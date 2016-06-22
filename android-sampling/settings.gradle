@@ -1,6 +1,5 @@
 include 'libs:ui'
 include 'apps:app'
-include 'apps:stock'
 include 'libs:android-beacon-library'
 include 'libs:base'
 include 'libs:utils'
