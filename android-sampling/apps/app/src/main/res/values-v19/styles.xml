@@ -1,0 +1,15 @@
+<resources>>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar.TranslucentDecor" type="text/css">
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+    <style name="BaseAppTheme" parent="AppTheme.Base">
+        <item name="toolbarStyle">@style/ToolBarStyle</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+</resources>

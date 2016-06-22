@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ToolBarStyle" parent="Widget.AppCompat.Toolbar">
+        <item name="actionMenuTextColor">#ff63BBF7</item>
+        <item name="android:textColorPrimary">@color/base_white</item>
+        <item name="android:actionBarSize">@dimen/common_actionbar_height</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="contentInsetStart">0dp</item><!-- 设置该属性解决空白部分-->
+        <item name="android:homeAsUpIndicator">@drawable/abc_ic_ab_back_mtrl_am_alpha</item>
+    </style>
+    <style name="AppTheme" parent="@style/BaseAppTheme">
+
+    </style>
+</resources>
