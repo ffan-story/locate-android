@@ -24,8 +24,8 @@ public abstract class FileRequest<T> extends Request<T> {
 
   protected void init() {
     File path =
-        new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/"
-            + mConfig.getFilePath() + "/");
+        new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
+            + mConfig.getFilePath() + File.separator);
     if (!path.exists()) {
       Log.d("TestFile", "Create the path:" + path.getAbsolutePath());
       path.mkdir();
@@ -35,7 +35,7 @@ public abstract class FileRequest<T> extends Request<T> {
       throw new IllegalArgumentException("the filename can not be null or filename format illegal");
     }
     mLogFile =
-        new File(path.getPath()+ fileName);
+        new File(path.getPath()+ File.separator+ fileName);
     if (!mLogFile.exists()) {
       try {
         mLogFile.createNewFile();

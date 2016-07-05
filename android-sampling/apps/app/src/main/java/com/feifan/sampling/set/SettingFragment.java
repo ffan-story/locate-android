@@ -6,13 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.feifan.sampling.R;
 import com.libs.base.mvp.MvpRouter;
-import com.libs.ui.fragments.CommonFragment;
+import com.libs.ui.fragments.CommonMenuFragment;
 
 /**
  * Created by mengmeng on 16/5/24.
  */
-public class SettingFragment extends CommonFragment{
+public class SettingFragment extends CommonMenuFragment {
     private SettingView mSetingView;
     private SettingPresentor mSettingPresentor;
     private MvpRouter mMvpRouter;
@@ -33,5 +34,6 @@ public class SettingFragment extends CommonFragment{
         mMvpRouter = new MvpRouter(mSetingView,mSettingPresentor);
         mSetingView.bindRouter(mMvpRouter);
         mSettingPresentor.bindRouter(mMvpRouter);
+        setTitle(R.string.setting_title);
     }
 }

@@ -2,7 +2,7 @@ package com.feifan.sampling.scan.model;
 
 import android.net.Uri;
 
-import com.mm.beacon.data.IBeacon;
+import com.mm.beacon.IBeacon;
 
 import java.util.List;
 

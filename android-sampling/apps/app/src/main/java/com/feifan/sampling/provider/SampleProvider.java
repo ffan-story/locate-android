@@ -12,14 +12,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.support.annotation.Nullable;
 
-import com.feifan.sampling.provider.SampleData.Zone;
-import com.feifan.sampling.provider.SampleData.Sample;
-import com.feifan.sampling.provider.SampleData.Spot;
 import com.feifan.sampling.provider.SampleData.BeaconDetail;
 import com.feifan.sampling.provider.SampleData.BeaconUUID;
+import com.feifan.sampling.provider.SampleData.Sample;
 import com.feifan.sampling.provider.SampleData.SampleDetail;
+import com.feifan.sampling.provider.SampleData.Spot;
+import com.feifan.sampling.provider.SampleData.Zone;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -142,7 +141,6 @@ public class SampleProvider extends ContentProvider {
         return true;
     }
 
-    @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -188,7 +186,6 @@ public class SampleProvider extends ContentProvider {
         return c;
     }
 
-    @Nullable
     @Override
     public String getType(Uri uri) {
         switch (sUriMatcher.match(uri)) {
@@ -222,7 +219,6 @@ public class SampleProvider extends ContentProvider {
         }
     }
 
-    @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
 
@@ -313,9 +309,7 @@ public class SampleProvider extends ContentProvider {
                                        + Spot.Y + " FLOAT NOT NULL DEFAULT 0.00,"
                                        + Spot.D + " FLOAT NOT NULL DEFAULT 0.00,"
                                        + Spot.NAME + " TEXT,"
-                                       + Spot.REMOTE_ID + " TEXT,"
-                                       + Spot.ZONE + " INTEGER NOT NULL,FOREIGN KEY("
-                                       + Spot.ZONE + ") REFERENCES " + ZONE_TABLE_NAME + "(" + Zone._ID + ")"
+                                       + Spot.REMOTE_ID + " TEXT"
                                        + ");");
 
             // 创建样本表
@@ -323,8 +317,7 @@ public class SampleProvider extends ContentProvider {
                                        + Sample._ID + " INTEGER PRIMARY KEY,"
                                        + Sample.NAME + " TEXT,"
                                        + Sample.TIME + " TEXT,"
-                                       + Sample.SPOT + " INTEGER NOT NULL,FOREIGN KEY("
-                                         + Sample.SPOT + ") REFERENCES " + SPOT_TABLE_NAME + "(" + Spot._ID + ")"
+                                       + Sample.SPOT + " INTEGER NOT NULL"
                                        + ");");
 
             // 创建样本表
@@ -345,36 +338,35 @@ public class SampleProvider extends ContentProvider {
                                        + BeaconDetail.REMOTE_ID + " INTEGER DEFAULT 0,"
                                        + BeaconDetail.ACCURACY + " DECIMAL DEFAULT 0.00,"
                                        + BeaconDetail.DIRECTION + " DECIMAL DEFAULT 0.00,"
-                                       + BeaconDetail.SAMPLE + " INTEGER NOT NULL,FOREIGN KEY("
-                                         + BeaconDetail.SAMPLE + ") REFERENCES " + SAMPLE_TABLE_NAME + "(" + Sample._ID + ")"
+                                       + BeaconDetail.SAMPLE + " INTEGER NOT NULL"
                                        + ");");
 
             // 创建样本详情视图
-            db.execSQL("CREATE VIEW " + SAMPLE_DETAIL_VIEW_NAME + " AS SELECT "
-                                      + BeaconDetail.UUID + ", "
-                                      + BeaconDetail.MAJOR + ", "
-                                      + BeaconDetail.MINOR + ", "
-                                      + BeaconDetail.MAC + ", "
-                                      + BeaconDetail.RSSI + ", "
-                                      + BeaconDetail.ACCURACY + ", "
-                                      + BeaconDetail.DIRECTION + ", "
-                                      + SPOT_TABLE_NAME + "." + Spot.ZONE + ", "
-                                      + SPOT_TABLE_NAME + "." + Spot.X + ", "
-                                      + SPOT_TABLE_NAME + "." + Spot.Y + ", "
-                                      + SPOT_TABLE_NAME + "." + Spot.D + ", "
-                                      + SAMPLE_TABLE_NAME + "." + Sample.SPOT + ", "
-                                      + SAMPLE_TABLE_NAME + "." + Sample.TIME
-                                      + " FROM " + BEACON_TABLE_NAME
-                                      + " LEFT OUTER JOIN " + SAMPLE_TABLE_NAME + " ON "
-                                      + BEACON_TABLE_NAME + "." + BeaconDetail.SAMPLE + "="
-                                      + SAMPLE_TABLE_NAME + "." + Sample._ID
-                                      + " LEFT OUTER JOIN " + SPOT_TABLE_NAME + " ON "
-                                      + SAMPLE_TABLE_NAME + "." + Sample.SPOT + "="
-                                      + SPOT_TABLE_NAME + "." + Spot._ID
-                                      + " LEFT OUTER JOIN " + ZONE_TABLE_NAME + " ON "
-                                      + SPOT_TABLE_NAME + "." + Spot.ZONE + "="
-                                      + ZONE_TABLE_NAME + "." + Zone._ID
-                                      + ";");
+//            db.execSQL("CREATE VIEW " + SAMPLE_DETAIL_VIEW_NAME + " AS SELECT "
+//                                      + BeaconDetail.UUID + ", "
+//                                      + BeaconDetail.MAJOR + ", "
+//                                      + BeaconDetail.MINOR + ", "
+//                                      + BeaconDetail.MAC + ", "
+//                                      + BeaconDetail.RSSI + ", "
+//                                      + BeaconDetail.ACCURACY + ", "
+//                                      + BeaconDetail.DIRECTION + ", "
+//                                      + SPOT_TABLE_NAME + "." + Spot.ZONE + ", "
+//                                      + SPOT_TABLE_NAME + "." + Spot.X + ", "
+//                                      + SPOT_TABLE_NAME + "." + Spot.Y + ", "
+//                                      + SPOT_TABLE_NAME + "." + Spot.D + ", "
+//                                      + SAMPLE_TABLE_NAME + "." + Sample.SPOT + ", "
+//                                      + SAMPLE_TABLE_NAME + "." + Sample.TIME
+//                                      + " FROM " + BEACON_TABLE_NAME
+//                                      + " LEFT OUTER JOIN " + SAMPLE_TABLE_NAME + " ON "
+//                                      + BEACON_TABLE_NAME + "." + BeaconDetail.SAMPLE + "="
+//                                      + SAMPLE_TABLE_NAME + "." + Sample._ID
+//                                      + " LEFT OUTER JOIN " + SPOT_TABLE_NAME + " ON "
+//                                      + SAMPLE_TABLE_NAME + "." + Sample.SPOT + "="
+//                                      + SPOT_TABLE_NAME + "." + Spot._ID
+//                                      + " LEFT OUTER JOIN " + ZONE_TABLE_NAME + " ON "
+//                                      + SPOT_TABLE_NAME + "." + Spot.ZONE + "="
+//                                      + ZONE_TABLE_NAME + "." + Zone._ID
+//                                      + ";");
         }
 
         @Override

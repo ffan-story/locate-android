@@ -23,6 +23,8 @@
  */
 package com.mm.beacon.data;
 
+import com.mm.beacon.IBeacon;
+
 /**
  * This class represents a criteria of fields used to match iBeacons.  The strange name
  * comes from the iOS implementation, where the idea of a "Region" is also used for a geofence.

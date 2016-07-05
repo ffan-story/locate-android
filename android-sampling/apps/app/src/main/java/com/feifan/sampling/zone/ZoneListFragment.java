@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -18,14 +16,25 @@ import android.view.ViewGroup;
 import com.feifan.sampling.Constants;
 import com.feifan.sampling.R;
 import com.feifan.sampling.SpotListActivity;
+import com.feifan.sampling.http.ApiCreator;
+import com.feifan.sampling.provider.ProviderHelper;
 import com.feifan.sampling.provider.SampleData.Zone;
 import com.feifan.sampling.spot.SpotListFragment;
+import com.feifan.sampling.test.model.LocItem;
+import com.feifan.sampling.test.model.LocModel;
 import com.feifan.sampling.util.LogUtil;
 import com.feifan.sampling.widget.SimpleAdapter;
 import com.feifan.sampling.widget.SpaceItemDecoration;
+import com.feifan.sampling.zone.request.ZoneListRequest;
+import com.libs.base.http.BpCallback;
+import com.libs.base.model.BaseJsonBean;
 import com.libs.ui.activities.BaseActivity;
 import com.libs.ui.fragments.CommonFragment;
 import com.libs.ui.fragments.FragmentDelegate;
+
+import java.util.List;
+
+import retrofit2.Call;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,6 +45,8 @@ public class ZoneListFragment extends CommonFragment<Cursor> implements View.OnC
 
     // 启动采集点活动
     private Intent mIntent;
+    private int START_PAGE_INDEX = 1;
+    private int PAGE_LENGTH = 20;
 
     @Override
     public void onAttach(Context context) {
@@ -64,7 +75,7 @@ public class ZoneListFragment extends CommonFragment<Cursor> implements View.OnC
         return rootView;
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+    private void setupRecyclerView( RecyclerView recyclerView) {
         mAdapter = new SimpleAdapter<ZoneModel>(ZoneModel.class) {
             @Override
             protected void onBindViewHolder(ViewHolder holder, Cursor cursor) {
@@ -79,9 +90,10 @@ public class ZoneListFragment extends CommonFragment<Cursor> implements View.OnC
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated( Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initLoader();
+        startZoneListRequest();
     }
 
     private void initActionBar() {
@@ -120,6 +132,34 @@ public class ZoneListFragment extends CommonFragment<Cursor> implements View.OnC
         if(id == getLocalLoadId()) {    // 加载子项数据
             mAdapter.swapCursor((Cursor) data);
         }
+    }
+
+    private void startZoneListRequest(){
+        ZoneListRequest request = ApiCreator.getInstance().createApi(ZoneListRequest.class);
+        Call<BaseJsonBean<LocModel>> call = request.getZoneList(START_PAGE_INDEX,PAGE_LENGTH);
+        call.enqueue(new BpCallback<BaseJsonBean<LocModel>>() {
+            @Override
+            public void onResponse(BaseJsonBean<LocModel> helpCenterModel) {
+                if (helpCenterModel == null){
+                    return;
+                }
+                LocModel model = helpCenterModel.getData();
+                if (model == null || model.getZones() == null || model.getZones().size() == 0){
+                    return;
+                }
+                ProviderHelper.clearZoneMap(getActivity());
+                List<LocItem> list = model.getZones();
+                for (int i = 0;i<list.size();i++) {
+                    LocItem item = list.get(i);
+                    ZoneHelper.saveRemoteId(getActivity(),String.valueOf(item.getId()), item.getName());
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
     }
 
     @Override

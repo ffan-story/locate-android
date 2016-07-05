@@ -2,7 +2,6 @@ package com.mm.beacon;
 
 
 import com.mm.beacon.blue.ScanData;
-import com.mm.beacon.data.IBeacon;
 import com.mm.beacon.data.Region;
 
 import java.util.List;

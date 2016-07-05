@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 /**
  * Created by mengmeng on 15/8/21.
@@ -36,6 +37,7 @@ public class BlueLeManager extends IBlueManager implements BluetoothAdapter.LeSc
   @Override
   public void startScan() {
     if(mBluetoothAdapter != null) {
+      Log.e("startScan"," -------  ");
       mBluetoothAdapter.startLeScan(this);
     }
   }

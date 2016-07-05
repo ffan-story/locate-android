@@ -6,17 +6,23 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.RemoteCallbackList;
+import android.os.RemoteException;
 import android.util.Log;
 
+import com.mm.beacon.BeaconConstants;
 import com.mm.beacon.BeaconDispatcher;
 import com.mm.beacon.BeaconFilter;
+import com.mm.beacon.IBeacon;
+import com.mm.beacon.IBeaconDetect;
+import com.mm.beacon.IRemoteInterface;
+import com.mm.beacon.IScanData;
 import com.mm.beacon.RegionFilter;
 import com.mm.beacon.blue.BlueLOLLIPOPManager;
 import com.mm.beacon.blue.BlueLeManager;
 import com.mm.beacon.blue.IBlueManager;
 import com.mm.beacon.blue.ScanData;
 import com.mm.beacon.data.FilterBeacon;
-import com.mm.beacon.data.IBeacon;
 import com.mm.beacon.data.Region;
 
 import java.util.ArrayList;
@@ -31,16 +37,17 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   public static final String TAG = "BeaconService";
   private boolean isScanning;
   private Handler mHandler = new Handler();
-  private BeaconBinder mBeaconBinder = new BeaconBinder();
   private List<IBeacon> mBeaconList = new ArrayList<IBeacon>();
   private boolean mIsBind = false;
   private IBlueManager mBlueManager;
-  private  BeaconFilter mBeaconFilter = new  BeaconFilter();
-  private  RegionFilter mRegionFilter = new  RegionFilter();
-  private  BeaconDispatcher mBeaconDisptcher;
+  private BeaconFilter mBeaconFilter = new BeaconFilter();
+  private RegionFilter mRegionFilter = new RegionFilter();
+  private BeaconDispatcher mBeaconDisptcher;
   private List<IBeacon> mBeaconRegionMatchList = new ArrayList<IBeacon>();
-  private List<ScanData> mTempScanDataList = new ArrayList<ScanData>();
-  private long mScanDelay = 1500;
+  private List<IScanData> mTempScanDataList = new ArrayList<IScanData>();
+  private int mScanDelay = 1500;
+  private final RemoteCallbackList<IBeaconDetect> mCallbacks =
+      new RemoteCallbackList<IBeaconDetect>();
   private Runnable mBeaconRunnable = new Runnable() {
     @Override
     public void run() {
@@ -94,47 +101,43 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
       if (iBeacon == null) {
         return;
       }
-      if(!isBeaconMatched(iBeacon)){
+      if (!isBeaconMatched(iBeacon)) {
         return;
       }
       // 判断是否进店
       matchRegions(iBeacon, mRegionFilter.getRegionList());
-      //TODO 暂时去掉重复
-//      if (mBeaconList.contains(iBeacon)) {
-//        mBeaconList.remove(iBeacon);
-//      }
-//      int matNum = matchBeacons(iBeacon, mBeaconList);
-//      if (matNum > 0) {
-//        IBeacon beacon = mBeaconList.remove(matNum);
-//        iBeacon.copyBeaconInsideNum(beacon);
-//      }
+      // TODO 暂时去掉重复
+      // if (mBeaconList.contains(iBeacon)) {
+      // mBeaconList.remove(iBeacon);
+      // }
+      // int matNum = matchBeacons(iBeacon, mBeaconList);
+      // if (matNum > 0) {
+      // IBeacon beacon = mBeaconList.remove(matNum);
+      // iBeacon.copyBeaconInsideNum(beacon);
+      // }
       mBeaconList.add(iBeacon);
-    }
-  }
-
-  public void setScanDelay(int delay){
-    if (delay > 0){
-      mScanDelay = delay;
     }
   }
 
   private void processBeaconResult() {
     // 处理进店出店的判断
-//    performRegin();
-    if (mBeaconDisptcher != null && !mBeaconList.isEmpty()) {
-      mBeaconDisptcher.onBeaconDetect(mBeaconList);
+    // performRegin();
+    Log.e("The length is:",mBeaconList.size()+"");
+    if (!mBeaconList.isEmpty()) {
+//      mBeaconDisptcher.onBeaconDetect(mBeaconList);
+      notifyAllCallBack(mBeaconList,mTempScanDataList);
       mBeaconList.clear();
     } else if (mBeaconDisptcher != null) {
       mBeaconDisptcher.onBeaconDetect(null);
     }
     performRawData();
-//    stopBeaconScan();
+    // stopBeaconScan();
     mHandler.postDelayed(mBeaconRunnable, mScanDelay);
   }
 
-  private void performRawData(){
-    if(mTempScanDataList.size() >0){
-      mBeaconDisptcher.onBeaconRawDataDetect(mTempScanDataList);
+  private void performRawData() {
+  if (mBeaconDisptcher != null && mTempScanDataList.size() > 0) {
+//      mBeaconDisptcher.onBeaconRawDataDetect(mTempScanDataList);
       mTempScanDataList.clear();
     }
   }
@@ -193,21 +196,23 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   @Override
   public IBinder onBind(Intent intent) {
     Log.i(TAG, "binding");
+    mScanDelay = intent.getIntExtra(BeaconConstants.SCAN_INTERVAL,BeaconConstants.DEFAULT_SCAN_INTERVAL);
     createBlueManager();
     mBlueManager.registerListener(this);
     setBind(true);
     startBeaconScan();
-    return mBeaconBinder;
+    return mLocalBinder;
   }
 
-  private void createBlueManager(){
+  private void createBlueManager() {
     int api = Build.VERSION.SDK_INT;
-    if(api >= Build.VERSION_CODES.LOLLIPOP){
+    if (api >= Build.VERSION_CODES.LOLLIPOP) {
       mBlueManager = BlueLOLLIPOPManager.getInstance(this);
-    }else if (api >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+    } else if (api >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
       mBlueManager = BlueLeManager.getInstance(this);
     }
   }
+
   @Override
   public boolean onUnbind(Intent intent) {
     Log.i(TAG, "unbind called");
@@ -235,7 +240,7 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
     }
   }
 
-  public void setBeaconFilter(BeaconFilter beaconfilter){
+  public void setBeaconFilter(BeaconFilter beaconfilter) {
     if (beaconfilter != null && !beaconfilter.isEmpty()) {
       mBeaconFilter = beaconfilter;
     }
@@ -253,7 +258,9 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   public void startBeaconScan() {
     if (isBind() && !isScanning()) {
       setIsScanning(true);
+      Log.e("startBeaconScan","start");
       if (mBlueManager != null) {
+        Log.e("startBeaconScan"," ---- ");
         mBlueManager.startScan();
         mHandler.postDelayed(mBeaconRunnable, mScanDelay);
       }
@@ -305,6 +312,7 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
 
   /**
    * check if beaconlist contains iBeacon
+   * 
    * @param iBeacon
    * @param beacon
    * @return
@@ -324,39 +332,71 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
     return -1;
   }
 
- private boolean isBeaconMatched(IBeacon iBeacon){
-   List<FilterBeacon> beaconList = mBeaconFilter.getBeaconList();
-   if(beaconList == null || beaconList.isEmpty()){
-     return true;
-   }
-   if(iBeacon != null){
-    if(beaconList != null && !beaconList.isEmpty()){
-      for (int i = 0; i < beaconList.size(); i++) {
-        FilterBeacon beacon = beaconList.get(i);
-        if(beacon != null){
-            if(isBeaconMatched(beacon,iBeacon)){
+  private boolean isBeaconMatched(IBeacon iBeacon) {
+    List<FilterBeacon> beaconList = mBeaconFilter.getBeaconList();
+    if (beaconList == null || beaconList.isEmpty()) {
+      return true;
+    }
+    if (iBeacon != null) {
+      if (beaconList != null && !beaconList.isEmpty()) {
+        for (int i = 0; i < beaconList.size(); i++) {
+          FilterBeacon beacon = beaconList.get(i);
+          if (beacon != null) {
+            if (isBeaconMatched(beacon, iBeacon)) {
               return true;
             }
+          }
         }
       }
     }
-   }
-   return false;
- }
+    return false;
+  }
 
-  private boolean isBeaconMatched(FilterBeacon filterBeacon , IBeacon ibeacon){
-    if(filterBeacon != null && ibeacon != null){
-      if(!filterBeacon.getUuid().equals(ibeacon.getProximityUuid())){
+  private boolean isBeaconMatched(FilterBeacon filterBeacon, IBeacon ibeacon) {
+    if (filterBeacon != null && ibeacon != null) {
+      if (!filterBeacon.getUuid().equals(ibeacon.getProximityUuid())) {
         return false;
       }
-      if(filterBeacon.getMajor() != 0 && filterBeacon.getMajor() != ibeacon.getMajor()){
+      if (filterBeacon.getMajor() != 0 && filterBeacon.getMajor() != ibeacon.getMajor()) {
         return false;
       }
-      if(filterBeacon.getMinor() != 0 && filterBeacon.getMinor() != ibeacon.getMinor()){
+      if (filterBeacon.getMinor() != 0 && filterBeacon.getMinor() != ibeacon.getMinor()) {
         return false;
       }
       return true;
     }
     return false;
   }
+
+  private void notifyAllCallBack(List<IBeacon> list,List<IScanData> dataList){
+    int N = mCallbacks.beginBroadcast();
+    if(mCallbacks != null && N > 0){
+      for (int i =0;i<N;i++){
+        try {
+          IBeaconDetect cb = mCallbacks.getBroadcastItem(i);
+          if(cb != null){
+            cb.onBeaconDetect(list);
+            cb.onRawDataDetect(dataList);
+          }
+        } catch (RemoteException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    mCallbacks.finishBroadcast();
+  }
+
+
+    private IRemoteInterface.Stub mLocalBinder = new IRemoteInterface.Stub() {
+
+    @Override
+    public void registerCallback(IBeaconDetect cb) throws RemoteException {
+      mCallbacks.register(cb);
+    }
+
+    @Override
+    public void unregisterCallback(IBeaconDetect cb) throws RemoteException {
+      mCallbacks.unregister(cb);
+    }
+  };
 }

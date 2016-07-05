@@ -1,9 +1,7 @@
 package com.feifan.sampling.spot;
 
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,7 +11,6 @@ import android.widget.EditText;
 
 import com.feifan.sampling.R;
 import com.feifan.sampling.http.ApiCreator;
-import com.feifan.sampling.provider.SampleData;
 import com.feifan.sampling.spot.request.AddSpotInterface;
 import com.feifan.sampling.zone.model.SpotAddModel;
 import com.libs.base.http.BpCallback;
@@ -74,15 +71,15 @@ public class SpotEditFragment extends CommonFragment {
         return view;
     }
 
-    private void startNetRequest(final String x,final String y,final String d,final String id){
+    private void startNetRequest(final String x,final String y,final String d,final String zoneid){
         AddSpotInterface request = ApiCreator.getInstance().createApi(AddSpotInterface.class);
-        Call<BaseJsonBean<SpotAddModel>> call = request.addSpot(x,y,d,id);
+        Call<BaseJsonBean<SpotAddModel>> call = request.addSpot(x,y,d,zoneid);
         call.enqueue(new BpCallback<BaseJsonBean<SpotAddModel>>() {
             @Override
             public void onResponse(BaseJsonBean<SpotAddModel> helpCenterModel) {
                 String remoteid = helpCenterModel.getData().getId();
                 System.out.println(remoteid);
-                saveRemoteId(x,y,d,id,remoteid);
+                SpotHelper.saveRemoteId(getActivity(),x,y,d,zoneid,remoteid);
                 onBackPressed();
             }
 
@@ -93,17 +90,4 @@ public class SpotEditFragment extends CommonFragment {
         });
     }
 
-    private void saveRemoteId(final String x,final String y,final String d,final String id,final String remoteid){
-        if(!TextUtils.isEmpty(id)){
-            // 保存到数据库
-            ContentValues values = new ContentValues();
-            values.put(SampleData.Spot.X, x);
-            values.put(SampleData.Spot.Y, y);
-            values.put(SampleData.Spot.D, d);
-            values.put(SampleData.Spot.NAME, toString());
-            values.put(SampleData.Spot.ZONE, id);
-            values.put(SampleData.Spot.REMOTE_ID, remoteid);
-            Uri spotUri = getActivity().getContentResolver().insert(SampleData.Spot.CONTENT_URI, values);
-        }
-    }
 }

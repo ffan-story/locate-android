@@ -114,10 +114,10 @@ public class SampleFragment extends AbsLoaderFragment {
     /**
      * 样本数据适配器
      */
-    private class SampleAdapter extends RecyclerCursorAdapter<SampleFragment.ViewHolder> {
+    private class SampleAdapter extends RecyclerCursorAdapter<ViewHolder> {
 
         @Override
-        protected void onBindViewHolder(SampleFragment.ViewHolder holder, Cursor cursor) {
+        protected void onBindViewHolder(ViewHolder holder, Cursor cursor) {
             final SampleModel sample = SampleModel.from(cursor);
             holder.bind(sample);
 //            holder.mDetailsV.setText(String.format("#beacons:%d\t\t\t\t#samples:%d", spot.beaconCount, spot.sampleCount));
@@ -137,7 +137,7 @@ public class SampleFragment extends AbsLoaderFragment {
         }
 
         @Override
-        public SampleFragment.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.simple_list_item, parent, false);
             return new ViewHolder(view);

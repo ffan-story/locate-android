@@ -1,9 +1,7 @@
 package com.feifan.sampling.zone;
 
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -16,8 +14,6 @@ import android.widget.EditText;
 import com.feifan.sampling.Constants;
 import com.feifan.sampling.R;
 import com.feifan.sampling.http.ApiCreator;
-import com.feifan.sampling.provider.SampleData;
-import com.feifan.sampling.util.LogUtil;
 import com.feifan.sampling.zone.model.SpotAddModel;
 import com.feifan.sampling.zone.request.AddZoneInterface;
 import com.libs.base.http.BpCallback;
@@ -76,7 +72,7 @@ public class ZoneEditFragment extends CommonFragment {
             public void onResponse(BaseJsonBean<SpotAddModel> helpCenterModel) {
                 String id = helpCenterModel.getData().getId();
                 System.out.println(id);
-                saveRemoteId(id,name);
+                ZoneHelper.saveRemoteId(getActivity(),id,name);
             }
 
             @Override
@@ -84,17 +80,5 @@ public class ZoneEditFragment extends CommonFragment {
 
             }
         });
-    }
-
-    private void saveRemoteId(String id,String name){
-        if(!TextUtils.isEmpty(id)){
-            ZoneModel zone = new ZoneModel(name,id);
-            // 保存到数据库
-            ContentValues values = new ContentValues();
-            zone.fill(values);
-            Uri spotUri = getActivity().getContentResolver().insert(SampleData.Zone.CONTENT_URI, values);
-            zone.id = Integer.valueOf(spotUri.getLastPathSegment());
-            LogUtil.i(Constants.DEBUG_TAG, zone.toString() + "'id is " + zone.id);
-        }
     }
 }

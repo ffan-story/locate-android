@@ -44,7 +44,7 @@ public class SimpleAdapter<M extends SimpleAdapter.CursorModel> extends Recycler
      * Simple ViewHolder
      * @param <M>
      */
-    public static class ViewHolder<M extends SimpleAdapter.CursorModel> extends RecyclerView.ViewHolder {
+    public static class ViewHolder<M extends CursorModel> extends RecyclerView.ViewHolder {
 
         private TextView mContentV;
 

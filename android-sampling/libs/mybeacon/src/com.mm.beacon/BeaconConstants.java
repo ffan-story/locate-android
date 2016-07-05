@@ -5,4 +5,6 @@ package com.mm.beacon;
  */
 public class BeaconConstants {
     public static final long SCAN_TIME = 3000;
+    public static final String SCAN_INTERVAL = "scan_interval";
+    public static final int DEFAULT_SCAN_INTERVAL = 1500;
 }

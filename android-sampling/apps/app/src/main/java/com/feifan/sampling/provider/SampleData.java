@@ -23,10 +23,10 @@ public class SampleData {
         /** 访问Zone表的URL */
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/zone");
 
-        /** {@link com.feifan.sampling.provider.SampleData.Zone#CONTENT_URI}的MIME类型 */
+        /** {@link Zone#CONTENT_URI}的MIME类型 */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.zone";
 
-        /** {@link com.feifan.sampling.provider.SampleData.Zone#CONTENT_URI}子项的MIME类型 */
+        /** {@link Zone#CONTENT_URI}子项的MIME类型 */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.zone";
 
         /**
@@ -50,10 +50,10 @@ public class SampleData {
         /** 访问Spot表的URL */
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/spot");
 
-        /** {@link com.feifan.sampling.provider.SampleData.Spot#CONTENT_URI}的MIME类型 */
+        /** {@link Spot#CONTENT_URI}的MIME类型 */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.spot";
 
-        /** {@link com.feifan.sampling.provider.SampleData.Spot#CONTENT_URI}子项的MIME类型 */
+        /** {@link Spot#CONTENT_URI}子项的MIME类型 */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.spot";
 
         /**
@@ -94,10 +94,10 @@ public class SampleData {
         /** 访问Sample表的URL */
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/sample");
 
-        /** {@link com.feifan.sampling.provider.SampleData.Sample#CONTENT_URI}的MIMIE类型 */
+        /** {@link Sample#CONTENT_URI}的MIMIE类型 */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.sample";
 
-        /** {@link com.feifan.sampling.provider.SampleData.Sample#CONTENT_URI}子项的MIMIE类型 */
+        /** {@link Sample#CONTENT_URI}子项的MIMIE类型 */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.sample";
 
         /** 名称 */
@@ -121,10 +121,10 @@ public class SampleData {
         /** 访问Samples表的URL */
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/beacon_uuid");
 
-        /** {@link com.feifan.sampling.provider.SampleData.BeaconUUID#CONTENT_URI}的MIMIE类型 */
+        /** {@link BeaconUUID#CONTENT_URI}的MIMIE类型 */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.beacon_uuid";
 
-        /** {@link com.feifan.sampling.provider.SampleData.BeaconUUID#CONTENT_URI}子项的MIMIE类型 */
+        /** {@link BeaconUUID#CONTENT_URI}子项的MIMIE类型 */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.beacon_uuid";
 
         /** 字段名－uuid
@@ -144,10 +144,10 @@ public class SampleData {
         /** 使用Sample参数访问BeaconDetail表的URL */
         public static final Uri CONTENT_URI_SAMPLE = Uri.parse("content://" + AUTHORITY + "/beacon/sample");
 
-        /** {@link com.feifan.sampling.provider.SampleData.BeaconDetail#CONTENT_URI}的MIMIE类型 */
+        /** {@link BeaconDetail#CONTENT_URI}的MIMIE类型 */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.beacon";
 
-        /** {@link com.feifan.sampling.provider.SampleData.BeaconDetail#CONTENT_URI}子项的MIMIE类型 */
+        /** {@link BeaconDetail#CONTENT_URI}子项的MIMIE类型 */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.beacon";
 
         /** 字段名－uuid
@@ -209,10 +209,10 @@ public class SampleData {
         /** 访问BeaconDetail表的URL */
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/sample_detail");
 
-        /** {@link com.feifan.sampling.provider.SampleData.SampleDetail#CONTENT_URI}的MIMIE类型 */
+        /** {@link SampleDetail#CONTENT_URI}的MIMIE类型 */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.sample_detail";
 
-        /** {@link com.feifan.sampling.provider.SampleData.SampleDetail#CONTENT_URI}子项的MIMIE类型 */
+        /** {@link SampleDetail#CONTENT_URI}子项的MIMIE类型 */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.sample_detail";
     }
 }

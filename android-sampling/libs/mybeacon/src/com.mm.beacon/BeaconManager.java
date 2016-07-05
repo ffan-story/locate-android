@@ -31,7 +31,6 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.mm.beacon.blue.ScanData;
-import com.mm.beacon.data.IBeacon;
 import com.mm.beacon.data.Region;
 import com.mm.beacon.service.BeaconService;
 

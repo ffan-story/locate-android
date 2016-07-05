@@ -85,6 +85,6 @@ public class SettingDialog extends BaseBottomDialogFragment {
     }
 
     public interface SettingBtnCallBack{
-        public void onConfirmBtn(String str,int type);
+        public void onConfirmBtn(String str, int type);
     }
 }

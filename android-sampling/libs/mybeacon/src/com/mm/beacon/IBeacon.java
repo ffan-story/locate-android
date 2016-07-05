@@ -21,12 +21,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.mm.beacon.data;
+package com.mm.beacon;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.mm.beacon.blue.ScanData;
+import com.mm.beacon.data.Region;
 
 /**
 * The <code>IBeacon</code> class represents a single hardware iBeacon detected by 
@@ -170,6 +171,16 @@ public class IBeacon implements Parcelable{
 
 	public void setTime(long time) {
 		this.time = time;
+	}
+
+	public float mDirection;
+
+	public float getmDirection() {
+		return mDirection;
+	}
+
+	public void setmDirection(float mDirection) {
+		this.mDirection = mDirection;
 	}
 
 	/**

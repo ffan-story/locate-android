@@ -107,12 +107,13 @@
     <!-- setting -->
     <string name="setting_beacon_time_interval">扫描时间间隔</string>
     <string name="setting_file_save_path">文件保存地址</string>
-    <string name="setting_max_count">采样数量</string>
+    <string name="setting_max_count">采样循环次数</string>
+    <string name="setting_title">扫描</string>
 
     <!-- scan -->
     <string name="scan_title">beacon测试扫描</string>
     <string name="scan_btn_title">点击进行扫描</string>
-    <string name="scan_interval_title">输入扫描间隔</string>
+    <string name="scan_interval_title">输入扫描间隔 ms</string>
     <string name="scan_count_title">输入扫描次数</string>
     <string name="scan_interval_txt">剩余扫描次数：%d</string>
     <string name="scan_write_file">扫描结束，开始写入文件</string>

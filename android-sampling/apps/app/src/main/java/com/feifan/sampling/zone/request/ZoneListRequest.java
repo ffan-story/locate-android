@@ -12,7 +12,7 @@ import retrofit2.http.Query;
  */
 public interface ZoneListRequest {
 
-    String HELPER_CENTER_PATH = "/api/zone";
+    String HELPER_CENTER_PATH = "/api/v1/zones";
     String PAGEINDEX = "pageIndex";
     String PAGESIZE = "pageSize";
 

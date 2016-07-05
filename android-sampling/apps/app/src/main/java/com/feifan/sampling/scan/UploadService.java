@@ -14,7 +14,7 @@ import com.feifan.sampling.spot.request.UploadSpotInterface;
 import com.libs.base.http.BpCallback;
 import com.libs.base.model.BaseJsonBean;
 import com.libs.utils.SystemUtils;
-import com.mm.beacon.data.IBeacon;
+import com.mm.beacon.IBeacon;
 
 import java.util.ArrayList;
 import java.util.List;

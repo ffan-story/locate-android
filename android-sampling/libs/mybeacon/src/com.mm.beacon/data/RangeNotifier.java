@@ -23,6 +23,8 @@
  */
 package com.mm.beacon.data;
 
+import com.mm.beacon.IBeacon;
+
 import java.util.Collection;
 
 /**

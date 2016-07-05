@@ -12,6 +12,7 @@ import com.feifan.sampling.SampleApplication;
 import com.feifan.sampling.http.ApiCreator;
 import com.feifan.sampling.main.model.IsConnectedModel;
 import com.feifan.sampling.main.request.IsConnetedInterface;
+import com.feifan.sampling.map.MapFragment;
 import com.feifan.sampling.scan.ScanFragment;
 import com.feifan.sampling.set.SettingFragment;
 import com.feifan.sampling.uuid.UUidFragment;
@@ -52,7 +53,7 @@ public class MainActivity extends BaseMultiActivity {
                         mFragmentDelegate.replaceFragment("ScanFragment", R.id.main_content, ScanFragment.class.getName(), null);
                         break;
                     case R.id.nav_gallery:
-//						getSupportFragmentManager().beginTransaction().replace(R.id.content,new FragmentThree()).commit();
+                        mFragmentDelegate.replaceFragment("MapFragment", R.id.main_content, MapFragment.class.getName(), null);
                         break;
                     case R.id.nav_slideshow:
 //						getSupportFragmentManager().beginTransaction().replace(R.id.content,new FragmentThree()).commit();

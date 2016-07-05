@@ -96,5 +96,7 @@ public class Constants {
         public final static String DEFAULT_LOG_FILE_PATH = "indoor";
         public final static String RECYCLE_TIME_INTERVAL = "recycle_time_interval";
         public final static String SCAN_MAX_COUNT = "prefs_general_sample_max_count";
+        public final static int DEFAULT_SCAN_TIME = 1000;
+        public final static int DEFAULT_SCAN_NUM = 100;
     }
 }

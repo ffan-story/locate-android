@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +18,13 @@ import com.feifan.sampling.base.log.config.APPLogConfig;
 import com.feifan.sampling.base.log.request.CursorRequest;
 import com.feifan.sampling.provider.SampleData;
 import com.feifan.sampling.scan.model.CursorSaveModel;
-import com.libs.ui.fragments.CommonFragment;
+import com.libs.base.sensor.dici.DiciService;
+import com.libs.ui.fragments.CommonMenuFragment;
 import com.libs.utils.DateTimeUtils;
-import com.mm.beacon.BeaconManager;
+import com.libs.utils.PrefUtil;
+import com.mm.beacon.BeaconServiceManager;
+import com.mm.beacon.IBeacon;
 import com.mm.beacon.blue.ScanData;
-import com.mm.beacon.data.IBeacon;
 import com.mm.beacon.data.Region;
 import com.wanda.logger.log.Logger;
 
@@ -35,22 +36,25 @@ import java.util.Map;
 /**
  * Created by mengmeng on 16/6/15.
  */
-public class ScanFragment extends CommonFragment implements BeaconManager.OnBeaconDetectListener {
+public class ScanFragment extends CommonMenuFragment implements BeaconServiceManager.OnBeaconDetectListener,DiciService.OnSensorCallBack {
   private Button mScanBtn;
   private TextView mScanStatusText;
   private EditText mIntervalEdit;
   private EditText mCountEdit;
-  private BeaconManager mBeaconManager;
+  private BeaconServiceManager mBeaconManager;
   private List<IBeacon> mTemplist = new ArrayList<IBeacon>();
   private List<ScanData> mRawlist = new ArrayList<ScanData>();
   private Map<String, IBeacon> mMacBeacon = new HashMap<String, IBeacon>();
   private int mIntervalCount = 100;
   private int mInterval;
+  private long mIntervalNum;
   private final String CVS_SCAN_SAVE_NAME = "scan_save_cvs";
   private final String RAW_SCAN_SAVE_NAME = "scan_save_raw";
   private final String COM_SCAN_SAVE_NAME = "scan_save_combine";
   private String mSpotid = "";
   private String mDirection = "";
+  private float mRealDirection = 0f;
+  private DiciService mDiciService;
   private Handler mHandler = new Handler() {
     public void handleMessage(Message msg) {
       super.handleMessage(msg);
@@ -61,18 +65,16 @@ public class ScanFragment extends CommonFragment implements BeaconManager.OnBeac
         mScanStatusText.setText(String.format(getString(R.string.scan_write_file)));
         String beaconName =
             CVS_SCAN_SAVE_NAME + "_" + DateTimeUtils.getCurrentTime("yyyy-MM-dd HH-mm-ss") + "_"
-                + mInterval + "_" + mIntervalCount;
+                + mIntervalNum + "_" + mIntervalCount+ "_" +mDirection;
         String[] header = buildHeader();
         ScanHelper.SaveIBeacon(header, getCvsData(), beaconName);
 
         String rawName =
             RAW_SCAN_SAVE_NAME + "_" + DateTimeUtils.getCurrentTime("yyyy-MM-dd HH-mm-ss") + "_"
-                + mInterval + "_" + mIntervalCount;
+                + mIntervalNum + "_" + mIntervalCount+ "_" +mDirection;;
         String[] rawheader = buildRawHeader();
         ScanHelper.SaveIBeacon(rawheader, getRawCvsData(), rawName);
-
         sendCombineCvs();
-
         mBeaconManager.stopService();
       }
     }
@@ -119,13 +121,22 @@ public class ScanFragment extends CommonFragment implements BeaconManager.OnBeac
       mDirection = bundle.getString(Constants.EXTRA_KEY_SPOT_DIRECTION);
       setTitle(name);
     }
+    initData();
   }
 
+  private void initData(){
+    mIntervalNum = PrefUtil.getLong(getContext(), Constants.SHAREPREFERENCE.RECYCLE_TIME_INTERVAL,Constants.SHAREPREFERENCE.DEFAULT_SCAN_TIME);
+    mIntervalEdit.setText(mIntervalNum+"");
+    int scancount = PrefUtil.getInt(getContext(), Constants.SHAREPREFERENCE.SCAN_MAX_COUNT,Constants.SHAREPREFERENCE.DEFAULT_SCAN_NUM);
+    mCountEdit.setText(scancount+"");
+    mDiciService = DiciService.getInstance(getActivity().getApplicationContext());
+  }
   @Override
-  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+  public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    mBeaconManager = BeaconManager.getInstance(getActivity().getApplicationContext());
+    mBeaconManager = BeaconServiceManager.getInstance(getActivity().getApplicationContext());
     mBeaconManager.registerBeaconListerner(this);
+    mDiciService.startMagicScan();
   }
 
   @Override
@@ -143,6 +154,7 @@ public class ScanFragment extends CommonFragment implements BeaconManager.OnBeac
       for (int i = 0; i < beaconlist.size(); i++) {
         IBeacon beacon = beaconlist.get(i);
         beacon.setIndex(mInterval);
+        beacon.setmDirection(mRealDirection);
         String mac = beacon.getMac();
         if (!TextUtils.isEmpty(mac)) {
           if (!mMacBeacon.containsKey(mac)) {
@@ -338,5 +350,12 @@ public class ScanFragment extends CommonFragment implements BeaconManager.OnBeac
     super.onDestroyView();
     mBeaconManager.stopService();
     mBeaconManager.unRegisterBeaconListener(this);
+  }
+
+  @Override
+  public void onSensorCallBack(float[] prefvalues) {
+    if (prefvalues != null){
+      mRealDirection = prefvalues[0];
+    }
   }
 }

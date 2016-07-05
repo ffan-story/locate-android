@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.feifan.sampling.provider.SampleData;
 import com.feifan.sampling.scan.model.CursorSaveModel;
-import com.mm.beacon.data.IBeacon;
+import com.mm.beacon.IBeacon;
 import com.wanda.logger.toolbox.IConfig;
 import com.wanda.logger.toolbox.Request;
 
@@ -36,7 +36,7 @@ public class CursorRequest extends Request<CursorSaveModel> {
     }
   }
 
-  public void saveIBeaconDb(List<IBeacon> beaconlist, String spotid,Uri uri,String sampleName,String direction) {
+  public void saveIBeaconDb(List<IBeacon> beaconlist, String spotid, Uri uri, String sampleName, String direction) {
     if (beaconlist != null && !beaconlist.isEmpty() && !TextUtils.isEmpty(spotid) && uri != null) {
       //TODO
       int sampleId = Integer.valueOf(spotid);

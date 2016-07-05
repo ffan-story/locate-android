@@ -14,7 +14,6 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.libs.ui.R;
 import com.libs.ui.activities.model.ActivityResultModel;
-import com.libs.ui.compat.StatusBarCompat;
 import com.libs.ui.fragments.FragmentDelegate;
 import com.libs.ui.fragments.FragmentParams;
 import com.libs.ui.fragments.RootFragment;
@@ -58,7 +57,7 @@ public class BaseActivity extends AppCompatActivity {
                 }
             }
         }
-        StatusBarCompat.compat(this);
+//        StatusBarCompat.compat(this);
 //        initWindow();
         super.onCreate(arg0);
 //        StatusBarCompat.compat(this);
@@ -67,29 +66,24 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void initWindow() {
+        // 修改状态栏颜色，4.4+生效
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            setTranslucentStatus();
         }
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintColor(getResources().getColor(R.color.colorPrimaryDark));
         tintManager.setStatusBarTintEnabled(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            setTranslucentStatus(true);
-        }
+        tintManager.setStatusBarTintResource(R.color.colorPrimaryDark);//通知栏所需颜色
     }
 
+
     @TargetApi(19)
-    private void setTranslucentStatus(boolean on) {
-        Window win = getWindow();
-        WindowManager.LayoutParams winParams = win.getAttributes();
-        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-        if (on) {
-            winParams.flags |= bits;
-        } else {
-            winParams.flags &= ~bits;
-        }
-        win.setAttributes(winParams);
+    protected void setTranslucentStatus() {
+        Window window = getWindow();
+        // Translucent status bar
+        window.setFlags(
+                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
     }
 
     private void hidenInputMethord(){
@@ -166,7 +160,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected    FragmentDelegate getFragmetnDelegate() {
+    protected FragmentDelegate getFragmetnDelegate() {
         return null;
     }
 

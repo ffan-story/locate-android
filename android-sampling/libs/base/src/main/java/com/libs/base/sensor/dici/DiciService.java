@@ -6,6 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -24,6 +26,7 @@ public class DiciService implements SensorEventListener {
     private double mInclination;
     private int count = 1;
     private float mAzimuth;
+    private List<OnSensorCallBack> mList = new ArrayList<OnSensorCallBack>();
 
     public static DiciService getInstance(Context context){
         if (mDiciService == null){
@@ -62,12 +65,14 @@ public class DiciService implements SensorEventListener {
     }
 
     public void stopMagicScan(){
-        mSensorManager.unregisterListener(this,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
-        mSensorManager.unregisterListener(this,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD));
-        mSensorManager.unregisterListener(this,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE));
+        if (mList == null || mList.isEmpty()) {
+            mSensorManager.unregisterListener(this,
+                    mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
+            mSensorManager.unregisterListener(this,
+                    mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD));
+            mSensorManager.unregisterListener(this,
+                    mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE));
+        }
     }
 
     @Override
@@ -120,6 +125,7 @@ public class DiciService implements SensorEventListener {
         try {
             //preValues[0]是方位角，单位是弧度，范围是-pi到pi，通过Math.toDegrees()转换为角度
             mAzimuth = (float) Math.toDegrees(mPrefValues[0]);
+            notifySensorCallBack(mPrefValues);
 //        String msg = String.format("推荐方式：\n方位角：%7.3f\npitch: %7.3f\nroll: %7.3f\n地磁仰角：%7.3f\n",
 //                mAzimuth,Math.toDegrees(mPrefValues[1]),Math.toDegrees(mPrefValues[2]),
 //                Math.toDegrees(mInclination));
@@ -146,5 +152,34 @@ public class DiciService implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    public void registerSensorCallBack(OnSensorCallBack callBack){
+        if (callBack != null) {
+            mList.add(callBack);
+        }
+    }
+
+    public void unRegisterSensorCallBack(OnSensorCallBack callBack){
+        if (callBack != null) {
+            mList.remove(callBack);
+        }
+    }
+
+    public void notifySensorCallBack(float[] prefvalues){
+        if (prefvalues != null) {
+            if (mList != null && mList.size() > 0) {
+                for (int i = 0; i < mList.size(); i++) {
+                    OnSensorCallBack callback = mList.get(i);
+                    if (callback != null) {
+                        callback.onSensorCallBack(prefvalues);
+                    }
+                }
+            }
+        }
+    }
+
+    public interface OnSensorCallBack{
+        public void onSensorCallBack(float[] prefvalues);
     }
 }

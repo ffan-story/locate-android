@@ -3,7 +3,7 @@ package com.feifan.sampling.scan;
 import com.feifan.sampling.base.log.config.APPLogConfig;
 import com.feifan.sampling.scan.model.PatchSpotModel;
 import com.libs.utils.SystemUtils;
-import com.mm.beacon.data.IBeacon;
+import com.mm.beacon.IBeacon;
 import com.wanda.logger.file.CVSModel;
 import com.wanda.logger.file.CvsFileRequest;
 import com.wanda.logger.log.Logger;
@@ -24,7 +24,7 @@ public class ScanHelper {
         Logger.writeRequest(request);
     }
 
-    public static List<PatchSpotModel> buildPatchUploadList(List<IBeacon> list,String spotid){
+    public static List<PatchSpotModel> buildPatchUploadList(List<IBeacon> list, String spotid){
         List<PatchSpotModel> patchList = new ArrayList<PatchSpotModel>();
         if(list != null && !list.isEmpty()){
             for (int i = 0; i < list.size(); i++) {

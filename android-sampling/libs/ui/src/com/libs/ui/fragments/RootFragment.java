@@ -113,10 +113,14 @@ public abstract class RootFragment<T> extends Fragment implements LoaderCallback
             mActionBarView = root.findViewById(R.id.action_bar);
             initActionBar();
         }
-        View actionBarRightView = onActionRightView(inflater,mToolBarDelegate.getExtraView(),savedInstanceState);
-        if(actionBarRightView != null) {
-            mToolBarDelegate.addRightView(actionBarRightView);
+
+        if(mToolBarDelegate != null) {
+            View actionBarRightView = onActionRightView(inflater, mToolBarDelegate.getExtraView(), savedInstanceState);
+            if (actionBarRightView != null) {
+                mToolBarDelegate.addRightView(actionBarRightView);
+            }
         }
+
         ViewGroup root_content = (ViewGroup) root.findViewById(R.id.content);
         RelativeLayout content = (RelativeLayout) inflater.inflate(R.layout.common_custom_fragment_layout, root_content, false);
         root_content.addView(content);
@@ -125,17 +129,17 @@ public abstract class RootFragment<T> extends Fragment implements LoaderCallback
         if (content_content != null) {
             mContainerView.addView(content_content);
         }
-        if(isCustomView()){
-        ViewGroup viewGroup = (ViewGroup) content.findViewWithTag(getString(R.string.app_name));
-            mLoadingView = (ViewGroup) onCreateLoadingView(inflater, mLoadingView, savedInstanceState);
-            if (mLoadingView != null) {
-                viewGroup.addView(mLoadingView);
-            }
-            mEmptyView = (ViewGroup) onCreateEmptyView(inflater, mEmptyView, savedInstanceState);
-            if (mEmptyView != null) {
-                viewGroup.addView(mEmptyView);
-            }
-        }else {
+//        if(isCustomView()){
+//        ViewGroup viewGroup = (ViewGroup) content.findViewWithTag(getString(R.string.app_name));
+//            mLoadingView = (ViewGroup) onCreateLoadingView(inflater, mLoadingView, savedInstanceState);
+//            if (mLoadingView != null) {
+//                viewGroup.addView(mLoadingView);
+//            }
+//            mEmptyView = (ViewGroup) onCreateEmptyView(inflater, mEmptyView, savedInstanceState);
+//            if (mEmptyView != null) {
+//                viewGroup.addView(mEmptyView);
+//            }
+//        }else {
             mLoadingView = (ViewGroup) content.findViewById(R.id.loading);
             View content_loading = onCreateLoadingView(inflater, mLoadingView, savedInstanceState);
             if (content_loading != null) {
@@ -146,7 +150,7 @@ public abstract class RootFragment<T> extends Fragment implements LoaderCallback
             if (content_empView != null) {
                 mEmptyView.addView(content_empView);
             }
-        }
+//        }
         return root;
     }
 
@@ -174,8 +178,10 @@ public abstract class RootFragment<T> extends Fragment implements LoaderCallback
      * @param title
      */
     protected void setTitle(String title) {
-        TextView titleView = (TextView) mActionBarView.findViewById(R.id.tool_title);
-        titleView.setText(title);
+        if (mActionBarView != null) {
+            TextView titleView = (TextView) mActionBarView.findViewById(R.id.tool_title);
+            titleView.setText(title);
+        }
     }
 
     private void initActionBar(){

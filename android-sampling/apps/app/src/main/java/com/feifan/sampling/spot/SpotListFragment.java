@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
@@ -18,12 +17,23 @@ import android.widget.TextView;
 
 import com.feifan.sampling.Constants;
 import com.feifan.sampling.R;
+import com.feifan.sampling.http.ApiCreator;
+import com.feifan.sampling.provider.ProviderHelper;
 import com.feifan.sampling.provider.SampleData;
 import com.feifan.sampling.scan.ScanFragment;
+import com.feifan.sampling.spot.model.SpotItem;
+import com.feifan.sampling.spot.model.SpotList;
+import com.feifan.sampling.spot.request.SpotListRequest;
 import com.feifan.sampling.widget.RecyclerCursorAdapter;
+import com.libs.base.http.BpCallback;
+import com.libs.base.model.BaseJsonBean;
 import com.libs.ui.activities.BaseActivity;
 import com.libs.ui.fragments.CommonFragment;
 import com.libs.ui.fragments.FragmentDelegate;
+
+import java.util.List;
+
+import retrofit2.Call;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,11 +45,9 @@ public class SpotListFragment extends CommonFragment<Cursor> implements View.OnC
     protected static final String LOADER_KEY_SELECTION = "selection";
     /** 创建Loader时的参数－selectionArgs */
     protected static final String LOADER_KEY_SELECTION_ARGS = "selectionArgs";
-
+    private int START_PAGE_INDEX = 1;
+    private int PAGE_LENGTH = 20;
     private String mZoneId;
-    public SpotListFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -62,7 +70,7 @@ public class SpotListFragment extends CommonFragment<Cursor> implements View.OnC
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated( Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setupRecyclerView();
         initArgus();
@@ -96,6 +104,33 @@ public class SpotListFragment extends CommonFragment<Cursor> implements View.OnC
         startActivity(intent);
     }
 
+    private void startSpoListRequest(){
+        SpotListRequest request = ApiCreator.getInstance().createApi(SpotListRequest.class);
+        Call<BaseJsonBean<SpotList>> call = request.getSpotList(Integer.valueOf(mZoneId),START_PAGE_INDEX,PAGE_LENGTH);
+        call.enqueue(new BpCallback<BaseJsonBean<SpotList>>() {
+            @Override
+            public void onResponse(BaseJsonBean<SpotList> helpCenterModel) {
+                if (helpCenterModel == null){
+                    return;
+                }
+                SpotList model = helpCenterModel.getData();
+                if (model == null || model.getSpots() == null || model.getSpots().size() == 0){
+                    return;
+                }
+                ProviderHelper.clearZoneMap(getActivity());
+                List<SpotItem> list = model.getSpots();
+                for (int i = 0;i<list.size();i++) {
+                    SpotItem item = list.get(i);
+                    SpotHelper.saveRemoteId(getActivity(),String.valueOf(item.getX()),String.valueOf(item.getY()),String.valueOf(item.getD()),mZoneId,String.valueOf(item.getId()));
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
+    }
     @Override
     protected int getLocalLoadId() {
         return Constants.LOADER.LOADER_ID_ZONE;

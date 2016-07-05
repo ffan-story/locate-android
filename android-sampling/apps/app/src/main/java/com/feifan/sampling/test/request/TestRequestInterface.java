@@ -18,6 +18,6 @@ public interface TestRequestInterface {
 
     @GET(HELPER_CENTER_PATH)
     Call<BaseJsonBean<LocModel>> getZoneList(
-              @Query(PAGEINDEX) int pageIndex
+            @Query(PAGEINDEX) int pageIndex
             , @Query(PAGESIZE) int pageSize);
 }

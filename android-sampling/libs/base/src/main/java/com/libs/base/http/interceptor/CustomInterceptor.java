@@ -1,5 +1,7 @@
 package com.libs.base.http.interceptor;
 
+import android.util.Log;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -14,6 +16,9 @@ public abstract class CustomInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
+        String host = request.url().url().getHost();
+        String path = request.url().url().getPath();
+        Log.d("path",host+path);
         onPreRequest(request);
         Response response = chain.proceed(request);
         onPostRequest(response);

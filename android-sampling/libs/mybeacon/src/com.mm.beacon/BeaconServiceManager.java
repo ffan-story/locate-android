@@ -28,13 +28,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.mm.beacon.blue.ScanData;
-import com.mm.beacon.data.IBeacon;
 import com.mm.beacon.data.Region;
-import com.mm.beacon.service.BeaconService;
+import com.mm.beacon.service.BeaconRemoteService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BeaconServiceManager implements BeaconDispatcher {
@@ -42,10 +43,11 @@ public class BeaconServiceManager implements BeaconDispatcher {
 	private static final String TAG = "BeaconServiceManager";
 	private Context mContext;
 	private static BeaconServiceManager client = null;
-	private BeaconService mService;
 	private BeaconFilter mBeaconfilter;
-
-
+	private List<OnBeaconDetectListener> mBeaconDetectList = new ArrayList<OnBeaconDetectListener>();
+	private IRemoteInterface mRemoteInterface;
+	private int mDelay = 1000;
+	private boolean mIsBinded = false;
 
 	/**
 	 * An accessor for the singleton instance of this class. A context must be provided, but if you need to use it from
@@ -54,7 +56,6 @@ public class BeaconServiceManager implements BeaconDispatcher {
 	 */
 	public static BeaconServiceManager getInstance(Context context) {
 		if (!isInstantiated()) {
-			Log.d(TAG, "IBeaconManager instance craetion");
 			client = new BeaconServiceManager(context);
 		}
 		return client;
@@ -82,38 +83,115 @@ public class BeaconServiceManager implements BeaconDispatcher {
 		}
 	}
 
+	public void setDelay(int delay){
+		if(delay > 0) {
+			mDelay = delay;
+		}
+	}
+
 	public void startService(){
 		bindService();
 	}
 
 	private ServiceConnection iBeaconServiceConnection = new ServiceConnection() {
-		// Called when the connection with the service is established
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			Log.d(TAG, "we have a connection to the service now");
-			mService = ((BeaconService.BeaconBinder)service).getService();
-			mService.setBeaconDisptcher(BeaconServiceManager.this);
+			mRemoteInterface = IRemoteInterface.Stub.asInterface(service);
+			try {
+				mRemoteInterface.registerCallback(mCallback);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
 
-		// Called when the connection with the service disconnects unexpectedly
 		public void onServiceDisconnected(ComponentName className) {
-			Log.e(TAG, "onServiceDisconnected");
-			mService.setBeaconDisptcher(null);
+			if(mRemoteInterface != null){
+				try {
+					mRemoteInterface.unregisterCallback(mCallback);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	};
 
 	public void bindService( ){
 		if(mContext != null) {
-			Intent intent = new Intent(mContext.getApplicationContext(), BeaconService.class);
+			Intent intent = new Intent(mContext.getApplicationContext(), BeaconRemoteService.class);
+			intent.putExtra(BeaconConstants.SCAN_INTERVAL,mDelay);
 			mContext.bindService(intent, iBeaconServiceConnection, Context.BIND_AUTO_CREATE);
+			mIsBinded = true;
 		}
+	}
+
+
+	public void stopService() {
+		unBindService();
 	}
 
 	public void unBindService(){
-		if(mContext != null) {
-			mContext.unbindService(iBeaconServiceConnection);
+		if(mContext != null && mIsBinded) {
+			mContext.getApplicationContext().unbindService(iBeaconServiceConnection);
+			mIsBinded = false;
 		}
 	}
 
+	public void registerBeaconListerner(OnBeaconDetectListener listener) {
+		if (mBeaconDetectList != null && !mBeaconDetectList.contains(listener)) {
+			mBeaconDetectList.add(listener);
+		}
+	}
+
+	public void unRegisterBeaconListener(OnBeaconDetectListener listener) {
+		if (mBeaconDetectList != null && mBeaconDetectList.contains(listener)) {
+			mBeaconDetectList.remove(listener);
+		}
+	}
+
+	private void clearListener() {
+		if (mBeaconDetectList != null && !mBeaconDetectList.isEmpty()) {
+			mBeaconDetectList.clear();
+		}
+	}
+
+	/**
+	 *
+	 */
+	private IBeaconDetect.Stub mCallback = new IBeaconDetect.Stub() {
+
+		@Override
+		public void onBeaconDetect(List<IBeacon> beaconlist) throws RemoteException {
+				Log.e("callback",beaconlist.size()+"");
+			if (mBeaconDetectList != null && beaconlist != null
+					&& !beaconlist.isEmpty()) {
+				for (int i = 0; i < mBeaconDetectList.size(); i++) {
+					OnBeaconDetectListener beacon = mBeaconDetectList.get(i);
+					if (beacon != null) {
+						List<IBeacon> list = new ArrayList<IBeacon>();
+						list.addAll(beaconlist);
+						beacon.onBeaconDetected(list);
+					}
+				}
+			}
+		}
+
+		@Override
+		public void onRawDataDetect(List<IScanData> list){
+			Log.e("onRawDataDetect",list.size()+"");
+		}
+	};
+
+
+//	private IBeaconDetect mCallback = new IBeaconDetect() {
+//		@Override
+//		public void onBeaconDetect(List<IBeacon> list) throws RemoteException {
+//
+//		}
+//
+//		@Override
+//		public IBinder asBinder() {
+//			return null;
+//		}
+//	};
 	public void onDestory(){
 		unBindService();
 	}
@@ -137,4 +215,13 @@ public class BeaconServiceManager implements BeaconDispatcher {
 	public void onBeaconExit(Region region) {
 
 	}
+
+	public interface OnBeaconDetectListener {
+		public void onBeaconDetected(List<IBeacon> beaconlist);
+		public void onBeaconRawDataDetect(List<ScanData> beaconlist);
+		public void onBeaconEnter(Region region);
+
+		public void onBeaconExit(Region region);
+	}
+
 }
