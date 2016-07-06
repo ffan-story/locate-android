@@ -84,7 +84,7 @@ public class SampleActivity extends AppCompatActivity implements BeaconConsumer,
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.getBeaconParsers().add(new BeaconParser()
                 .setBeaconLayout(Constants.LAYOUT_IBEACON));
-        long timeInterval = PrefUtil.getLong(getApplicationContext(),Constants.SHAREPREFERENCE.RECYCLE_TIME_INTERVAL,1100);
+        long timeInterval = PrefUtil.getInt(getApplicationContext(),Constants.SHAREPREFERENCE.RECYCLE_TIME_INTERVAL,1100);
 //        beaconManager.setBackgroundBetweenScanPeriod(timeInterval);
 //        beaconManager.setForegroundBetweenScanPeriod(timeInterval);
         Toolbar toolbar = (Toolbar) findViewById(R.id.sample_toolbar);

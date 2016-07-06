@@ -180,18 +180,6 @@ public class BeaconServiceManager implements BeaconDispatcher {
 		}
 	};
 
-
-//	private IBeaconDetect mCallback = new IBeaconDetect() {
-//		@Override
-//		public void onBeaconDetect(List<IBeacon> list) throws RemoteException {
-//
-//		}
-//
-//		@Override
-//		public IBinder asBinder() {
-//			return null;
-//		}
-//	};
 	public void onDestory(){
 		unBindService();
 	}

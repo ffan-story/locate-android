@@ -47,13 +47,16 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
   private Map<String, IBeacon> mMacBeacon = new HashMap<String, IBeacon>();
   private int mIntervalCount = 100;
   private int mInterval;
-  private long mIntervalNum;
+  private int mIntervalNum;
   private final String CVS_SCAN_SAVE_NAME = "scan_save_cvs";
   private final String RAW_SCAN_SAVE_NAME = "scan_save_raw";
   private final String COM_SCAN_SAVE_NAME = "scan_save_combine";
   private String mSpotid = "";
   private String mDirection = "";
   private float mRealDirection = 0f;
+  private boolean mIsMenu = true;
+  private float mPoint_x;
+  private float mPoint_y;
   private DiciService mDiciService;
   private Handler mHandler = new Handler() {
     public void handleMessage(Message msg) {
@@ -63,15 +66,11 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
 
       if (mInterval == mIntervalCount) {
         mScanStatusText.setText(String.format(getString(R.string.scan_write_file)));
-        String beaconName =
-            CVS_SCAN_SAVE_NAME + "_" + DateTimeUtils.getCurrentTime("yyyy-MM-dd HH-mm-ss") + "_"
-                + mIntervalNum + "_" + mIntervalCount+ "_" +mDirection;
+        String beaconFileName = ScanHelper.getFilePathStr(CVS_SCAN_SAVE_NAME,mPoint_x,mPoint_y,mIntervalNum,mIntervalCount,mDirection);
         String[] header = buildHeader();
-        ScanHelper.SaveIBeacon(header, getCvsData(), beaconName);
+        ScanHelper.SaveIBeacon(header, getCvsData(), beaconFileName);
+        String rawName = ScanHelper.getFilePathStr(RAW_SCAN_SAVE_NAME,mPoint_x,mPoint_y,mIntervalNum,mIntervalCount,mDirection);
 
-        String rawName =
-            RAW_SCAN_SAVE_NAME + "_" + DateTimeUtils.getCurrentTime("yyyy-MM-dd HH-mm-ss") + "_"
-                + mIntervalNum + "_" + mIntervalCount+ "_" +mDirection;;
         String[] rawheader = buildRawHeader();
         ScanHelper.SaveIBeacon(rawheader, getRawCvsData(), rawName);
         sendCombineCvs();
@@ -86,6 +85,11 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
     View view = inflater.inflate(R.layout.biz_scan_fragment_layout, container, false);
     initView(view);
     return view;
+  }
+
+  @Override
+  protected boolean isShowMenu() {
+    return !(mPoint_x > 0|| mPoint_y > 0);
   }
 
   private void initView(View view) {
@@ -119,13 +123,15 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
       mSpotid = bundle.getString(Constants.EXTRA_KEY_SPOT_ID);
       String name = bundle.getString(Constants.EXTRA_KEY_SPOT_NAME);
       mDirection = bundle.getString(Constants.EXTRA_KEY_SPOT_DIRECTION);
+      mPoint_x = bundle.getFloat(Constants.EXTRA_KEY_SPOT_X);
+      mPoint_y = bundle.getFloat(Constants.EXTRA_KEY_SPOT_Y);
       setTitle(name);
     }
     initData();
   }
 
   private void initData(){
-    mIntervalNum = PrefUtil.getLong(getContext(), Constants.SHAREPREFERENCE.RECYCLE_TIME_INTERVAL,Constants.SHAREPREFERENCE.DEFAULT_SCAN_TIME);
+    mIntervalNum = PrefUtil.getInt(getContext(), Constants.SHAREPREFERENCE.RECYCLE_TIME_INTERVAL,Constants.SHAREPREFERENCE.DEFAULT_SCAN_TIME);
     mIntervalEdit.setText(mIntervalNum+"");
     int scancount = PrefUtil.getInt(getContext(), Constants.SHAREPREFERENCE.SCAN_MAX_COUNT,Constants.SHAREPREFERENCE.DEFAULT_SCAN_NUM);
     mCountEdit.setText(scancount+"");
@@ -276,11 +282,9 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
   private void sendCombineCvs() {
     ArrayList<IBeacon> beaconList = buildCombineData();
     ArrayList<String[]> combineList = getCombineCvsData(beaconList);
-    String beaconName =
-        COM_SCAN_SAVE_NAME + "_" + DateTimeUtils.getCurrentTime("yyyy-MM-dd HH-mm-ss") + "_"
-            + mInterval + "_" + mIntervalCount;
+    String combineName = ScanHelper.getFilePathStr(COM_SCAN_SAVE_NAME,mPoint_x,mPoint_y,mIntervalNum,mIntervalCount,mDirection);
     String[] header = buildHeader();
-    ScanHelper.SaveIBeacon(header, combineList, beaconName);
+    ScanHelper.SaveIBeacon(header, combineList, combineName);
     saveBeaconDb(beaconList);
   }
 

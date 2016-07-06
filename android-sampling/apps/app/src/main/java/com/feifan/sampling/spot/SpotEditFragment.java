@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.feifan.sampling.Constants;
 import com.feifan.sampling.R;
+import com.feifan.sampling.base.log.GlobalState;
 import com.feifan.sampling.http.ApiCreator;
 import com.feifan.sampling.spot.request.AddSpotInterface;
 import com.feifan.sampling.zone.model.SpotAddModel;
@@ -59,12 +61,12 @@ public class SpotEditFragment extends CommonFragment {
                     if(!TextUtils.isEmpty(dEdt.getText())) {
                         data.putExtra(EXTRA_NAME_D, Float.valueOf(dEdt.getText().toString()));
                     }
-
-                    startNetRequest(xEdt.getText().toString(),yEdt.getText().toString(),dEdt.getText().toString(),mZoneId);
-                    // 返回结果
-//                    final FragmentActivity activity = getActivity();
-//                    activity.setResult(RESPONSE_CODE_SPOT, data);
-//                    activity.finish();
+                    if(GlobalState.isOnLineState()) {
+                        startNetRequest(xEdt.getText().toString(), yEdt.getText().toString(), dEdt.getText().toString(), mZoneId);
+                    }else {
+                        SpotHelper.saveRemoteId(getActivity(),xEdt.getText().toString(), yEdt.getText().toString(), dEdt.getText().toString(), mZoneId, String.valueOf(Constants.DEFAULT_REMOTE_ID));
+                        onBackPressed();
+                    }
                 }
             }
         });

@@ -59,7 +59,7 @@ public class SettingPresentor extends IPresentor implements SettingDialog.Settin
         }else if (type == SettingDialog.TIME_TYPE){
             mMvpRouter.sendEvent(SettingEvent.CHANGE_BEACON_RECYCLE_EVENT,str);
             if(TextUtils.isDigitsOnly(str)) {
-                PrefUtil.putLong(mContext, Constants.SHAREPREFERENCE.RECYCLE_TIME_INTERVAL, Long.valueOf(str));
+                PrefUtil.putInt(mContext, Constants.SHAREPREFERENCE.RECYCLE_TIME_INTERVAL, Integer.valueOf(str));
             }
         }else if(type == SettingDialog.SCAN_TYPE){
             mMvpRouter.sendEvent(SettingEvent.CHANGE_SCAN_POINT_EVENT,str);

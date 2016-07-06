@@ -12,6 +12,11 @@ public class Constants {
 
     }
 
+    /**
+     * When is offline state ,the remote id is -1
+     */
+    public static final int DEFAULT_REMOTE_ID = -1;
+
     public static final String DEFAULT_SCAN_SAMPLES = "10";
     /**
      * 调试时使用的日志TAG
@@ -35,6 +40,16 @@ public class Constants {
      * 参数名－采集点ID
      */
     public static final String EXTRA_KEY_SPOT_ID = "spot_id";
+
+    /**
+     * 参数名－采集点ID
+     */
+    public static final String EXTRA_KEY_SPOT_X = "spot_x";
+
+    /**
+     * 参数名－采集点ID
+     */
+    public static final String EXTRA_KEY_SPOT_Y = "spot_y";
     /**
      * 参数名－采集点名称
      */

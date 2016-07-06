@@ -184,6 +184,8 @@ public class SpotListFragment extends CommonFragment<Cursor> implements View.OnC
                     bundle.putString(Constants.EXTRA_KEY_SPOT_ID, String.valueOf(spot.remoteid));
                     bundle.putString(Constants.EXTRA_KEY_SPOT_NAME, spot.toString());
                     bundle.putString(Constants.EXTRA_KEY_SPOT_DIRECTION, String.valueOf(spot.d));
+                    bundle.putFloat(Constants.EXTRA_KEY_SPOT_X, spot.x);
+                    bundle.putFloat(Constants.EXTRA_KEY_SPOT_Y, spot.y);
                     Intent intent = FragmentDelegate.getIntent(getActivity(), 0, 0, "ScanFragment", ScanFragment.class.getName(), BaseActivity.class, bundle);
                     startActivity(intent);
                 }

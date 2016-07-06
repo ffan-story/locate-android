@@ -7,6 +7,7 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
         android:padding="10dp"/>
     <View
         android:layout_width="match_parent"
@@ -15,9 +16,11 @@
         android:background="@android:color/darker_gray"/>
     <TextView
         android:id="@+id/scan"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:padding="10dp"
+        android:textColor="@android:color/black"
         android:text="扫描"
         android:textSize="15sp"
         android:gravity="center_vertical|left"/>

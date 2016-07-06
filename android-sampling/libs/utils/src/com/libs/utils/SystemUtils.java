@@ -20,7 +20,9 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.os.StatFs;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -705,4 +707,33 @@ public class SystemUtils {
         }
         return true;
     }
+
+	/**
+	 * check is add in white list on android 6.0
+	 * @param context
+	 * @param pmName  package name
+     * @return
+     */
+	@TargetApi(Build.VERSION_CODES.M)
+	public boolean isJoinWhiteList(Context context,String pmName){
+		if(context != null && !TextUtils.isEmpty(pmName)){
+			PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+			boolean isInWhiteList = pm.isIgnoringBatteryOptimizations(pmName);
+			return isInWhiteList;
+		}
+		return false;
+	}
+
+	/**
+	 * request add white list
+	 * @param context
+     */
+	@TargetApi(Build.VERSION_CODES.M)
+	public static void requestWhiteList(Context context){
+		if(context != null){
+			Intent intent = new Intent();
+			intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+			context.startActivity(intent);
+		}
+	}
 }

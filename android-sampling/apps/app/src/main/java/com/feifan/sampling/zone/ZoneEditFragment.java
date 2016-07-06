@@ -13,6 +13,7 @@ import android.widget.EditText;
 
 import com.feifan.sampling.Constants;
 import com.feifan.sampling.R;
+import com.feifan.sampling.base.log.GlobalState;
 import com.feifan.sampling.http.ApiCreator;
 import com.feifan.sampling.zone.model.SpotAddModel;
 import com.feifan.sampling.zone.request.AddZoneInterface;
@@ -50,7 +51,11 @@ public class ZoneEditFragment extends CommonFragment {
                     final EditText nameEdt = (EditText)view.findViewById(R.id.zone_edit_name_edt);
 
                     if(!TextUtils.isEmpty(nameEdt.getText())) {
-                        startNetRequest(nameEdt.getText().toString());
+                        if(GlobalState.isOnLineState()) {
+                            startNetRequest(nameEdt.getText().toString());
+                        }else {
+                            ZoneHelper.saveRemoteId(getActivity(),String.valueOf(Constants.DEFAULT_REMOTE_ID),nameEdt.getText().toString());
+                        }
                         data.putExtra(Constants.EXTRA.KEY_NAME, nameEdt.getText().toString());
                     }
 

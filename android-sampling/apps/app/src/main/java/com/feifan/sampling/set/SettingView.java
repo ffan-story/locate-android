@@ -38,7 +38,7 @@ public class SettingView extends IView implements View.OnClickListener{
             mRootView.findViewById(R.id.scan_point).setOnClickListener(this);
             String path = PrefUtil.getString(getContentView().getContext(), Constants.SHAREPREFERENCE.LOG_FILE_PATH,Constants.SHAREPREFERENCE.DEFAULT_LOG_FILE_PATH);
             fileView.setText(path);
-            long timeinterval = PrefUtil.getLong(getContentView().getContext(), Constants.SHAREPREFERENCE.RECYCLE_TIME_INTERVAL,Constants.SHAREPREFERENCE.DEFAULT_SCAN_TIME);
+            long timeinterval = PrefUtil.getInt(getContentView().getContext(), Constants.SHAREPREFERENCE.RECYCLE_TIME_INTERVAL,Constants.SHAREPREFERENCE.DEFAULT_SCAN_TIME);
             beaconView.setText(timeinterval+"");
             int str = PrefUtil.getInt(getContentView().getContext(), Constants.SHAREPREFERENCE.SCAN_MAX_COUNT,Constants.SHAREPREFERENCE.DEFAULT_SCAN_NUM);
             scanView.setText(str+"");

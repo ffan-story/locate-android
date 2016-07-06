@@ -2,6 +2,7 @@ package com.feifan.sampling;
 
 import android.app.Application;
 
+import com.feifan.sampling.base.log.GlobalState;
 import com.wanda.logger.log.Logger;
 
 /**
@@ -13,6 +14,7 @@ public class SampleApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Logger.init("BEACONS",this);
+        GlobalState.init(this);
     }
 
     public boolean isServiceOn() {

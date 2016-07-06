@@ -1,7 +1,11 @@
 package com.feifan.sampling.scan;
 
+import android.text.TextUtils;
+
 import com.feifan.sampling.base.log.config.APPLogConfig;
 import com.feifan.sampling.scan.model.PatchSpotModel;
+import com.libs.utils.DateTimeUtils;
+import com.libs.utils.ExceptionUtils;
 import com.libs.utils.SystemUtils;
 import com.mm.beacon.IBeacon;
 import com.wanda.logger.file.CVSModel;
@@ -43,5 +47,17 @@ public class ScanHelper {
             }
         }
         return patchList;
+    }
+
+    public static String getFilePathStr(String path,float x,float y,int interval,int count,String direction){
+        if (!TextUtils.isEmpty(path)){
+            String beaconName =
+                    path + "_" + DateTimeUtils.getCurrentTime("yyyy-MM-dd HH-mm-ss") + "_"
+                            + interval + "_" + count+ "_" +direction+"_"+x+"_"+y;
+            return beaconName;
+        }else {
+            ExceptionUtils.throwArgumentExeception("the path can not be null");
+        }
+        return "";
     }
 }

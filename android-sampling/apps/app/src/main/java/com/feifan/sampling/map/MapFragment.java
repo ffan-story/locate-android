@@ -16,7 +16,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.feifan.sampling.R;
-import com.libs.ui.fragments.CommonFragment;
+import com.libs.ui.fragments.CommonMenuFragment;
 import com.libs.ui.views.photoview.PhotoView;
 import com.libs.ui.views.photoview.PhotoViewAttacher;
 
@@ -26,7 +26,7 @@ import java.io.InputStream;
 /**
  * Created by mengmeng on 16/7/4.
  */
-public class MapFragment extends CommonFragment {
+public class MapFragment extends CommonMenuFragment {
     private PhotoView mPhotoview;
     private WindowManager mWindowManager;
     private WindowManager.LayoutParams mParams;
@@ -158,5 +158,16 @@ public class MapFragment extends CommonFragment {
         mDialogFragment.setTargetFragment(this,0);
         mDialogFragment.setTargetFragment(MapFragment.this, 0);
         mDialogFragment.show(getFragmentManager(), MapFragment.class.getName());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mWindowManager != null){
+            mWindowManager.removeView(mImageView);
+        }
+        if(mDialogFragment != null){
+            mDialogFragment.dismiss();
+        }
     }
 }

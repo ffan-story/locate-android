@@ -23,10 +23,12 @@ public class CommonMenuFragment<C> extends CommonFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		initActionBar();
+		if(isShowMenu()) {
+			initActionBar();
+		}
 	}
 
-	private void initActionBar() {
+	protected void initActionBar() {
 		if (mAbar != null) {
 			mAbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 			mAbar.setDisplayHomeAsUpEnabled(true);
@@ -36,4 +38,7 @@ public class CommonMenuFragment<C> extends CommonFragment {
 		}
 	}
 
+	protected boolean isShowMenu(){
+		return true;
+	}
 }

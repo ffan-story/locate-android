@@ -165,12 +165,12 @@ public class ZoneListFragment extends CommonFragment<Cursor> implements View.OnC
     @Override
     public void onClick(View v) {
         ZoneModel model = (ZoneModel) v.getTag();
-        String id = model.getRemoteId();
+        String remoteid = model.getRemoteId();
         String name = model.getName();
-        LogUtil.d(Constants.DEBUG_TAG, "click zone " + id + " to open it");
-        mIntent.putExtra(Constants.EXTRA.KEY_ID, id);
+        LogUtil.d(Constants.DEBUG_TAG, "click zone " + remoteid + " to open it");
+        mIntent.putExtra(Constants.EXTRA.KEY_ID, remoteid);
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.EXTRA.KEY_ID,id);
+        bundle.putString(Constants.EXTRA.KEY_ID,remoteid);
         bundle.putString(Constants.EXTRA.KEY_NAME,name);
         Intent intent = FragmentDelegate.getIntent(getActivity(), 0, 0, "SpotListFragment", SpotListFragment.class.getName(), BaseActivity.class, bundle);
         startActivity(intent);
