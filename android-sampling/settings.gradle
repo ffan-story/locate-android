@@ -1,4 +1,4 @@
-include ':qrlibs'
+include 'libs:qrlibs'
 include 'libs:ui'
 include 'apps:app'
 include 'libs:android-beacon-library'
