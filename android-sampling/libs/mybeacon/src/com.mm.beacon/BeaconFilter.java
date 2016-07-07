@@ -2,7 +2,6 @@ package com.mm.beacon;
 
 import android.text.TextUtils;
 
-import com.mm.beacon.data.FilterBeacon;
 import com.mm.beacon.data.Region;
 
 import java.util.ArrayList;

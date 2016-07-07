@@ -98,6 +98,9 @@ public class BeaconServiceManager implements BeaconDispatcher {
 			mRemoteInterface = IRemoteInterface.Stub.asInterface(service);
 			try {
 				mRemoteInterface.registerCallback(mCallback);
+				if(mBeaconfilter != null){
+//					mRemoteInterface.setBeaconFilter();
+				}
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}

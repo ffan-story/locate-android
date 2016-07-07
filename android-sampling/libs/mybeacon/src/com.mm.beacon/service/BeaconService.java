@@ -16,7 +16,7 @@ import com.mm.beacon.blue.BlueLOLLIPOPManager;
 import com.mm.beacon.blue.BlueLeManager;
 import com.mm.beacon.blue.IBlueManager;
 import com.mm.beacon.blue.ScanData;
-import com.mm.beacon.data.FilterBeacon;
+import com.mm.beacon.FilterBeacon;
 import com.mm.beacon.data.Region;
 
 import java.util.ArrayList;

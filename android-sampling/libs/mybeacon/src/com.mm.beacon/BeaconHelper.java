@@ -1,8 +1,6 @@
 package com.mm.beacon;
 
 
-import com.mm.beacon.data.FilterBeacon;
-
 import java.util.List;
 
 /**

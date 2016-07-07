@@ -22,7 +22,7 @@ import com.mm.beacon.blue.BlueLOLLIPOPManager;
 import com.mm.beacon.blue.BlueLeManager;
 import com.mm.beacon.blue.IBlueManager;
 import com.mm.beacon.blue.ScanData;
-import com.mm.beacon.data.FilterBeacon;
+import com.mm.beacon.FilterBeacon;
 import com.mm.beacon.data.Region;
 
 import java.util.ArrayList;
@@ -122,10 +122,10 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   private void processBeaconResult() {
     // 处理进店出店的判断
     // performRegin();
-    Log.e("The length is:",mBeaconList.size()+"");
+    Log.e("The length is:", mBeaconList.size() + "");
     if (!mBeaconList.isEmpty()) {
-//      mBeaconDisptcher.onBeaconDetect(mBeaconList);
-      notifyAllCallBack(mBeaconList,mTempScanDataList);
+      // mBeaconDisptcher.onBeaconDetect(mBeaconList);
+      notifyAllCallBack(mBeaconList, mTempScanDataList);
       mBeaconList.clear();
     } else if (mBeaconDisptcher != null) {
       mBeaconDisptcher.onBeaconDetect(null);
@@ -136,8 +136,8 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   }
 
   private void performRawData() {
-  if (mBeaconDisptcher != null && mTempScanDataList.size() > 0) {
-//      mBeaconDisptcher.onBeaconRawDataDetect(mTempScanDataList);
+    if (mBeaconDisptcher != null && mTempScanDataList.size() > 0) {
+      // mBeaconDisptcher.onBeaconRawDataDetect(mTempScanDataList);
       mTempScanDataList.clear();
     }
   }
@@ -196,7 +196,8 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   @Override
   public IBinder onBind(Intent intent) {
     Log.i(TAG, "binding");
-    mScanDelay = intent.getIntExtra(BeaconConstants.SCAN_INTERVAL,BeaconConstants.DEFAULT_SCAN_INTERVAL);
+    mScanDelay =
+        intent.getIntExtra(BeaconConstants.SCAN_INTERVAL, BeaconConstants.DEFAULT_SCAN_INTERVAL);
     createBlueManager();
     mBlueManager.registerListener(this);
     setBind(true);
@@ -258,9 +259,9 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   public void startBeaconScan() {
     if (isBind() && !isScanning()) {
       setIsScanning(true);
-      Log.e("startBeaconScan","start");
+      Log.e("startBeaconScan", "start");
       if (mBlueManager != null) {
-        Log.e("startBeaconScan"," ---- ");
+        Log.e("startBeaconScan", " ---- ");
         mBlueManager.startScan();
         mHandler.postDelayed(mBeaconRunnable, mScanDelay);
       }
@@ -368,13 +369,13 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
     return false;
   }
 
-  private void notifyAllCallBack(List<IBeacon> list,List<IScanData> dataList){
+  private void notifyAllCallBack(List<IBeacon> list, List<IScanData> dataList) {
     int N = mCallbacks.beginBroadcast();
-    if(mCallbacks != null && N > 0){
-      for (int i =0;i<N;i++){
+    if (mCallbacks != null && N > 0) {
+      for (int i = 0; i < N; i++) {
         try {
           IBeaconDetect cb = mCallbacks.getBroadcastItem(i);
-          if(cb != null){
+          if (cb != null) {
             cb.onBeaconDetect(list);
             cb.onRawDataDetect(dataList);
           }
@@ -387,7 +388,7 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   }
 
 
-    private IRemoteInterface.Stub mLocalBinder = new IRemoteInterface.Stub() {
+  private IRemoteInterface.Stub mLocalBinder = new IRemoteInterface.Stub() {
 
     @Override
     public void registerCallback(IBeaconDetect cb) throws RemoteException {
@@ -397,6 +398,11 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
     @Override
     public void unregisterCallback(IBeaconDetect cb) throws RemoteException {
       mCallbacks.unregister(cb);
+    }
+
+    @Override
+    public void setBeaconFilter(List<FilterBeacon> list) throws RemoteException {
+
     }
   };
 }
