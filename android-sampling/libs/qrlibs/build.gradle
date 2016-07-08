@@ -1,25 +1,56 @@
 apply plugin: 'com.android.library'
+apply plugin: "maven"
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 22
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
-        minSdkVersion 18
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion 11
+        targetSdkVersion 21
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+    lintOptions {
+        abortOnError false
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            jniLibs.srcDir 'libs'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+
+        androidTest.setRoot('tests')
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    uploadArchives {
+        repositories.mavenDeployer {
+            name = 'mavenCentralReleaseDeployer'
+//            repository(url:"http://work.dianshang.wanda.cn/nexus/content/repositories/releases/") {
+//                authentication(userName: "deployment", password: "deployment123")
+//            }
+            repository(url: "http://101.200.89.219:8081/nexus/content/repositories/releases/") {
+            authentication(userName: "admin", password: "admin123")
+        }
+            pom.version = "1.2.1"
+            pom.artifactId = "scanlibs"
+            pom.groupId = "com.ffan.lib"
+            pom.name = "scanlibs"
+            pom.packaging = 'aar'
         }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.google.zxing:core:3.2.1'
 }
