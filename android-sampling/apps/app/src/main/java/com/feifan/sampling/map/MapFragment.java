@@ -19,6 +19,7 @@ import com.feifan.sampling.R;
 import com.libs.ui.fragments.CommonMenuFragment;
 import com.libs.ui.views.photoview.PhotoView;
 import com.libs.ui.views.photoview.PhotoViewAttacher;
+import com.wanda.logger.toolbox.SystemUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,10 +94,10 @@ public class MapFragment extends CommonMenuFragment {
                  * @param y    - where the user tapped from the top of the Drawable, as
                  */
                 @Override
-                public void onRawPhotoTap(View view, float x, float y) {
-                    double dl = 0.021;
-                    float scale = mPhotoview.getScale();
-                    Log.e("the raw position is: ",x * dl * scale+"____"+y * dl * scale);
+                public void onRawPhotoTap(View view, double x, double y) {
+                    double dl = 1;
+                    float scale = 1;
+                    Log.e("the raw position is: ",x * dl * scale+"____"+y * dl * scale+" __ "+ SystemUtil.getScreenDpi(getResources()));
                     mParam_x = (float) (x * dl * scale);
                     mParam_y = (float) (y * dl * scale);
                 }
@@ -126,7 +127,7 @@ public class MapFragment extends CommonMenuFragment {
 
     private void createFloatView(float x, float y){
         if(mWindowManager != null) {
-            mWindowManager.removeViewImmediate(mImageView);
+            mWindowManager.removeView(mImageView);
         }else {
             //获取LayoutParams对象
             mParams = new WindowManager.LayoutParams();
@@ -150,7 +151,11 @@ public class MapFragment extends CommonMenuFragment {
         mParams.y = (int) (y+bitmap.getMinimumHeight()/2);
         Log.e("createFloatView ",x+" _ "+y+" _ "+bitmap.getMinimumWidth()/2+" _ "+bitmap.getMinimumWidth());
         Log.e("params ",mParams.x+" _ "+mParams.y);
-        mWindowManager.addView(mImageView, mParams);
+        try {
+            mWindowManager.addView(mImageView, mParams);
+        }catch (Exception e){
+
+        }
         Bundle args = new Bundle();
         args.putFloat("param_x",mParam_x);
         args.putFloat("param_y",mParam_y);

@@ -178,8 +178,19 @@ public class BeaconServiceManager implements BeaconDispatcher {
 		}
 
 		@Override
-		public void onRawDataDetect(List<IScanData> list){
-			Log.e("onRawDataDetect",list.size()+"");
+		public void onRawDataDetect(List<IScanData> beaconlist){
+			Log.e("onRawDataDetect",beaconlist.size()+"");
+			if (mBeaconDetectList != null && beaconlist != null
+					&& !beaconlist.isEmpty()) {
+				for (int i = 0; i < mBeaconDetectList.size(); i++) {
+					OnBeaconDetectListener beacon = mBeaconDetectList.get(i);
+					if (beacon != null) {
+						List<IScanData> list = new ArrayList<IScanData>();
+						list.addAll(beaconlist);
+						beacon.onBeaconRawDataDetect(list);
+					}
+				}
+			}
 		}
 	};
 
@@ -209,7 +220,7 @@ public class BeaconServiceManager implements BeaconDispatcher {
 
 	public interface OnBeaconDetectListener {
 		public void onBeaconDetected(List<IBeacon> beaconlist);
-		public void onBeaconRawDataDetect(List<ScanData> beaconlist);
+		public void onBeaconRawDataDetect(List<IScanData> beaconlist);
 		public void onBeaconEnter(Region region);
 
 		public void onBeaconExit(Region region);

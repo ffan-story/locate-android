@@ -24,7 +24,7 @@ import com.libs.utils.DateTimeUtils;
 import com.libs.utils.PrefUtil;
 import com.mm.beacon.BeaconServiceManager;
 import com.mm.beacon.IBeacon;
-import com.mm.beacon.blue.ScanData;
+import com.mm.beacon.IScanData;
 import com.mm.beacon.data.Region;
 import com.wanda.logger.log.Logger;
 
@@ -43,7 +43,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
   private EditText mCountEdit;
   private BeaconServiceManager mBeaconManager;
   private List<IBeacon> mTemplist = new ArrayList<IBeacon>();
-  private List<ScanData> mRawlist = new ArrayList<ScanData>();
+  private List<IScanData> mRawlist = new ArrayList<IScanData>();
   private Map<String, IBeacon> mMacBeacon = new HashMap<String, IBeacon>();
   private int mIntervalCount = 100;
   private int mInterval;
@@ -61,11 +61,8 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
   private Handler mHandler = new Handler() {
     public void handleMessage(Message msg) {
       super.handleMessage(msg);
-      mScanStatusText.setText(String.format(getString(R.string.scan_interval_txt),
-          (mIntervalCount - mInterval)));
-
-      if (mInterval == mIntervalCount) {
-        mScanStatusText.setText(String.format(getString(R.string.scan_write_file)));
+      if (mInterval >= mIntervalCount) {
+        mScanStatusText.setText(String.format(getString(R.string.scan_write_file))+"\nbeacon size is: "+mTemplist.size()+"\nraw blue size is: "+mRawlist.size());
         String beaconFileName = ScanHelper.getFilePathStr(CVS_SCAN_SAVE_NAME,mPoint_x,mPoint_y,mIntervalNum,mIntervalCount,mDirection);
         String[] header = buildHeader();
         ScanHelper.SaveIBeacon(header, getCvsData(), beaconFileName);
@@ -75,6 +72,9 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
         ScanHelper.SaveIBeacon(rawheader, getRawCvsData(), rawName);
         sendCombineCvs();
         mBeaconManager.stopService();
+      }else {
+        mScanStatusText.setText(String.format(getString(R.string.scan_interval_txt),
+                (mIntervalCount - mInterval)));
       }
     }
   };
@@ -175,7 +175,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
     if (!mRawlist.isEmpty() && !mMacBeacon.isEmpty()) {
       ArrayList<IBeacon> beaconList = new ArrayList<IBeacon>();
       for (int i = 0; i < mRawlist.size(); i++) {
-        ScanData data = mRawlist.get(i);
+        IScanData data = mRawlist.get(i);
         if (data != null) {
           String mac = data.device.getAddress();
           IBeacon beacon = IBeacon.fromScanData(data);
@@ -200,17 +200,17 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
     return null;
   }
 
-  private void buildRawScanIndex(List<ScanData> beaconlist) {
+  private void buildRawScanIndex(List<IScanData> beaconlist) {
     if (beaconlist != null && beaconlist.size() > 0) {
       for (int i = 0; i < beaconlist.size(); i++) {
-        ScanData beacon = beaconlist.get(i);
+        IScanData beacon = beaconlist.get(i);
         beacon.index = mInterval;
       }
     }
   }
 
   @Override
-  public void onBeaconRawDataDetect(List<ScanData> beaconlist) {
+  public void onBeaconRawDataDetect(List<IScanData> beaconlist) {
     if (beaconlist != null && !beaconlist.isEmpty()) {
       buildRawScanIndex(beaconlist);
       mRawlist.addAll(beaconlist);
@@ -242,7 +242,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
     if (mRawlist != null && mRawlist.size() > 0) {
       List<String[]> list = new ArrayList<String[]>();
       for (int i = 0; i < mRawlist.size(); i++) {
-        ScanData scandata = mRawlist.get(i);
+        IScanData scandata = mRawlist.get(i);
         if (scandata != null) {
           String[] items = new String[4];
           items[0] = String.valueOf(scandata.index);
@@ -282,6 +282,9 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
   private void sendCombineCvs() {
     ArrayList<IBeacon> beaconList = buildCombineData();
     ArrayList<String[]> combineList = getCombineCvsData(beaconList);
+    String textStr = mScanStatusText.getText().toString();
+    textStr = textStr +"\n combine size is: "+combineList.size();
+    mScanStatusText.setText(textStr);
     String combineName = ScanHelper.getFilePathStr(COM_SCAN_SAVE_NAME,mPoint_x,mPoint_y,mIntervalNum,mIntervalCount,mDirection);
     String[] header = buildHeader();
     ScanHelper.SaveIBeacon(header, combineList, combineName);

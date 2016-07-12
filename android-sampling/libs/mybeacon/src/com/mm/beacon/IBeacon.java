@@ -26,7 +26,6 @@ package com.mm.beacon;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.mm.beacon.blue.ScanData;
 import com.mm.beacon.data.Region;
 
 /**
@@ -258,7 +257,7 @@ public class IBeacon implements Parcelable{
 		return (thatIBeacon.getMajor() == this.getMajor() && thatIBeacon.getMinor() == this.getMinor() && thatIBeacon.getProximityUuid().equals(thatIBeacon.getProximityUuid()));
 	}
 
-	public static IBeacon fromScanData(ScanData scanData) {
+	public static IBeacon fromScanData(IScanData scanData) {
 		if(scanData != null && scanData.scanRecord != null){
 			String mac= "";
 			if(scanData.device != null){
