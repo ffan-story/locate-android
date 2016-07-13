@@ -86,12 +86,6 @@
         <service android:name=".scan.UploadService" />
         <service android:name=".spot.SpotUploadService" />
         <service
-            android:name="com.mm.beacon.service.BeaconService"
-            android:enabled="true"
-            android:exported="false"
-            android:isolatedProcess="false"
-            android:label="beacon" />
-        <service
             android:name="com.mm.beacon.service.BeaconRemoteService"
             android:process=":scan"
             android:enabled="true"

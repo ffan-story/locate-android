@@ -61,7 +61,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
   private Handler mHandler = new Handler() {
     public void handleMessage(Message msg) {
       super.handleMessage(msg);
-      if (mInterval >= mIntervalCount) {
+      if (mInterval == mIntervalCount) {
         mScanStatusText.setText(String.format(getString(R.string.scan_write_file))+"\nbeacon size is: "+mTemplist.size()+"\nraw blue size is: "+mRawlist.size());
         String beaconFileName = ScanHelper.getFilePathStr(CVS_SCAN_SAVE_NAME,mPoint_x,mPoint_y,mIntervalNum,mIntervalCount,mDirection);
         String[] header = buildHeader();
@@ -72,7 +72,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
         ScanHelper.SaveIBeacon(rawheader, getRawCvsData(), rawName);
         sendCombineCvs();
         mBeaconManager.stopService();
-      }else {
+      }else if(mInterval < mIntervalCount) {
         mScanStatusText.setText(String.format(getString(R.string.scan_interval_txt),
                 (mIntervalCount - mInterval)));
       }
@@ -89,7 +89,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
 
   @Override
   protected boolean isShowMenu() {
-    return !(mPoint_x > 0|| mPoint_y > 0);
+    return (mPoint_x > 0|| mPoint_y > 0);
   }
 
   private void initView(View view) {
@@ -137,12 +137,31 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
     mCountEdit.setText(scancount+"");
     mDiciService = DiciService.getInstance(getActivity().getApplicationContext());
   }
+
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     mBeaconManager = BeaconServiceManager.getInstance(getActivity().getApplicationContext());
     mBeaconManager.registerBeaconListerner(this);
     mDiciService.startMagicScan();
+    Bundle bundle = getArguments();
+    if (bundle != null) {
+      mPoint_x = bundle.getFloat(Constants.EXTRA_KEY_SPOT_X);
+      mPoint_y = bundle.getFloat(Constants.EXTRA_KEY_SPOT_Y);
+      mDirection = String.valueOf(mRealDirection);
+    }
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    mDiciService.registerSensorCallBack(this);
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    mDiciService.unRegisterSensorCallBack(this);
   }
 
   @Override
@@ -218,7 +237,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
   }
 
   private String[] buildHeader() {
-    String[] header = new String[7];
+    String[] header = new String[11];
     header[0] = "index";
     header[1] = "mac";
     header[2] = "uuid";
@@ -226,6 +245,10 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
     header[4] = "minor";
     header[5] = "rssi";
     header[6] = "time";
+    header[7] = "realdirection";
+    header[8] = "loc_x";
+    header[9] = "loc_y";
+    header[10] = "loc_direc";
     return header;
   }
 
@@ -263,7 +286,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
       for (int i = 0; i < mTemplist.size(); i++) {
         IBeacon beacon = mTemplist.get(i);
         if (beacon != null) {
-          String[] items = new String[7];
+          String[] items = new String[11];
           items[0] = String.valueOf(beacon.getIndex());
           items[1] = String.valueOf(beacon.getMac());
           items[2] = beacon.getProximityUuid();
@@ -271,6 +294,10 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
           items[4] = String.valueOf(beacon.getMinor());
           items[5] = String.valueOf(beacon.getRssi());
           items[6] = String.valueOf(beacon.getTime());
+          items[7] = String.valueOf(mRealDirection);
+          items[8] = String.valueOf(mPoint_x);
+          items[9] = String.valueOf(mPoint_y);
+          items[10] = String.valueOf(mDirection);
           list.add(items);
         }
       }
@@ -326,7 +353,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
       for (int i = 0; i < beaconlist.size(); i++) {
         IBeacon beacon = beaconlist.get(i);
         if (beacon != null) {
-          String[] items = new String[7];
+          String[] items = new String[11];
           items[0] = String.valueOf(beacon.getIndex());
           items[1] = String.valueOf(beacon.getMac());
           items[2] = beacon.getProximityUuid();
@@ -334,6 +361,10 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
           items[4] = String.valueOf(beacon.getMinor());
           items[5] = String.valueOf(beacon.getRssi());
           items[6] = String.valueOf(beacon.getTime());
+          items[7] = String.valueOf(mRealDirection);
+          items[8] = String.valueOf(mPoint_x);
+          items[9] = String.valueOf(mPoint_y);
+          items[10] = String.valueOf(mDirection);
           list.add(items);
         }
       }
@@ -357,11 +388,15 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
     super.onDestroyView();
     mBeaconManager.stopService();
     mBeaconManager.unRegisterBeaconListener(this);
+    mDiciService.stopMagicScan();
   }
 
   @Override
   public void onSensorCallBack(float[] prefvalues) {
     if (prefvalues != null){
+      if(mRealDirection == 0){
+        mDirection = String.valueOf(prefvalues[0]);
+      }
       mRealDirection = prefvalues[0];
     }
   }
