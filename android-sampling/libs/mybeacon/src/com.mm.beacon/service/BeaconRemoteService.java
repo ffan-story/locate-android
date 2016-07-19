@@ -122,11 +122,13 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   private void processBeaconResult() {
     // 处理进店出店的判断
     // performRegin();
-    Log.e("The length is:", mBeaconList.size() + "");
+    Log.e("The mTempScanDataList:", mTempScanDataList.size() + "");
+    Log.e("The mBeaconList:", mBeaconList.size() + "");
     if (!mBeaconList.isEmpty()) {
       // mBeaconDisptcher.onBeaconDetect(mBeaconList);
       notifyAllCallBack(mBeaconList, mTempScanDataList);
       mBeaconList.clear();
+      mTempScanDataList.clear();
     } else if (mBeaconDisptcher != null) {
       mBeaconDisptcher.onBeaconDetect(null);
     }
@@ -138,6 +140,7 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   private void performRawData() {
     if (mBeaconDisptcher != null && mTempScanDataList.size() > 0) {
       // mBeaconDisptcher.onBeaconRawDataDetect(mTempScanDataList);
+      Log.e("send size",mTempScanDataList.size()+"");
       mTempScanDataList.clear();
     }
   }
@@ -376,11 +379,25 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
         try {
           IBeaconDetect cb = mCallbacks.getBroadcastItem(i);
           if (cb != null) {
-            cb.onBeaconDetect(list);
+            if(list != null && list.size() >0){
+//              List<IBeacon> subList;
+//              for (int j = 0; j < list.size(); j = j+50) {
+//                if(j+50 < list.size()) {
+//                  subList = list.subList(j, j + 50);
+//                }else {
+//                  subList = list.subList(j, list.size());
+//                }
+//                cb.onBeaconDetect(subList);
+//              }
+              cb.onBeaconDetect(list);
+            }
+
             cb.onRawDataDetect(dataList);
           }
         } catch (RemoteException e) {
           e.printStackTrace();
+          Log.e("list size is:",list.size()+"");
+          Log.e("list dataList is:",dataList.size()+"");
         }
       }
     }

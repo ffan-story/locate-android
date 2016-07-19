@@ -441,7 +441,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                     float yResult = (y - displayRect.top)
                             / displayRect.height();
                     Log.e("rate is: ",1318/(displayRect.right - displayRect.left)+" "+(1318/imageView.getWidth()));
-                    double ssate = 28.265/(displayRect.right - displayRect.left);
+                    double ssate = 28.93/(displayRect.right - displayRect.left);
                     double xlen = (e.getX() - displayRect.left) * ssate * 0.021;
                     double ylen = (e.getY() - displayRect.top) * ssate * 0.021;
                     Log.e(" ====== ",xlen+"  "+ylen);
