@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <bool name="base_view_indicator_circle_indicator_centered">true</bool>
-    <bool name="base_view_indicator_circle_indicator_snap">false</bool>
-    <bool name="base_view_indicator_line_indicator_centered">true</bool>
-    <bool name="base_view_indicator_title_indicator_selected_bold">true</bool>
-    <bool name="base_view_indicator_underline_indicator_fades">true</bool>
-</resources>
