@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 
 import com.feifan.sampling.Constants;
 import com.feifan.sampling.R;
-import com.feifan.sampling.SpotListActivity;
 import com.feifan.sampling.http.ApiCreator;
 import com.feifan.sampling.provider.ProviderHelper;
 import com.feifan.sampling.provider.SampleData.Zone;
@@ -51,7 +50,6 @@ public class ZoneListFragment extends CommonFragment<Cursor> implements View.OnC
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mIntent = new Intent(context.getApplicationContext(), SpotListActivity.class);
     }
 
     @Override

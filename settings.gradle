@@ -1,7 +1,6 @@
 include 'libs:qrlibs'
 include 'libs:ui'
 include 'apps:app'
-include 'libs:android-beacon-library'
 include 'libs:base'
 include 'libs:utils'
 include 'libs:logger'

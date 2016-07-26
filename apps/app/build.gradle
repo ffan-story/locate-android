@@ -25,5 +25,4 @@ dependencies {
     compile project(':libs:logger')
     compile project(':libs:ui')
     compile project(':libs:mybeacon')
-    compile project(':libs:android-beacon-library')
 }

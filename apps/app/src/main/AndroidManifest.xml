@@ -52,25 +52,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SpotListActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"></activity>
-        <activity
             android:name="com.libs.ui.activities.BaseActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"></activity>
-        <activity
-            android:name=".SampleActivity"
-            android:label="@string/spot_details_title"
-            android:parentActivityName=".SpotListActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SpotListActivity" />
-        </activity>
         <activity
             android:name=".TopBarActivity"
             android:screenOrientation="portrait" />
