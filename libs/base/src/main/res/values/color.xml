@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- indicator -->
+    <color name="base_view_indicator_background_holo_dark">#ff000000</color>
+    <color name="base_view_indicator_background_holo_light">#fff3f3f3</color>
+    <color name="base_view_indicator_bright_foreground_holo_dark">@color/base_view_indicator_background_holo_light</color>
+    <color name="base_view_indicator_bright_foreground_holo_light">@color/base_view_indicator_background_holo_dark</color>
+    <color name="base_view_indicator_bright_foreground_disabled_holo_dark">#ff4c4c4c</color>
+    <color name="base_view_indicator_bright_foreground_disabled_holo_light">#ffb2b2b2</color>
+    <color name="base_view_indicator_bright_foreground_inverse_holo_dark">@color/base_view_indicator_bright_foreground_holo_light</color>
+    <color name="base_view_indicator_bright_foreground_inverse_holo_light">@color/base_view_indicator_bright_foreground_holo_dark</color>
+    <color name="base_view_indicator_circle_indicator_fill_color">#FFFFFFFF</color>
+    <color name="base_view_indicator_circle_indicator_page_color">#00000000</color>
+    <color name="base_view_indicator_circle_indicator_stroke_color">#FFDDDDDD</color>
+    <color name="base_view_indicator_line_indicator_selected_color">#FF33B5E5</color>
+    <color name="base_view_indicator_line_indicator_unselected_color">#FFBBBBBB</color>
+    <color name="base_view_indicator_title_indicator_footer_color">#FF33B5E5</color>
+    <color name="base_view_indicator_title_indicator_selected_color">#FFFFFFFF</color>
+    <color name="base_view_indicator_title_indicator_text_color">#BBFFFFFF</color>
+    <color name="base_view_indicator_underline_indicator_selected_color">#FF33B5E5</color>
+    
+  	<!-- base -->
+    <color name="base_white">#ffffff</color>
+    <color name="base_red">#FFC93437</color>
+    <color name="base_blue">#FF375BF1</color>
+    <color name="base_yellow">#FFF7D23E</color>
+    <color name="base_green">#FF34A350</color>
+
+    
+     <!-- volley Photo Viewer Colors -->
+    <color name="solid_black">#ff000000</color>
+    <color name="photo_crop_dim_color">#cc000000</color>
+    <color name="photo_crop_highlight_color">#fff</color>
+    <color name="base_mian_transparent">#66000000</color>
+    <color name="base_black">#000000</color>
+    
+    <color name="red">#bf360c</color>
+    <color name="ripple_red">#ffbf5232</color>
+
+    <color name="material_teal">@color/material_deep_teal_500</color>
+    <color name="ripple_material_teal">#ff149691</color>
+
+    <color name="blue">#304f9f</color>
+    <color name="grey">@color/material_blue_grey_800</color>
+    <color name="light">@color/primary_material_light</color>
+
+    <color name="colorPrimary">@color/material_deep_teal_500</color>
+    <color name="colorPrimaryDark">@color/material_deep_teal_500</color>
+
+    <color name="windowBackgroundColor">#333333</color>
+    <color name="black_translucent">#80000000</color>
+    
+    <!-- base -->
+	<color name="base_color">@color/material_teal</color>
+	<color name="base_color_alpha">#5503A9F4</color>
+
+</resources>

@@ -1,0 +1,62 @@
+<resources>
+
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+    </style>
+    <style name="AppTheme" parent="AppTheme.Base" >
+        <item name="toolbarStyle">@style/ToolBarStyle</item>
+        </style>
+    <style name="AppTransparent" parent="AppTheme.Base">
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
+    </style>
+
+    <style name="create_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+    <style name="ToolBarStyle" parent="Widget.AppCompat.Toolbar">
+        <item name="actionMenuTextColor">#ff63BBF7</item>
+        <item name="android:textColorPrimary">@color/base_white</item>
+        <item name="android:actionBarSize">@dimen/common_actionbar_height</item>
+        <item name="contentInsetStart">0dp</item><!-- 设置该属性解决空白部分-->
+        <item name="android:homeAsUpIndicator">@drawable/abc_ic_ab_back_mtrl_am_alpha</item>
+    </style>
+    <style name="ToolBarTextStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/base_white</item>
+    </style>
+    <style name="ToolBarRightTextStyle" parent="ToolBarTextStyle">
+        <item name="android:textSize">15sp</item>
+    </style>
+    <style name="LoginBtnStyle" parent="ToolBarTextStyle">
+        <item name="android:textColor">@color/material_grey_900</item>
+    </style>
+    <style name="RegiBtnStyle" parent="ToolBarTextStyle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/material_grey_850</item>
+    </style>
+    <!-- loading dialog no dim -->
+    <style name="biz_record_loading_style" parent="android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <!-- 无边框 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 没有标题 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- 背景是否半透明 -->
+        <item name="android:backgroundDimEnabled">false</item>
+        <!-- 背景是否模糊 -->
+    </style>
+
+</resources>

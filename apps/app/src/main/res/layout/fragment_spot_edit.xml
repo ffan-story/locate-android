@@ -1,0 +1,73 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".spot.SpotEditFragment">
+
+    <TextView
+        android:id="@+id/spot_edit_title_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/spot_edit_title"
+        android:textAppearance="?attr/textAppearanceListItem"/>
+
+    <TextView
+        android:id="@+id/spot_edit_x_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="80dp"
+        android:layout_margin="10dp"
+        android:layout_alignLeft="@id/spot_edit_title_txt"
+        android:layout_below="@id/spot_edit_title_txt"
+        android:text="@string/spot_edit_x_label" />
+    <EditText
+        android:id="@+id/spot_edit_x_edt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:layout_toRightOf="@id/spot_edit_x_txt"
+        android:layout_alignBaseline="@id/spot_edit_x_txt" />
+
+    <TextView
+        android:id="@+id/spot_edit_y_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="80dp"
+        android:layout_margin="10dp"
+        android:layout_alignLeft="@id/spot_edit_title_txt"
+        android:layout_below="@id/spot_edit_x_txt"
+        android:text="@string/spot_edit_y_label" />
+    <EditText
+        android:id="@+id/spot_edit_y_edt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:layout_toRightOf="@id/spot_edit_y_txt"
+        android:layout_alignBaseline="@id/spot_edit_y_txt"
+        android:layout_alignLeft="@id/spot_edit_x_edt"/>
+
+    <TextView
+        android:id="@+id/spot_edit_d_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_alignLeft="@id/spot_edit_title_txt"
+        android:layout_below="@id/spot_edit_y_txt"
+        android:text="@string/spot_edit_d_label" />
+    <EditText
+        android:id="@+id/spot_edit_d_edt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:layout_toRightOf="@id/spot_edit_d_txt"
+        android:layout_alignBaseline="@id/spot_edit_d_txt"
+        android:layout_alignLeft="@id/spot_edit_x_edt"/>
+    <Button
+        android:id="@+id/spot_edit_save_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spot_edit_d_txt"
+        android:layout_margin="10dp"
+        android:text="@string/common_save_return_text"/>
+
+</RelativeLayout>

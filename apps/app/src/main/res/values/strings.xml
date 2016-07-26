@@ -1,0 +1,121 @@
+<resources xmlns:xliff="http://schemas.android.com/tools">
+    <string name="app_name">室内定位采样工具</string>
+    <string name="spot_details_title">采集点详情</string>
+    <string name="zone_list_title">区域列表</string>
+    <string name="uuid_list_title">UUID列表</string>
+
+    <!-- 通用 -->
+    <string name="common_save_return_text">保存并返回</string>
+
+    <!-- 定位区域编辑界面 -->
+    <string name="zone_edit_title">添加定位区域</string>
+    <string name="zone_edit_tip">请输入定位区域信息</string>
+    <string name="zone_edit_name_label">名称</string>
+
+    <!-- 采集点列表界面 -->
+    <string name="spot_item_details_format">#beacons:<xliff:g>%1d</xliff:g>&#x0009;#samples:<xliff:g>%2d</xliff:g></string>
+
+    <!-- 采集点编辑界面 -->
+    <string name="spot_edit_title">请输入采集点信息</string>
+    <string name="spot_edit_x_label">x轴坐标：</string>
+    <string name="spot_edit_y_label">y轴坐标：</string>
+    <string name="spot_edit_d_label">方向(角度)：</string>
+
+    <!-- 样本详情界面 -->
+    <string name="sample_detail_menu_export_text">导出</string>
+
+    <!-- 无效的字符串值  -->
+    <string name="no_title_text">n/a</string>
+
+
+    <!-- 设置界面 -->
+
+    <!-- 通用设置 -->
+    <string name="pref_header_general">通用</string>
+    <string name="pref_default_display_name">John Smith</string>
+    <string name="pref_title_sampling_max_count">采样数量</string>
+
+
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+
+    <!-- setting -->
+    <string name="setting_beacon_time_interval">扫描时间间隔</string>
+    <string name="setting_file_save_path">文件保存地址</string>
+    <string name="setting_max_count">采样循环次数</string>
+    <string name="setting_title">扫描</string>
+
+    <!-- scan -->
+    <string name="scan_title">beacon测试扫描</string>
+    <string name="scan_btn_title">点击进行扫描</string>
+    <string name="scan_interval_title">输入扫描间隔 ms</string>
+    <string name="scan_count_title">输入扫描次数</string>
+    <string name="scan_interval_txt">剩余扫描次数：%d</string>
+    <string name="scan_write_file">扫描结束，开始写入文件</string>
+    <string name="scan_end">扫描结束，已写入文件</string>
+</resources>

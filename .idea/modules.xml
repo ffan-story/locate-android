@@ -2,7 +2,19 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/locate-android.iml" filepath="$PROJECT_DIR$/.idea/locate-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/android-beacon-library/android-beacon-library.iml" filepath="$PROJECT_DIR$/libs/android-beacon-library/android-beacon-library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apps/app/app.iml" filepath="$PROJECT_DIR$/apps/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apps/apps.iml" filepath="$PROJECT_DIR$/apps/apps.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/base/base.iml" filepath="$PROJECT_DIR$/libs/base/base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/commons/commons.iml" filepath="$PROJECT_DIR$/commons/commons.iml" />
+      <module fileurl="file://$PROJECT_DIR$/commons/compatlib/compatlib.iml" filepath="$PROJECT_DIR$/commons/compatlib/compatlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/libs.iml" filepath="$PROJECT_DIR$/libs/libs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/locate-android.iml" filepath="$PROJECT_DIR$/locate-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/logger/logger.iml" filepath="$PROJECT_DIR$/libs/logger/logger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/mybeacon/mybeacon.iml" filepath="$PROJECT_DIR$/libs/mybeacon/mybeacon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/qrlibs/qrlibs.iml" filepath="$PROJECT_DIR$/libs/qrlibs/qrlibs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/ui/ui.iml" filepath="$PROJECT_DIR$/libs/ui/ui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/utils/utils.iml" filepath="$PROJECT_DIR$/libs/utils/utils.iml" />
     </modules>
   </component>
 </project>
