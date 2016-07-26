@@ -64,6 +64,7 @@ public class MapFragment extends CommonMenuFragment {
         if (mPhotoview != null){
             setImag();
             mPhotoview.setMinimumScale(0.5f);
+            mPhotoview.setMaximumScale(5.0f);
             mPhotoview.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
                 /**
                  * A callback to receive where the user taps on a photo. You will only
