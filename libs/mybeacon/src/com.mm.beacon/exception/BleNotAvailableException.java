@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.mm.beacon;
+package com.mm.beacon.exception;
 
 /**
  * Indicates that low energy bluetooth is not available on this device

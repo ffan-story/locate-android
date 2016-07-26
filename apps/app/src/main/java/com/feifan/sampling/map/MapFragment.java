@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -52,14 +51,12 @@ public class MapFragment extends CommonMenuFragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //以下注释掉的代码不靠谱.若采用,会有异常
-        //InputStream is = assetManager.open("file:///android_asset/Fresh_01.jpg");
         Bitmap bitmap = BitmapFactory.decodeStream(is);
         mPhotoview.setImageBitmap(bitmap);
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (mPhotoview != null){
             setImag();

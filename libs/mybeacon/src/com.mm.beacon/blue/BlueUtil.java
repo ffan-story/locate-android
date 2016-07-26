@@ -8,7 +8,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
-import com.mm.beacon.BleNotAvailableException;
+import com.mm.beacon.exception.BleNotAvailableException;
 
 
 /**
