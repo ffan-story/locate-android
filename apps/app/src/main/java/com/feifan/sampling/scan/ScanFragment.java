@@ -208,7 +208,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
             if (ibeacon != null) {
               ibeacon.setIndex(data.index);
               ibeacon.setTime(data.time);
-              ibeacon.setTime(data.rssi);
+              ibeacon.setRssi(data.rssi);
               beaconList.add(ibeacon);
             }
           }

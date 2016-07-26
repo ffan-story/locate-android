@@ -216,6 +216,10 @@ public class IBeacon implements Parcelable{
 		}
 		return proximity;		
 	}
+
+	public void setRssi(int rssi){
+		this.rssi = rssi;
+	}
 	/**
 	 * @see #rssi
 	 * @return rssi
