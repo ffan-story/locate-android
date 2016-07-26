@@ -28,6 +28,9 @@ public class BeaconFilter {
     }
 
 
+    /**
+     * 这个是目前所有广场的beacon的uuid
+     */
     private void initFilter(){
         mUidList.add("a3fce438-627c-42b7-ab72-dc6e55e137ac");
         mUidList.add("01122334-4556-6778-899a-abbccddeeff0");

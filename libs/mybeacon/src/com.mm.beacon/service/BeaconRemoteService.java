@@ -11,8 +11,8 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.mm.beacon.BeaconConstants;
-import com.mm.beacon.BeaconDispatcher;
 import com.mm.beacon.BeaconFilter;
+import com.mm.beacon.FilterBeacon;
 import com.mm.beacon.IBeacon;
 import com.mm.beacon.IBeaconDetect;
 import com.mm.beacon.IRemoteInterface;
@@ -22,7 +22,6 @@ import com.mm.beacon.blue.BlueLOLLIPOPManager;
 import com.mm.beacon.blue.BlueLeManager;
 import com.mm.beacon.blue.IBlueManager;
 import com.mm.beacon.blue.ScanData;
-import com.mm.beacon.FilterBeacon;
 import com.mm.beacon.data.Region;
 
 import java.util.ArrayList;
@@ -42,7 +41,6 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   private IBlueManager mBlueManager;
   private BeaconFilter mBeaconFilter = new BeaconFilter();
   private RegionFilter mRegionFilter = new RegionFilter();
-  private BeaconDispatcher mBeaconDisptcher;
   private List<IBeacon> mBeaconRegionMatchList = new ArrayList<IBeacon>();
   private List<IScanData> mTempScanDataList = new ArrayList<IScanData>();
   private int mScanDelay = 1500;
@@ -122,25 +120,17 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   private void processBeaconResult() {
     // 处理进店出店的判断
     // performRegin();
-    Log.e("The mTempScanDataList:", mTempScanDataList.size() + "");
-    Log.e("The mBeaconList:", mBeaconList.size() + "");
     if (!mBeaconList.isEmpty()) {
-      // mBeaconDisptcher.onBeaconDetect(mBeaconList);
       notifyAllCallBack(mBeaconList, mTempScanDataList);
       mBeaconList.clear();
       mTempScanDataList.clear();
-    } else if (mBeaconDisptcher != null) {
-      mBeaconDisptcher.onBeaconDetect(null);
     }
-    performRawData();
-    // stopBeaconScan();
+    clearRawData();
     mHandler.postDelayed(mBeaconRunnable, mScanDelay);
   }
 
-  private void performRawData() {
-    if (mBeaconDisptcher != null && mTempScanDataList.size() > 0) {
-      // mBeaconDisptcher.onBeaconRawDataDetect(mTempScanDataList);
-      Log.e("send size",mTempScanDataList.size()+"");
+  private void clearRawData() {
+    if (mTempScanDataList.size() > 0) {
       mTempScanDataList.clear();
     }
   }
@@ -156,8 +146,8 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
             if (!matched) {
               boolean isInside = region.isInside();
               region.subRegion();
-              if (!region.isInside() && isInside && mBeaconDisptcher != null) { // 上一次是在室内，而此时是在室外
-                mBeaconDisptcher.onBeaconExit(region);
+              if (!region.isInside() && isInside) { // 上一次是在室内，而此时是在室外
+                //TODO  region out
               }
             } else {
               region.plusRegion();
@@ -174,8 +164,8 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
           if (region != null) {
             boolean isInside = region.isInside();
             region.subRegion();
-            if (!region.isInside() && isInside && mBeaconDisptcher != null) { // 上一次是在室内，而此时是在室外
-              mBeaconDisptcher.onBeaconExit(region);
+            if (!region.isInside() && isInside) { // 上一次是在室内，而此时是在室外
+              //TODO  region out
             }
           } else {
             region.plusRegion();
@@ -183,12 +173,6 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
         }
         return;
       }
-    }
-  }
-
-  public void setBeaconDisptcher(BeaconDispatcher beaconDisptcher) {
-    if (beaconDisptcher != null) {
-      mBeaconDisptcher = beaconDisptcher;
     }
   }
 
@@ -238,12 +222,20 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
     stopBeaconScan();
   }
 
+  /**
+   * set region filter  场景就是进出店的使用
+   * @param regionFilter
+     */
   public void setRegionFilter(RegionFilter regionFilter) {
     if (regionFilter != null && !regionFilter.isEmpty()) {
       mRegionFilter = regionFilter;
     }
   }
 
+  /**
+   * 添加beacon filter用于过滤beacon
+   * @param beaconfilter
+     */
   public void setBeaconFilter(BeaconFilter beaconfilter) {
     if (beaconfilter != null && !beaconfilter.isEmpty()) {
       mBeaconFilter = beaconfilter;
@@ -262,9 +254,7 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
   public void startBeaconScan() {
     if (isBind() && !isScanning()) {
       setIsScanning(true);
-      Log.e("startBeaconScan", "start");
       if (mBlueManager != null) {
-        Log.e("startBeaconScan", " ---- ");
         mBlueManager.startScan();
         mHandler.postDelayed(mBeaconRunnable, mScanDelay);
       }
@@ -281,7 +271,7 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
       if (region.matchesIBeacon(iBeacon)) {
         if (!region.isInside()) {
           region.makeRegionInside();
-          mBeaconDisptcher.onBeaconEnter(region);
+          //TODO  enter  region
         } else {
           region.makeRegionInside();
         }
@@ -380,15 +370,6 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
           IBeaconDetect cb = mCallbacks.getBroadcastItem(i);
           if (cb != null) {
             if(list != null && list.size() >0){
-//              List<IBeacon> subList;
-//              for (int j = 0; j < list.size(); j = j+50) {
-//                if(j+50 < list.size()) {
-//                  subList = list.subList(j, j + 50);
-//                }else {
-//                  subList = list.subList(j, list.size());
-//                }
-//                cb.onBeaconDetect(subList);
-//              }
               cb.onBeaconDetect(list);
             }
 
@@ -396,8 +377,6 @@ public class BeaconRemoteService extends Service implements IBlueManager.OnBlueS
           }
         } catch (RemoteException e) {
           e.printStackTrace();
-          Log.e("list size is:",list.size()+"");
-          Log.e("list dataList is:",dataList.size()+"");
         }
       }
     }

@@ -18,6 +18,7 @@ import com.mm.beacon.blue.BlueUtil;
 
 /**
  * Created by mengmeng on 16/1/11.
+ * 这个是用于在LOLLIPOP以及以上版本进行模拟beacon的发送
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class AdvertiseManager {

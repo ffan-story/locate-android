@@ -31,14 +31,13 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.mm.beacon.blue.ScanData;
 import com.mm.beacon.data.Region;
 import com.mm.beacon.service.BeaconRemoteService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BeaconServiceManager implements BeaconDispatcher {
+public class BeaconServiceManager{
 
 	private static final String TAG = "BeaconServiceManager";
 	private Context mContext;
@@ -196,26 +195,6 @@ public class BeaconServiceManager implements BeaconDispatcher {
 
 	public void onDestory(){
 		unBindService();
-	}
-
-	@Override
-	public void onBeaconDetect(List<IBeacon> beaconlist) {
-
-	}
-
-	@Override
-	public void onBeaconRawDataDetect(List<ScanData> beaconlist) {
-
-	}
-
-	@Override
-	public void onBeaconEnter(Region region) {
-
-	}
-
-	@Override
-	public void onBeaconExit(Region region) {
-
 	}
 
 	public interface OnBeaconDetectListener {
