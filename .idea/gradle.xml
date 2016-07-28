@@ -14,11 +14,9 @@
             <option value="$PROJECT_DIR$/commons" />
             <option value="$PROJECT_DIR$/commons/compatlib" />
             <option value="$PROJECT_DIR$/libs" />
-            <option value="$PROJECT_DIR$/libs/android-beacon-library" />
             <option value="$PROJECT_DIR$/libs/base" />
             <option value="$PROJECT_DIR$/libs/logger" />
             <option value="$PROJECT_DIR$/libs/mybeacon" />
-            <option value="$PROJECT_DIR$/libs/qrlibs" />
             <option value="$PROJECT_DIR$/libs/ui" />
             <option value="$PROJECT_DIR$/libs/utils" />
           </set>
@@ -31,11 +29,9 @@
             <option value="$PROJECT_DIR$/commons" />
             <option value="$PROJECT_DIR$/commons/compatlib" />
             <option value="$PROJECT_DIR$/libs" />
-            <option value="$PROJECT_DIR$/libs/android-beacon-library" />
             <option value="$PROJECT_DIR$/libs/base" />
             <option value="$PROJECT_DIR$/libs/logger" />
             <option value="$PROJECT_DIR$/libs/mybeacon" />
-            <option value="$PROJECT_DIR$/libs/qrlibs" />
             <option value="$PROJECT_DIR$/libs/ui" />
             <option value="$PROJECT_DIR$/libs/utils" />
           </set>

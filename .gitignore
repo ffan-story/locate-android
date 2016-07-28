@@ -40,12 +40,8 @@ captures/
 
 # Intellij
 *.iml
-.idea/workspace.xml
-# Windows clutter
-Thumbs.db
+.idea/
 
 # Keystore files
 *.jks
-# Android Studio
-*.iml
-/.idea
+libs/android-beacon-library/

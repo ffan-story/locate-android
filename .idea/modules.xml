@@ -12,7 +12,6 @@
       <module fileurl="file://$PROJECT_DIR$/locate-android.iml" filepath="$PROJECT_DIR$/locate-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/libs/logger/logger.iml" filepath="$PROJECT_DIR$/libs/logger/logger.iml" />
       <module fileurl="file://$PROJECT_DIR$/libs/mybeacon/mybeacon.iml" filepath="$PROJECT_DIR$/libs/mybeacon/mybeacon.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libs/qrlibs/qrlibs.iml" filepath="$PROJECT_DIR$/libs/qrlibs/qrlibs.iml" />
       <module fileurl="file://$PROJECT_DIR$/libs/ui/ui.iml" filepath="$PROJECT_DIR$/libs/ui/ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/libs/utils/utils.iml" filepath="$PROJECT_DIR$/libs/utils/utils.iml" />
     </modules>
