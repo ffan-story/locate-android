@@ -39,6 +39,9 @@ public class LogQueue {
         synchronized (mQueue) {
             if (request != null) {
                 mQueue.add(request);
+                if (mDispatcher != null && !mDispatcher.isAlive()){
+                    mDispatcher.start();
+                }
             }
         }
     }

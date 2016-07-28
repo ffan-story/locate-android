@@ -19,6 +19,7 @@ public class IScanData implements Parcelable {
     public int rssi;
     public long time;
     public byte[] scanRecord;
+    public float direction;
 
     protected IScanData(Parcel in) {
         index = in.readInt();
@@ -26,6 +27,7 @@ public class IScanData implements Parcelable {
         rssi = in.readInt();
         time = in.readLong();
         scanRecord = in.createByteArray();
+        direction = in.readFloat();
     }
 
     public static final Creator<IScanData> CREATOR = new Creator<IScanData>() {
@@ -66,5 +68,6 @@ public class IScanData implements Parcelable {
         dest.writeInt(rssi);
         dest.writeLong(time);
         dest.writeByteArray(scanRecord);
+        dest.writeFloat(direction);
     }
 }

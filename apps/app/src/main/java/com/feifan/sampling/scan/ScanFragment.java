@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,7 +149,6 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
     if (bundle != null) {
       mPoint_x = bundle.getFloat(Constants.EXTRA_KEY_SPOT_X);
       mPoint_y = bundle.getFloat(Constants.EXTRA_KEY_SPOT_Y);
-      mDirection = String.valueOf(mRealDirection);
     }
   }
 
@@ -193,22 +193,28 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
   private ArrayList<IBeacon> buildCombineData() {
     if (!mRawlist.isEmpty() && !mMacBeacon.isEmpty()) {
       ArrayList<IBeacon> beaconList = new ArrayList<IBeacon>();
+//      beaconList.addAll(mTemplist);
       for (int i = 0; i < mRawlist.size(); i++) {
         IScanData data = mRawlist.get(i);
         if (data != null) {
           String mac = data.device.getAddress();
           IBeacon beacon = IBeacon.fromScanData(data);
+          IBeacon ibeacon = mMacBeacon.get(mac);
           if (beacon != null) {
-            beacon.setIndex(data.index);
-            beacon.setTime(data.time);
-            beacon.setMac(mac);
-            beaconList.add(beacon);
+            if (ibeacon != null){
+              beacon.setIndex(data.index);
+              beacon.setTime(data.time);
+              beacon.setMac(mac);
+              beacon.setmDirection(data.direction);
+              Log.e("direction",mac+" --- "+data.index+" ------ "+ibeacon.getmDirection()+"");
+              beaconList.add(beacon);
+            }
           } else {
-            IBeacon ibeacon = mMacBeacon.get(mac);
             if (ibeacon != null) {
               ibeacon.setIndex(data.index);
               ibeacon.setTime(data.time);
               ibeacon.setRssi(data.rssi);
+              ibeacon.setmDirection(data.direction);
               beaconList.add(ibeacon);
             }
           }
@@ -222,8 +228,10 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
   private void buildRawScanIndex(List<IScanData> beaconlist) {
     if (beaconlist != null && beaconlist.size() > 0) {
       for (int i = 0; i < beaconlist.size(); i++) {
-        IScanData beacon = beaconlist.get(i);
-        beacon.index = mInterval;
+        IScanData scanData = beaconlist.get(i);
+        scanData.index = mInterval;
+        scanData.direction = mRealDirection;
+        Log.e("direction",mRealDirection+" ");
       }
     }
   }
@@ -294,7 +302,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
           items[4] = String.valueOf(beacon.getMinor());
           items[5] = String.valueOf(beacon.getRssi());
           items[6] = String.valueOf(beacon.getTime());
-          items[7] = String.valueOf(mRealDirection);
+          items[7] = String.valueOf(beacon.getmDirection());
           items[8] = String.valueOf(mPoint_x);
           items[9] = String.valueOf(mPoint_y);
           items[10] = String.valueOf(mDirection);
@@ -361,7 +369,7 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
           items[4] = String.valueOf(beacon.getMinor());
           items[5] = String.valueOf(beacon.getRssi());
           items[6] = String.valueOf(beacon.getTime());
-          items[7] = String.valueOf(mRealDirection);
+          items[7] = String.valueOf(beacon.getmDirection());
           items[8] = String.valueOf(mPoint_x);
           items[9] = String.valueOf(mPoint_y);
           items[10] = String.valueOf(mDirection);
@@ -393,11 +401,13 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
 
   @Override
   public void onSensorCallBack(float[] prefvalues) {
-    if (prefvalues != null){
-      if(mRealDirection == 0){
-        mDirection = String.valueOf(prefvalues[0]);
+    if (prefvalues != null && prefvalues.length > 0){
+      float azimuth = (float) Math.toDegrees(prefvalues[0]);
+      if(TextUtils.isEmpty(mDirection)){
+        mDirection = String.valueOf(azimuth);
       }
-      mRealDirection = prefvalues[0];
+      mRealDirection = azimuth;
+      Log.e("direction",mRealDirection+" --- "+ System.currentTimeMillis());
     }
   }
 }

@@ -429,22 +429,15 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
             if (null != displayRect) {
                 final float x = e.getX(), y = e.getY();
-                Log.e("tap  posi is pos",e.getRawX()+" ___ "+e.getRawY()+" ___ "+e.getX()+" ___  "+e.getY()+" __ "+displayRect.left+" ___ "+displayRect.top);
-                Log.e("scale is: ",getScale()+"");
-                Log.e("img posi is: ",imageView.getMeasuredWidth()+" "+imageView.getMeasuredHeight());
-                Log.e("img posi is: ",imageView.getLeft()+" "+imageView.getTop());
-                Log.e("------ ",((e.getX() - displayRect.left)/getScale())+"");
                 // Check to see if the user tapped on the photo
                 if (displayRect.contains(x, y)) {
                     float xResult = (x - displayRect.left)
                             / displayRect.width();
                     float yResult = (y - displayRect.top)
                             / displayRect.height();
-                    Log.e("rate is: ",1318/(displayRect.right - displayRect.left)+" "+(1318/imageView.getWidth()));
                     double ssate = 28.93/(displayRect.right - displayRect.left);
                     double xlen = (e.getX() - displayRect.left) * ssate * 0.021;
                     double ylen = (e.getY() - displayRect.top) * ssate * 0.021;
-                    Log.e(" ====== ",xlen+"  "+ylen);
                     mPhotoTapListener.onPhotoTap(imageView, xResult, yResult);
                     mPhotoTapListener.onRawPhotoTap(imageView, (x - displayRect.left)*ssate, (y - displayRect.top)*ssate);
                     mPhotoTapListener.onViewTap(imageView, e.getX(), e.getY());

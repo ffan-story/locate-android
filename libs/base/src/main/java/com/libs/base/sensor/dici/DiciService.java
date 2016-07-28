@@ -51,15 +51,15 @@ public class DiciService implements SensorEventListener {
         mSensorManager.registerListener(
                 this,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL );
+                SensorManager.SENSOR_DELAY_GAME );
         mSensorManager.registerListener(
                 this,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-                SensorManager.SENSOR_DELAY_NORMAL );
+                SensorManager.SENSOR_DELAY_GAME );
         mSensorManager.registerListener(
                 this,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),
-                SensorManager.SENSOR_DELAY_NORMAL );
+                SensorManager.SENSOR_DELAY_GAME );
 
 
     }

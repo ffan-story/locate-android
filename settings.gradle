@@ -1,4 +1,3 @@
-include 'libs:qrlibs'
 include 'libs:ui'
 include 'apps:app'
 include 'libs:base'
