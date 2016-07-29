@@ -193,7 +193,6 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
   private ArrayList<IBeacon> buildCombineData() {
     if (!mRawlist.isEmpty() && !mMacBeacon.isEmpty()) {
       ArrayList<IBeacon> beaconList = new ArrayList<IBeacon>();
-//      beaconList.addAll(mTemplist);
       for (int i = 0; i < mRawlist.size(); i++) {
         IScanData data = mRawlist.get(i);
         if (data != null) {
@@ -201,21 +200,19 @@ public class ScanFragment extends CommonMenuFragment implements BeaconServiceMan
           IBeacon beacon = IBeacon.fromScanData(data);
           IBeacon ibeacon = mMacBeacon.get(mac);
           if (beacon != null) {
-            if (ibeacon != null){
               beacon.setIndex(data.index);
               beacon.setTime(data.time);
               beacon.setMac(mac);
               beacon.setmDirection(data.direction);
-              Log.e("direction",mac+" --- "+data.index+" ------ "+ibeacon.getmDirection()+"");
               beaconList.add(beacon);
-            }
           } else {
             if (ibeacon != null) {
-              ibeacon.setIndex(data.index);
-              ibeacon.setTime(data.time);
-              ibeacon.setRssi(data.rssi);
-              ibeacon.setmDirection(data.direction);
-              beaconList.add(ibeacon);
+              IBeacon tempBeacon = ibeacon.clone();
+              tempBeacon.setIndex(data.index);
+              tempBeacon.setTime(data.time);
+              tempBeacon.setRssi(data.rssi);
+              tempBeacon.setmDirection(data.direction);
+              beaconList.add(tempBeacon);
             }
           }
         }

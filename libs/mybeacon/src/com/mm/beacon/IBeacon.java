@@ -206,6 +206,7 @@ public class IBeacon implements Parcelable{
 	public int getMinor() {
 		return minor;
 	}
+
 	/**
 	 * @see #proximity
 	 * @return proximity
@@ -480,5 +481,19 @@ public class IBeacon implements Parcelable{
 		dest.writeString(mac);
 		dest.writeInt(index);
 		dest.writeLong(time);
+	}
+
+	public IBeacon clone(){
+		IBeacon beacon = new IBeacon();
+		beacon.proximityUuid = this.proximityUuid;
+		beacon.major = this.major;
+		beacon.minor = this.minor;
+		beacon.rssi = this.rssi;
+		beacon.mDirection = this.mDirection;
+		beacon.index = this.index;
+		beacon.accuracy = this.accuracy;
+		beacon.time = this.time;
+		beacon.mac = this.mac;
+		return beacon;
 	}
 }
