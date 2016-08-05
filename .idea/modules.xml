@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/libs/android-beacon-library/android-beacon-library.iml" filepath="$PROJECT_DIR$/libs/android-beacon-library/android-beacon-library.iml" />
       <module fileurl="file://$PROJECT_DIR$/apps/app/app.iml" filepath="$PROJECT_DIR$/apps/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/apps/apps.iml" filepath="$PROJECT_DIR$/apps/apps.iml" />
       <module fileurl="file://$PROJECT_DIR$/libs/base/base.iml" filepath="$PROJECT_DIR$/libs/base/base.iml" />
       <module fileurl="file://$PROJECT_DIR$/commons/commons.iml" filepath="$PROJECT_DIR$/commons/commons.iml" />
       <module fileurl="file://$PROJECT_DIR$/commons/compatlib/compatlib.iml" filepath="$PROJECT_DIR$/commons/compatlib/compatlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/feifanlocate/feifanlocate.iml" filepath="$PROJECT_DIR$/feifanlocate/feifanlocate.iml" />
       <module fileurl="file://$PROJECT_DIR$/libs/libs.iml" filepath="$PROJECT_DIR$/libs/libs.iml" />
       <module fileurl="file://$PROJECT_DIR$/locate-android.iml" filepath="$PROJECT_DIR$/locate-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/libs/logger/logger.iml" filepath="$PROJECT_DIR$/libs/logger/logger.iml" />

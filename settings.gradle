@@ -1,3 +1,4 @@
+include ':feifanlocate'
 include 'libs:ui'
 include 'apps:app'
 include 'libs:base'

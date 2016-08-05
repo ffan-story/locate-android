@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- main_bottom_bar_tabs使用的XML属性 -->
+    <declare-styleable name="tab">
+        <attr name="id" format="reference" />
+        <attr name="item_icon" format="reference" />
+        <attr name="item_title" format="reference" />
+        <attr name="item_fragment" format="string" />
+    </declare-styleable>
+</resources>
