@@ -1,14 +1,15 @@
-package com.feifan.sampling.widget;
+package com.feifan.locate.widget.cursorwork;
 
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
+
+import com.feifan.locate.widget.BaseFragment;
 
 /**
  * 支持LoaderManager的Fragment
@@ -40,7 +41,9 @@ public abstract class AbsLoaderFragment extends BaseFragment implements LoaderMa
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(getLoaderId(), getArguments(), this);
+        if(getLoaderId() != 0) {
+            getLoaderManager().initLoader(getLoaderId(), getArguments(), this);
+        }
     }
 
     @Override

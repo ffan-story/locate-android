@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 内置定位区域列表 -->
+    <array name="zones">
+        <item>金地中心A座22层东2办公区</item>
+        <item>金地中心B座31层办公区</item>
+    </array>
+</resources>

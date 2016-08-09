@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">飞凡定位</string>
+
+    <!-- 主界面 -->
+    <string name="main_bottombar_tab_item_title_sampling">采样</string>
+    <string name="main_bottombar_tab_item_title_locating">定位</string>
+    <string name="main_bottombar_tab_item_title_config">设置</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>
