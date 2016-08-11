@@ -4,7 +4,7 @@
              android:layout_height="match_parent"
              tools:context="com.feifan.locate.sampling.SpotPlanFragment">
 
-    <com.feifan.locate.widget.TouchImageView
+    <com.feifan.locate.widget.plan.PlanView
         android:id="@+id/spot_plan_img"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

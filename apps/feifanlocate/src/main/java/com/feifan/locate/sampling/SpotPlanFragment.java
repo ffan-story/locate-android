@@ -9,9 +9,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.feifan.locate.R;
-import com.feifan.locate.widget.TouchImageView;
 import com.feifan.locate.widget.cursorwork.AbsLoaderFragment;
 import com.feifan.locate.widget.cursorwork.RecyclerCursorAdapter;
 
@@ -39,7 +39,7 @@ public class SpotPlanFragment extends AbsLoaderFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TouchImageView img = findView(R.id.spot_plan_img);
+        ImageView img = findView(R.id.spot_plan_img);
 
 
         try {

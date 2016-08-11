@@ -912,16 +912,17 @@ public class TouchImageView extends ImageView {
         	if (normalizedScale > maxScale) {
         		targetZoom = maxScale;
         		animateToZoomBoundary = true;
-        		
+
         	} else if (normalizedScale < minScale) {
         		targetZoom = minScale;
         		animateToZoomBoundary = true;
         	}
-        	
+
         	if (animateToZoomBoundary) {
 	        	DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, viewWidth / 2, viewHeight / 2, true);
 	        	compatPostOnAnimation(doubleTap);
         	}
+
         }
     }
     
@@ -948,6 +949,7 @@ public class TouchImageView extends ImageView {
         }
         
         matrix.postScale((float) deltaScale, (float) deltaScale, focusX, focusY);
+
         fixScaleTrans();
     }
     
