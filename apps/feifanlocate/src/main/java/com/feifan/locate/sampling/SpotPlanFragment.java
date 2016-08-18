@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import com.feifan.locate.R;
 import com.feifan.locate.widget.cursorwork.AbsLoaderFragment;
 import com.feifan.locate.widget.cursorwork.RecyclerCursorAdapter;
+import com.feifan.locate.widget.plan.PlanView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,8 +40,7 @@ public class SpotPlanFragment extends AbsLoaderFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ImageView img = findView(R.id.spot_plan_img);
-
+        final ImageView img = findView(R.id.spot_plan_img);
 
         try {
             // get input stream
@@ -53,6 +53,17 @@ public class SpotPlanFragment extends AbsLoaderFragment {
         catch(IOException ex) {
             return;
         }
+
+        ImageView control = findView(R.id.spot_plan_control);
+        control.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(img instanceof PlanView) {
+                    ((PlanView)img).lock();
+                }
+            }
+        });
+
     }
 
     @Override

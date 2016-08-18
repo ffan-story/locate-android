@@ -648,6 +648,8 @@ public class TouchImageView extends ImageView {
         }
         fixTrans();
         setImageMatrix(matrix);
+
+        Log.e("TouchImageView", "matchWidth-->" + matchViewWidth + ",matchHeight-->" + matchViewHeight);
     }
     
     /**
