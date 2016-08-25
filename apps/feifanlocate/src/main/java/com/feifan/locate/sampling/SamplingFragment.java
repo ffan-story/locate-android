@@ -8,13 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.feifan.locate.R;
-import com.feifan.locate.TitleBarActivity;
+import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.provider.LocateData.Zone;
 import com.feifan.locate.widget.cursorwork.AbsLoaderFragment;
 import com.feifan.locate.widget.cursorwork.RecyclerCursorAdapter;
@@ -79,8 +78,8 @@ public class SamplingFragment extends AbsLoaderFragment implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        Log.e("SamplingFragment", v.getTag().toString());
-        Intent intent = new Intent(getContext().getApplicationContext(), TitleBarActivity.class);
+        Intent intent = new Intent(getContext().getApplicationContext(), ToolbarActivity.class);
+        intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotPlanFragment.class.getName());
         startActivity(intent);
     }
 

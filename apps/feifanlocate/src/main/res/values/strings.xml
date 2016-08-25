@@ -6,6 +6,12 @@
     <string name="main_bottombar_tab_item_title_locating">定位</string>
     <string name="main_bottombar_tab_item_title_config">设置</string>
 
+    <!-- 采集点 -->
+    <string name="spot_plan_title_text">采集点平面图</string>
+    <string name="spot_detail_title_text">采集点详情</string>
+    <string name="spot_detail_sample_text">采样</string>
+    <string name="spot_detail_remove_text">移除该采集点</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

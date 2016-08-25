@@ -36,50 +36,43 @@ public class LocateData {
         public static final String NAME = "name";
     }
 
-//
-//    /**
-//     * 采集点定义
-//     */
-//    public static class Spot implements BaseColumns {
-//
-//        /** 访问Spot表的URL */
-//        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/spot");
-//
-//        /** {@link Spot#CONTENT_URI}的MIME类型 */
-//        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.spot";
-//
-//        /** {@link Spot#CONTENT_URI}子项的MIME类型 */
-//        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.spot";
-//
-//        /**
-//         * 字段名－x轴坐标
-//         *  TYPE:FLOAT
-//         */
-//        public static final String X = "x";
-//        /**
-//         * 字段名－y轴坐标
-//         * TYPE:FLOAT
-//         */
-//        public static final String Y = "y";
-//        /**
-//         * 字段名－方向（角度）
-//         * TYPE:FLOAT
-//         */
-//        public static final String D = "D";
-//
-//        public static final String NAME = "name";
-//
-//        /**
-//         * 字段名－定位区域
-//         * TYPE:INTEGER
-//         */
-//        public static final String ZONE = "zone";
-//
-//        /**
-//         * 服务器端返回的id
-//         */
-//        public static final String REMOTE_ID = "remote_id";
-//    }
+
+    /**
+     * 采集点定义
+     */
+    public static class Spot implements BaseColumns {
+
+        /** 访问Spot表的URL */
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/spot");
+
+        /** {@link Spot#CONTENT_URI}的MIME类型 */
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.spot";
+
+        /** {@link Spot#CONTENT_URI}子项的MIME类型 */
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.spot";
+
+        /**
+         * 字段名－x轴坐标
+         *  TYPE:FLOAT
+         */
+        public static final String X = "x";
+        /**
+         * 字段名－y轴坐标
+         * TYPE:FLOAT
+         */
+        public static final String Y = "y";
+        /**
+         * 字段名－方向（角度）
+         * TYPE:FLOAT
+         */
+        public static final String D = "D";
+
+        /**
+         * 字段名－定位区域
+         * TYPE:INTEGER
+         */
+        public static final String ZONE = "zone";
+    }
 //
 //    /**
 //     * 样本定义

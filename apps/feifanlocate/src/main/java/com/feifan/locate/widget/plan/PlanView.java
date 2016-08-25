@@ -11,10 +11,14 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.ViewConfiguration;
 import android.widget.ImageView;
 
 import com.feifan.locate.R;
 import com.feifan.locate.utils.LogUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 用于平面图操作的ImageView
@@ -38,18 +42,20 @@ public class PlanView extends ImageView {
 
     // 平移
     private PointF lastTouch = new PointF();
+    private int mTranslateSlop = 0;           // 有效平移距离
 
     // 图像变换
     private Matrix matrix = new Matrix();  // 用于图形变换的矩阵
     private float[] fixTransXY = new float[2]; // 缓存将img平移到view内的偏移量
     private float[] fixCenterXY = new float[2];  // 缓存缩放后将img平移到view中间位置的偏移量
-    private float[] imgOriginXY = new float[2]; // img坐标系原点
 
     // 尺寸
     private int viewWidth;
     private int viewHeight;
     private float matchViewWidth; // 实际显示平面图的初始View宽度
     private float matchViewHeight;// 实际显示平面图的初始View高度
+
+    private MarkLayer.MarkPoint currentMark = null;
 
     // 操作状态
     private enum State {
@@ -62,8 +68,17 @@ public class PlanView extends ImageView {
     // 用于获取matrix的参数
     private float[] m = new float[9];
 
-    // 地图标记
-    private MarkerLayer mMarkerLayer;
+    // 图层
+    private List<IPlanLayer> mLayers;
+
+    // 平面图标记层
+    private MarkLayer mMarkLayer;
+    // 平面图原点坐标
+    private PlanOrigin mPlanOrigin;
+
+    // 交互
+    private OnMarkTouchListener mMarkListener;
+
 
     public PlanView(Context context) {
         this(context, null);
@@ -77,19 +92,21 @@ public class PlanView extends ImageView {
         super(context, attrs, defStyleAttr);
 
         // 初始化
-        mMarkerLayer = new MarkerLayer();
+        mMarkLayer = new MarkLayer();
+        // TODO 提供默认的图标
         Bitmap bmpMark = BitmapFactory.decodeResource(context.getResources(), R.mipmap.plan_mark);
-        mMarkerLayer.setMarkIcon(bmpMark);
+        mMarkLayer.setMarkIcon(bmpMark);
 
         // 让GestureDetector起作用
         setClickable(true);
-
         mScaleDetector = new ScaleGestureDetector(context, new PlanScaleListener());
         mGestureDetector = new GestureDetector(context, new PlanGestureListener());
 
         setScaleType(ScaleType.MATRIX);
         setImageMatrix(matrix);
         setState(State.NONE);
+
+        mTranslateSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
     @Override
@@ -118,11 +135,34 @@ public class PlanView extends ImageView {
         // 调整图片位置居中
         fitImageToView();
 
-        // 初始化img坐标
-        imgOriginXY[0] = (viewWidth - matchViewWidth) / 2;
-        imgOriginXY[1] = (viewHeight - matchViewHeight) / 2;
+        // 初始化平面图原点
+        mPlanOrigin = new PlanOrigin((viewWidth - matchViewWidth) / 2, (viewHeight - matchViewHeight) / 2);
+    }
 
-        LogUtils.e("imgOriginXY-->" + imgOriginXY[0] + "," + imgOriginXY[1]);
+    public void addLayer(IPlanLayer layer) {
+        if(mLayers == null) {
+            mLayers = new ArrayList<>();
+        }
+        mLayers.add(layer);
+    }
+
+    public void setMarkListener(OnMarkTouchListener markListener) {
+        mMarkListener = markListener;
+    }
+
+    /**
+     * 锁定平面图
+     *
+     */
+    public void lock() {
+        mMarkLayer.lockAllPoints();
+
+        // TODO 还原平面图原来的大小和位置，并禁止任何操作
+        translateImageToCenter();
+    }
+
+    public MarkLayer getMarkLayer() {
+        return mMarkLayer;
     }
 
     // 计算视图实际尺寸
@@ -146,17 +186,6 @@ public class PlanView extends ImageView {
                 break;
         }
         return viewSize;
-    }
-
-    /**
-     * 锁定平面图
-     *
-     */
-    public void lock() {
-        mMarkerLayer.lockAllPoints();
-
-        // 还原平面图原来的大小和位置，并禁止任何操作
-
     }
 
     // 调整图片适应View
@@ -195,21 +224,15 @@ public class PlanView extends ImageView {
     // 进行边界检查，如果image小于view，则进行居中调整
     private void fixScaleTrans() {
         // 缩放之后，将img移动到view内
-        if(fixTrans(fixTransXY)) {
-            mMarkerLayer.onMoveEvent(fixTransXY[0], fixTransXY[1], scale);
-            computeMoveImageOrigin(fixTransXY[0], fixTransXY[1]);
-        }
+        fixTrans(fixTransXY);
 
         // img进行居中平移，虽在缩放之前，但移动的是缩放之后的距离
         matrix.getValues(m);
 
-        // 标记层偏移处理
+        // 图层偏移处理
         fixCenterXY[0] = getFixCenterTrans(m[Matrix.MTRANS_X], viewWidth, getImageWidth());
         fixCenterXY[1] = getFixCenterTrans(m[Matrix.MTRANS_Y], viewHeight, getImageHeight());
-        if(fixCenterXY[0] != 0 || fixCenterXY[1] != 0) {
-            mMarkerLayer.onMoveEvent(fixCenterXY[0], fixCenterXY[1], scale);
-            computeMoveImageOrigin(fixCenterXY[0], fixCenterXY[1]);
-        }
+        moveLayer(fixTransXY[0] + fixCenterXY[0], fixTransXY[1] + fixCenterXY[1], scale);
 
         // img偏移处理
         if (getImageWidth() < viewWidth) { // img缩小后的宽度小于view宽度时
@@ -313,22 +336,24 @@ public class PlanView extends ImageView {
                     setState(State.DRAG);
                     break;
                 case MotionEvent.ACTION_MOVE:
+                    currentMark = mMarkLayer.findMarkByTouchPoint(event.getX(), event.getY());
+                    if(currentMark != null) {   // 手指在标记上
+                        return false;
+                    }
                     if(mState == State.DRAG) {
                         float deltaX = event.getX() - lastTouch.x;
                         float deltaY = event.getY() - lastTouch.y;
 
-                        float fixTranX = mMarkerLayer.hasUnLockedPoints() ? deltaX : getFixDragTrans(deltaX, viewWidth, getImageWidth());
-                        float fixTranY = mMarkerLayer.hasUnLockedPoints() ? deltaY : getFixDragTrans(deltaY, viewHeight, getImageHeight());
-                        moveALl(fixTranX, fixTranY, scale);
+                        float fixTranX = mMarkLayer.hasUnLockedPoints() ? deltaX : getFixDragTrans(deltaX, viewWidth, getImageWidth());
+                        float fixTranY = mMarkLayer.hasUnLockedPoints() ? deltaY : getFixDragTrans(deltaY, viewHeight, getImageHeight());
+                        matrix.postTranslate(fixTranX, fixTranY);
 
-                        if(!mMarkerLayer.hasUnLockedPoints()) {    // 不存在未锁定的点，限制img在view内
-                            if(fixTrans(fixTransXY)) {
-                                mMarkerLayer.onMoveEvent(fixTransXY[0], fixTransXY[1], scale);
-                            }
+                        if(!mMarkLayer.hasUnLockedPoints()) {    // 不存在未锁定的点，限制img在view内
+                            fixTrans(fixTransXY);
+                            fixTranX += fixTransXY[0];
+                            fixTranY += fixTransXY[1];
                         }
-                        // TODO 计算img原点
-                        computeMoveImageOrigin(fixTranX + fixTransXY[0], fixTranY + fixTransXY[1]);
-
+                        moveLayer(fixTranX, fixTranY, scale);
                         lastTouch.set(event.getX(), event.getY());
                     }
                     break;
@@ -348,8 +373,12 @@ public class PlanView extends ImageView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // 绘制标记
-        mMarkerLayer.draw(canvas);
+        // 绘制图层
+        if(mLayers != null) {
+            for(IPlanLayer layer : mLayers) {
+                layer.onDraw(canvas);
+            }
+        }
     }
 
     // 设置操作状态
@@ -357,32 +386,29 @@ public class PlanView extends ImageView {
         this.mState = state;
     }
 
-    // 清除数据
-    private void clearXY(float[] xy) {
-        if(xy.length == 2) {
-            xy[0] = 0;
-            xy[1] = 0;
-        }
-    }
+    // 平移图层
+    private void moveLayer(float transX, float transY, float scale) {
+        // 计算img原点
+        mPlanOrigin.onMoveEvent(transX, transY);
 
-    // 移动所有元素
-    private void moveALl(float transX, float transY, float scale) {
-        matrix.postTranslate(transX, transY);
         // 标记层平移
-        mMarkerLayer.onMoveEvent(transX, transY, scale);
+        mMarkLayer.onMoveEvent(transX, transY, scale);
     }
 
-    // 计算img坐标系原点坐标
-    private void computeScaleImageOrigin(float scale, float focusX, float focusY) {
-        imgOriginXY[0] = (imgOriginXY[0] - focusX) * scale + focusX;
-        imgOriginXY[1] = (imgOriginXY[1] - focusY) * scale + focusY;
-        LogUtils.e("imgOriginXY-->" + imgOriginXY[0] + "," + imgOriginXY[1]);
+    // 缩放图层
+    private void scaleLayer(float scale, float focusX, float focusY) {
+        // 更新img原点
+        mPlanOrigin.onScaleEvent(scale, focusX, focusY);
+        // 标记层
+        mMarkLayer.onScaleEvent(scale, focusX, focusY, mPlanOrigin.getOriginX(), mPlanOrigin.getOriginY());
     }
 
-    private void computeMoveImageOrigin(float transX, float transY) {
-        imgOriginXY[0] = imgOriginXY[0] + transX;
-        imgOriginXY[1] = imgOriginXY[1] + transY;
-        LogUtils.e("imgOriginXY-->" + imgOriginXY[0] + "," + imgOriginXY[1]);
+    // 平移image到view中间
+    private void translateImageToCenter() {
+        float focusX = getWidth() / 2;
+        float focusY = getHeight() / 2;
+        scaleImage(1 / scale, focusX, focusY);
+        setImageMatrix(matrix);
     }
 
     /**
@@ -399,6 +425,7 @@ public class PlanView extends ImageView {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             scaleImage(detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY());
+
             return true;
         }
 
@@ -415,9 +442,30 @@ public class PlanView extends ImageView {
     private class PlanGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            mMarkerLayer.addMark(e.getX(), e.getY(), imgOriginXY, scale);
-            invalidate();
-            return super.onSingleTapConfirmed(e);
+
+//            currentMark = mMarkerLayer.findMarkByTouchPoint(e.getX(), e.getY());
+            if(currentMark != null) {
+                LogUtils.d("Mark" + currentMark.toString() + " is pressed");
+                if(mMarkListener != null) {
+                    mMarkListener.onPress(currentMark, e.getX(), e.getY());
+                }
+            }else {
+                mMarkLayer.addMark(e.getX(), e.getY(), mPlanOrigin.getOriginX(), mPlanOrigin.getOriginY(), scale);
+                invalidate();
+            }
+
+            return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            super.onLongPress(e);
+            if(currentMark != null) {
+                LogUtils.d("Mark" + currentMark.toString() + " is long-pressed");
+                if(mMarkListener != null) {
+                    mMarkListener.onLongPress(currentMark, e.getX(), e.getY());
+                }
+            }
         }
     }
 
@@ -441,10 +489,8 @@ public class PlanView extends ImageView {
             deltaScale = scale / originScale;
         }
         matrix.postScale((float) deltaScale, (float) deltaScale, focusX, focusY);
-        // 标记层
-        mMarkerLayer.onScaleEvent((float) deltaScale, focusX, focusY);
-        // 更新img原点
-        computeScaleImageOrigin((float) deltaScale, focusX, focusY);
+
+        scaleLayer((float)deltaScale, focusX, focusY);
 
         fixScaleTrans();
     }

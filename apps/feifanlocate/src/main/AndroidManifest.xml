@@ -22,7 +22,7 @@
             android:name=".provider.LocateProvider"
             android:authorities="com.feifan.locate"/>
 
-        <activity android:name=".TitleBarActivity">
+        <activity android:name=".ToolbarActivity">
         </activity>
     </application>
 

@@ -9,7 +9,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 
-import com.feifan.locate.widget.BaseFragment;
+import com.feifan.locate.widget.ui.BaseFragment;
 
 /**
  * 支持LoaderManager的Fragment

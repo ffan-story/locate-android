@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import com.feifan.locate.provider.LocateData.Zone;
+import com.feifan.locate.provider.LocateData.Spot;
 
 /**
  * Created by xuchunlei on 16/4/21.
@@ -49,9 +50,9 @@ public class LocateProvider extends ContentProvider {
     private static UriMatcher sUriMatcher;
     private static final int ZONE = 1;
     private static final int ZONE_ID = ZONE + 1;
-/*    private static final int SPOT = ZONE_ID + 1;
+    private static final int SPOT = ZONE_ID + 1;
     private static final int SPOT_ID = SPOT + 1;
-    private static final int SAMPLE = SPOT_ID + 1;
+/*    private static final int SAMPLE = SPOT_ID + 1;
     private static final int SAMPLE_ID = SAMPLE + 1;
     private static final int BEACON_UUID = SAMPLE_ID + 1;
     private static final int BEACON_UUID_ID = BEACON_UUID + 1;
@@ -64,7 +65,7 @@ public class LocateProvider extends ContentProvider {
     // 定位区域表列映射集合
     private static HashMap<String, String> sZoneProjectionMap;
     // 采集点表列映射集合
-//    private static HashMap<String, String> sSpotProjectionMap;
+    private static HashMap<String, String> sSpotProjectionMap;
     // 样本表列映射集合
 //    private static HashMap<String, String> sSampleProjectionMap;
     // 样本详情表列映射集合
@@ -78,9 +79,9 @@ public class LocateProvider extends ContentProvider {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sUriMatcher.addURI(AUTHORITY, "zone", ZONE);
         sUriMatcher.addURI(AUTHORITY, "zone/#", ZONE_ID);
-        /*sUriMatcher.addURI(AUTHORITY, "spot", SPOT);
+        sUriMatcher.addURI(AUTHORITY, "spot", SPOT);
         sUriMatcher.addURI(AUTHORITY, "spot/#", SPOT_ID);
-        sUriMatcher.addURI(AUTHORITY, "sample", SAMPLE);
+        /*sUriMatcher.addURI(AUTHORITY, "sample", SAMPLE);
         sUriMatcher.addURI(AUTHORITY, "sample/#", SAMPLE_ID);
         sUriMatcher.addURI(AUTHORITY, "beacon_uuid", BEACON_UUID);
         sUriMatcher.addURI(AUTHORITY, "beacon_uuid/#", BEACON_UUID_ID);
@@ -94,15 +95,13 @@ public class LocateProvider extends ContentProvider {
         sZoneProjectionMap.put(Zone.NAME, Zone.NAME);
 //        sZoneProjectionMap.put(Zone.REMOTE_ID, Zone.REMOTE_ID);
 
-        /*sSpotProjectionMap = new HashMap<String, String>();
+        sSpotProjectionMap = new HashMap<String, String>();
         sSpotProjectionMap.put(Spot._ID, Spot._ID);
         sSpotProjectionMap.put(Spot.X, Spot.X);
         sSpotProjectionMap.put(Spot.Y, Spot.Y);
         sSpotProjectionMap.put(Spot.D, Spot.D);
-        sSpotProjectionMap.put(Spot.NAME, Spot.NAME);
-        sSpotProjectionMap.put(Spot.REMOTE_ID, Spot.REMOTE_ID);
 
-        sSampleProjectionMap = new HashMap<String, String>();
+        /*sSampleProjectionMap = new HashMap<String, String>();
         sSampleProjectionMap.put(Sample._ID, Sample._ID);
         sSampleProjectionMap.put(Sample.NAME, Sample.NAME);
         sSampleProjectionMap.put(Sample.TIME, Sample.TIME);
@@ -144,11 +143,11 @@ public class LocateProvider extends ContentProvider {
                 qb.setTables(ZONE_TABLE_NAME);
                 qb.setProjectionMap(sZoneProjectionMap);
                 break;
-            /*case SPOT:
+            case SPOT:
                 qb.setTables(SPOT_TABLE_NAME);
                 qb.setProjectionMap(sSpotProjectionMap);
                 break;
-            case SAMPLE:        // 查询样本整表
+            /*case SAMPLE:        // 查询样本整表
                 qb.setTables(SAMPLE_TABLE_NAME);
                 qb.setProjectionMap(sSampleProjectionMap);
                 break;
@@ -188,11 +187,11 @@ public class LocateProvider extends ContentProvider {
                 return Zone.CONTENT_TYPE;
             case ZONE_ID:
                 return Zone.CONTENT_ITEM_TYPE;
-            /*case SPOT:
+            case SPOT:
                 return Spot.CONTENT_TYPE;
             case SPOT_ID:
                 return Spot.CONTENT_ITEM_TYPE;
-            case SAMPLE:
+            /*case SAMPLE:
                 return Sample.CONTENT_TYPE;
             case SAMPLE_ID:
                 return Sample.CONTENT_ITEM_TYPE;
@@ -225,11 +224,11 @@ public class LocateProvider extends ContentProvider {
                 contentUri = Zone.CONTENT_URI;
                 tableName = ZONE_TABLE_NAME;
                 break;
-            /*case SPOT:
+            case SPOT:
                 contentUri = Spot.CONTENT_URI;
                 tableName = SPOT_TABLE_NAME;
                 break;
-            case SAMPLE:
+            /*case SAMPLE:
                 contentUri = Sample.CONTENT_URI;
                 tableName = SAMPLE_TABLE_NAME;
                 break;
@@ -297,14 +296,12 @@ public class LocateProvider extends ContentProvider {
                                        + ");");
 
             // 创建采集点表
-            /*db.execSQL("CREATE TABLE " + SPOT_TABLE_NAME + " ("
+            db.execSQL("CREATE TABLE " + SPOT_TABLE_NAME + " ("
                                        + Spot._ID + " INTEGER PRIMARY KEY,"
                                        + Spot.X + " FLOAT NOT NULL DEFAULT 0.00,"
                                        + Spot.Y + " FLOAT NOT NULL DEFAULT 0.00,"
-                                       + Spot.D + " FLOAT NOT NULL DEFAULT 0.00,"
-                                       + Spot.NAME + " TEXT,"
-                                       + Spot.REMOTE_ID + " TEXT"
-                                       + ");");*/
+                                       + Spot.D + " FLOAT NOT NULL DEFAULT 0.00"
+                                       + ");");
 
             // 创建样本表
             /*db.execSQL("CREATE TABLE " + SAMPLE_TABLE_NAME + " ("

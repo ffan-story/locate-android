@@ -1,9 +1,11 @@
-package com.feifan.locate.widget;
+package com.feifan.locate.widget.ui;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +26,15 @@ public abstract class BaseFragment extends Fragment implements MenuItem.OnMenuIt
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        int titleRes = getTitleResource();
+        if(titleRes != NO_INTEGER) {
+            getActivity().setTitle(titleRes);
+        }
     }
 
     @Override
@@ -62,6 +73,14 @@ public abstract class BaseFragment extends Fragment implements MenuItem.OnMenuIt
      */
     protected <T> T findView(@IdRes int id) {
         return (T)getView().findViewById(id);
+    }
+
+    /**
+     * 获取标题资源
+     * @return
+     */
+    protected @StringRes int getTitleResource(){
+        return NO_INTEGER;
     }
 
     @Override
