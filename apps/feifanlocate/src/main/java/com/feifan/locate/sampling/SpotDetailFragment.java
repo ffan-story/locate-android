@@ -2,6 +2,7 @@ package com.feifan.locate.sampling;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,12 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.feifan.locate.R;
+import com.feifan.locate.provider.LocateData;
+import com.feifan.locate.provider.LocateData.SampleSpot;
 import com.feifan.locate.utils.LogUtils;
 import com.feifan.locate.widget.cursorwork.RecyclerCursorAdapter;
 import com.feifan.locate.widget.cursorwork.SimpleCursorAdapter;
 import com.feifan.locate.widget.plan.MarkLayer;
 import com.feifan.locate.widget.ui.AbsSensorFragment;
-import com.feifan.locate.provider.LocateData.Spot;
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -62,12 +64,7 @@ public class SpotDetailFragment extends AbsSensorFragment {
 
         // 加载样本列表
         RecyclerView recyclerView = findView(R.id.spot_detail_sample_list);
-        mAdapter = new SimpleCursorAdapter<DirectionModel>(DirectionModel.class){
-            @Override
-            protected void onBindViewHolder(ViewHolder holder, Cursor cursor) {
-                super.onBindViewHolder(holder, cursor);
-            }
-        };
+        mAdapter = new SimpleCursorAdapter<>(DirectionModel.class);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -88,7 +85,7 @@ public class SpotDetailFragment extends AbsSensorFragment {
 
     @Override
     protected Uri getContentUri() {
-        return Spot.CONTENT_URI;
+        return SampleSpot.CONTENT_URI;
     }
 
     @Override
@@ -99,17 +96,16 @@ public class SpotDetailFragment extends AbsSensorFragment {
     public static class DirectionModel extends SimpleCursorAdapter.CursorModel {
 
         public float direction;
-        public int sampleCount;
+        public int count;
 
         public DirectionModel(Cursor cursor) {
             super(cursor);
-            int idIndex = cursor.getColumnIndexOrThrow(Spot._ID);
+            int idIndex = cursor.getColumnIndexOrThrow(SampleSpot._ID);
             id = cursor.getInt(idIndex);
-            int directionIndex = cursor.getColumnIndexOrThrow(Spot.D);
+            int directionIndex = cursor.getColumnIndexOrThrow(SampleSpot.D);
             direction = cursor.getFloat(directionIndex);
-
-            // TODO 获取采样数量
-            sampleCount = 0;
+            int countIndex = cursor.getColumnIndexOrThrow(SampleSpot.COUNT);
+            count = cursor.getInt(countIndex);
         }
     }
 }

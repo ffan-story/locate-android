@@ -2,13 +2,8 @@ package com.feifan.locate.sampling;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,7 +17,6 @@ import android.widget.ImageView;
 import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.utils.LogUtils;
-import com.feifan.locate.widget.cursorwork.AbsLoaderFragment;
 import com.feifan.locate.widget.cursorwork.RecyclerCursorAdapter;
 import com.feifan.locate.widget.plan.LocationLayer;
 import com.feifan.locate.widget.plan.MarkLayer;
@@ -30,6 +24,8 @@ import com.feifan.locate.widget.plan.OnMarkTouchListener;
 import com.feifan.locate.widget.plan.PlanView;
 import com.feifan.locate.widget.popup.BubbleMenu;
 import com.feifan.locate.widget.ui.AbsSensorFragment;
+import com.feifan.locate.provider.LocateData.SampleSpot;
+import com.feifan.locate.provider.LocateData.WorkSpot;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +36,8 @@ import java.util.ArrayList;
  */
 public class SpotPlanFragment extends AbsSensorFragment implements OnMarkTouchListener {
 
+    public static final String EXTRA_KEY_ZONE = "zone";
+
     private static final int REQUEST_CODE_DETAIL = 0;
     private Intent detailIntent;
     private Bundle args;
@@ -49,6 +47,11 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnMarkTouchLi
     private BubbleMenu menu;
     private int transY;
 
+    // data
+    private int zoneId;
+    private int workSpotId;
+    private float radian;
+
     public SpotPlanFragment() {
         // Required empty public constructor
     }
@@ -56,6 +59,8 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnMarkTouchLi
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        zoneId = getArguments().getInt(EXTRA_KEY_ZONE);
 
         detailIntent = new Intent(getContext().getApplicationContext(), ToolbarActivity.class);
         detailIntent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotDetailFragment.class.getName());
@@ -76,8 +81,8 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnMarkTouchLi
 
         // 初始化PlanView
         plan = findView(R.id.spot_plan_img);
-        locationLayer = new LocationLayer();
-        plan.addLayer(locationLayer);
+//        locationLayer = new LocationLayer();
+//        plan.addLayer(locationLayer);
 
         ArrayList<String> items = new ArrayList<String>();
         items.add("采样");
@@ -160,6 +165,11 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnMarkTouchLi
     }
 
     @Override
+    public void onCreateMark(MarkLayer.MarkPoint mark, float x, float y) {
+        WorkSpot.addSpot(getContext(), mark.getOriginX(), mark.getOriginY(), zoneId);
+    }
+
+    @Override
     public void onPress(MarkLayer.MarkPoint mark, float x, float y) {
         if(transY == 0) {
             // todo 使用mark的高度更为合理
@@ -172,10 +182,14 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnMarkTouchLi
     public void onLongPress(MarkLayer.MarkPoint mark, float x, float y) {
         args.putParcelable(SpotDetailFragment.EXTRA_KEY_MARKPOINT, mark);
         startActivityForResult(detailIntent, REQUEST_CODE_DETAIL);
+
+        // 添加样本点到数据库
+        SampleSpot.add(getContext(), mark.getOriginX(), mark.getOriginY(), radian, workSpotId);
     }
 
     @Override
     protected void onOrientationChanged(float radian) {
         // TODO 更新界面
+        this.radian = radian;
     }
 }

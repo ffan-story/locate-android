@@ -8,6 +8,12 @@ package com.feifan.locate.widget.plan;
 public interface OnMarkTouchListener {
 
     /**
+     * 创建标记点
+     * @param x
+     * @param y
+     */
+    void onCreateMark(MarkLayer.MarkPoint mark, float x, float y);
+    /**
      * 点击标记监听
      * @param mark
      * @param x

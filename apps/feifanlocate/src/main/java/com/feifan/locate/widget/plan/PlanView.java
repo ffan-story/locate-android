@@ -96,6 +96,7 @@ public class PlanView extends ImageView {
         // TODO 提供默认的图标
         Bitmap bmpMark = BitmapFactory.decodeResource(context.getResources(), R.mipmap.plan_mark);
         mMarkLayer.setMarkIcon(bmpMark);
+        addLayer(mMarkLayer);
 
         // 让GestureDetector起作用
         setClickable(true);
@@ -443,13 +444,16 @@ public class PlanView extends ImageView {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
 
-//            currentMark = mMarkerLayer.findMarkByTouchPoint(e.getX(), e.getY());
             if(currentMark != null) {
                 LogUtils.d("Mark" + currentMark.toString() + " is pressed");
                 if(mMarkListener != null) {
                     mMarkListener.onPress(currentMark, e.getX(), e.getY());
                 }
             }else {
+                if(mMarkListener != null) {
+                    mMarkListener.onCreateMark(currentMark, e.getX(), e.getY());
+                }
+
                 mMarkLayer.addMark(e.getX(), e.getY(), mPlanOrigin.getOriginX(), mPlanOrigin.getOriginY(), scale);
                 invalidate();
             }
@@ -465,6 +469,7 @@ public class PlanView extends ImageView {
                 if(mMarkListener != null) {
                     mMarkListener.onLongPress(currentMark, e.getX(), e.getY());
                 }
+                currentMark = null;
             }
         }
     }

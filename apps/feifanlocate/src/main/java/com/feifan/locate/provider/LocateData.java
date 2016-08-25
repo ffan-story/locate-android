@@ -1,7 +1,11 @@
 package com.feifan.locate.provider;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 
 /**
  * Sample操作类
@@ -40,16 +44,66 @@ public class LocateData {
     /**
      * 采集点定义
      */
-    public static class Spot implements BaseColumns {
+    public static class WorkSpot implements BaseColumns {
 
         /** 访问Spot表的URL */
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/spot");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/workspot");
 
-        /** {@link Spot#CONTENT_URI}的MIME类型 */
-        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.spot";
+        /** {@link WorkSpot#CONTENT_URI}的MIME类型 */
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.workspot";
 
-        /** {@link Spot#CONTENT_URI}子项的MIME类型 */
-        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.spot";
+        /** {@link WorkSpot#CONTENT_URI}子项的MIME类型 */
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.workspot";
+
+        /**
+         * 字段名－x轴坐标
+         *  TYPE:FLOAT
+         */
+        public static final String X = "x";
+        /**
+         * 字段名－y轴坐标
+         * TYPE:FLOAT
+         */
+        public static final String Y = "y";
+
+        /**
+         * 字段名－定位区域
+         * TYPE:INTEGER
+         */
+        public static final String ZONE = "zone";
+
+        /**
+         * 添加采集点
+         * @param context
+         */
+        public static void  addSpot(Context context, float x, float y, int zone) {
+            final ContentResolver resolver = context.getContentResolver();
+
+            final int COLUMN_COUNT = 5;
+            ContentValues values = new ContentValues(COLUMN_COUNT);
+            values.put(X, x);
+            values.put(Y, y);
+            values.put(ZONE, zone);
+            Uri result = resolver.insert(CONTENT_URI, values);
+        }
+    }
+
+    /**
+     * 样本点定义
+     * <pre>
+     *     一个采集点可以根据方向不同，拥有多个样本点
+     * </pre>
+     */
+    public static class SampleSpot implements BaseColumns {
+
+        /** 访问Spot表的URL */
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/samplespot");
+
+        /** {@link SampleSpot#CONTENT_URI}的MIME类型 */
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.samplespot";
+
+        /** {@link SampleSpot#CONTENT_URI}子项的MIME类型 */
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.samplespot";
 
         /**
          * 字段名－x轴坐标
@@ -62,17 +116,47 @@ public class LocateData {
          */
         public static final String Y = "y";
         /**
-         * 字段名－方向（角度）
+         * 字段名－方向
          * TYPE:FLOAT
          */
-        public static final String D = "D";
-
+        public static final String D = "d";
         /**
-         * 字段名－定位区域
+         * 字段名－已经采集样本的数量
+         */
+        public static final String COUNT = "count";
+        /**
+         * 字段名－采集点
          * TYPE:INTEGER
          */
-        public static final String ZONE = "zone";
+        public static final String WORKSPOT = "workspot";
+        /**
+         * 添加样本点
+         * @param context
+         */
+        public static void add(Context context, float x, float y, float d, int wspot) {
+            final ContentResolver resolver = context.getContentResolver();
+
+            final int COLUMN_COUNT = 5;
+            ContentValues values = new ContentValues(COLUMN_COUNT);
+            values.put(X, x);
+            values.put(Y, y);
+            values.put(D, d);
+            values.put(COUNT, 0);
+            values.put(WORKSPOT, wspot);
+            Uri result = resolver.insert(CONTENT_URI, values);
+        }
+
+        /**
+         * 更新样本点
+         * @param context
+         */
+        public static void update(Context context) {
+
+        }
+
     }
+
+
 //
 //    /**
 //     * 样本定义

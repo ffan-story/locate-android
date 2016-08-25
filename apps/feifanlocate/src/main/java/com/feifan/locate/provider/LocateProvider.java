@@ -11,13 +11,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import com.feifan.locate.provider.LocateData.Zone;
-import com.feifan.locate.provider.LocateData.Spot;
+import com.feifan.locate.provider.LocateData.WorkSpot;
+import com.feifan.locate.provider.LocateData.SampleSpot;
+import com.feifan.locate.utils.LogUtils;
 
 /**
  * Created by xuchunlei on 16/4/21.
@@ -34,7 +34,9 @@ public class LocateProvider extends ContentProvider {
     // 数据库表名－定位区域
     private static final String ZONE_TABLE_NAME = "zone";
     // 数据库表名－采集点
-    private static final String SPOT_TABLE_NAME = "spot";
+    private static final String WORKSPOT_TABLE_NAME = "workspot";
+    // 数据库表名－样本点
+    private static final String SAMPLESPOT_TABLE_NAME = "samplespot";
     // 数据库表名－样本
     private static final String SAMPLE_TABLE_NAME = "sample";
     // 数据库表名－BeaconUUID
@@ -50,8 +52,11 @@ public class LocateProvider extends ContentProvider {
     private static UriMatcher sUriMatcher;
     private static final int ZONE = 1;
     private static final int ZONE_ID = ZONE + 1;
-    private static final int SPOT = ZONE_ID + 1;
-    private static final int SPOT_ID = SPOT + 1;
+    private static final int WORKSPOT = ZONE_ID + 1;
+    private static final int WORKSPOT_ID = WORKSPOT + 1;
+    private static final int SAMPLESPOT = WORKSPOT_ID + 1;
+    private static final int SAMPLESPOT_ID = SAMPLESPOT + 1;
+
 /*    private static final int SAMPLE = SPOT_ID + 1;
     private static final int SAMPLE_ID = SAMPLE + 1;
     private static final int BEACON_UUID = SAMPLE_ID + 1;
@@ -65,7 +70,9 @@ public class LocateProvider extends ContentProvider {
     // 定位区域表列映射集合
     private static HashMap<String, String> sZoneProjectionMap;
     // 采集点表列映射集合
-    private static HashMap<String, String> sSpotProjectionMap;
+    private static HashMap<String, String> sWorkSpotProjectionMap;
+    // 样本点表列映射集合
+    private static HashMap<String, String> sSampleSpotProjectionMap;
     // 样本表列映射集合
 //    private static HashMap<String, String> sSampleProjectionMap;
     // 样本详情表列映射集合
@@ -79,8 +86,10 @@ public class LocateProvider extends ContentProvider {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sUriMatcher.addURI(AUTHORITY, "zone", ZONE);
         sUriMatcher.addURI(AUTHORITY, "zone/#", ZONE_ID);
-        sUriMatcher.addURI(AUTHORITY, "spot", SPOT);
-        sUriMatcher.addURI(AUTHORITY, "spot/#", SPOT_ID);
+        sUriMatcher.addURI(AUTHORITY, "workspot", WORKSPOT);
+        sUriMatcher.addURI(AUTHORITY, "workspot/#", WORKSPOT_ID);
+        sUriMatcher.addURI(AUTHORITY, "samplespot", SAMPLESPOT);
+        sUriMatcher.addURI(AUTHORITY, "samplespot/#", SAMPLESPOT_ID);
         /*sUriMatcher.addURI(AUTHORITY, "sample", SAMPLE);
         sUriMatcher.addURI(AUTHORITY, "sample/#", SAMPLE_ID);
         sUriMatcher.addURI(AUTHORITY, "beacon_uuid", BEACON_UUID);
@@ -95,11 +104,15 @@ public class LocateProvider extends ContentProvider {
         sZoneProjectionMap.put(Zone.NAME, Zone.NAME);
 //        sZoneProjectionMap.put(Zone.REMOTE_ID, Zone.REMOTE_ID);
 
-        sSpotProjectionMap = new HashMap<String, String>();
-        sSpotProjectionMap.put(Spot._ID, Spot._ID);
-        sSpotProjectionMap.put(Spot.X, Spot.X);
-        sSpotProjectionMap.put(Spot.Y, Spot.Y);
-        sSpotProjectionMap.put(Spot.D, Spot.D);
+        sWorkSpotProjectionMap = new HashMap<String, String>();
+        sWorkSpotProjectionMap.put(WorkSpot._ID, WorkSpot._ID);
+        sWorkSpotProjectionMap.put(WorkSpot.X, WorkSpot.X);
+        sWorkSpotProjectionMap.put(WorkSpot.Y, WorkSpot.Y);
+
+        sSampleSpotProjectionMap = new HashMap<String, String>();
+        sSampleSpotProjectionMap.put(SampleSpot._ID, SampleSpot._ID);
+        sSampleSpotProjectionMap.put(SampleSpot.X, SampleSpot.X);
+        sSampleSpotProjectionMap.put(SampleSpot.Y, SampleSpot.Y);
 
         /*sSampleProjectionMap = new HashMap<String, String>();
         sSampleProjectionMap.put(Sample._ID, Sample._ID);
@@ -143,9 +156,13 @@ public class LocateProvider extends ContentProvider {
                 qb.setTables(ZONE_TABLE_NAME);
                 qb.setProjectionMap(sZoneProjectionMap);
                 break;
-            case SPOT:
-                qb.setTables(SPOT_TABLE_NAME);
-                qb.setProjectionMap(sSpotProjectionMap);
+            case WORKSPOT:
+                qb.setTables(WORKSPOT_TABLE_NAME);
+                qb.setProjectionMap(sWorkSpotProjectionMap);
+                break;
+            case SAMPLESPOT:
+                qb.setTables(SAMPLESPOT_TABLE_NAME);
+                qb.setProjectionMap(sSampleSpotProjectionMap);
                 break;
             /*case SAMPLE:        // 查询样本整表
                 qb.setTables(SAMPLE_TABLE_NAME);
@@ -187,10 +204,14 @@ public class LocateProvider extends ContentProvider {
                 return Zone.CONTENT_TYPE;
             case ZONE_ID:
                 return Zone.CONTENT_ITEM_TYPE;
-            case SPOT:
-                return Spot.CONTENT_TYPE;
-            case SPOT_ID:
-                return Spot.CONTENT_ITEM_TYPE;
+            case WORKSPOT:
+                return WorkSpot.CONTENT_TYPE;
+            case WORKSPOT_ID:
+                return WorkSpot.CONTENT_ITEM_TYPE;
+            case SAMPLESPOT:
+                return SampleSpot.CONTENT_TYPE;
+            case SAMPLESPOT_ID:
+                return SampleSpot.CONTENT_ITEM_TYPE;
             /*case SAMPLE:
                 return Sample.CONTENT_TYPE;
             case SAMPLE_ID:
@@ -224,9 +245,13 @@ public class LocateProvider extends ContentProvider {
                 contentUri = Zone.CONTENT_URI;
                 tableName = ZONE_TABLE_NAME;
                 break;
-            case SPOT:
-                contentUri = Spot.CONTENT_URI;
-                tableName = SPOT_TABLE_NAME;
+            case WORKSPOT:
+                contentUri = WorkSpot.CONTENT_URI;
+                tableName = WORKSPOT_TABLE_NAME;
+                break;
+            case SAMPLESPOT:
+                contentUri = SampleSpot.CONTENT_URI;
+                tableName = SAMPLESPOT_TABLE_NAME;
                 break;
             /*case SAMPLE:
                 contentUri = Sample.CONTENT_URI;
@@ -261,6 +286,7 @@ public class LocateProvider extends ContentProvider {
         if(rowId > 0) { // 通知变更
             Uri resultUri = ContentUris.withAppendedId(contentUri, rowId);
             getContext().getContentResolver().notifyChange(resultUri, null);
+            LogUtils.d("insert a row in " + tableName + " with id = " + rowId);
             return resultUri;
         }
 
@@ -296,12 +322,25 @@ public class LocateProvider extends ContentProvider {
                                        + ");");
 
             // 创建采集点表
-            db.execSQL("CREATE TABLE " + SPOT_TABLE_NAME + " ("
-                                       + Spot._ID + " INTEGER PRIMARY KEY,"
-                                       + Spot.X + " FLOAT NOT NULL DEFAULT 0.00,"
-                                       + Spot.Y + " FLOAT NOT NULL DEFAULT 0.00,"
-                                       + Spot.D + " FLOAT NOT NULL DEFAULT 0.00"
+            db.execSQL("CREATE TABLE " + WORKSPOT_TABLE_NAME + " ("
+                                       + WorkSpot._ID + " INTEGER PRIMARY KEY,"
+                                       + WorkSpot.X + " FLOAT NOT NULL DEFAULT 0.00,"
+                                       + WorkSpot.Y + " FLOAT NOT NULL DEFAULT 0.00,"
+                                       + WorkSpot.ZONE + " INTEGER NOT NULL REFERENCES " + ZONE_TABLE_NAME
+                                                   + "(" + Zone._ID + ") ON UPDATE CASCADE"
                                        + ");");
+
+            // 创建样本点表
+            db.execSQL("CREATE TABLE " + SAMPLESPOT_TABLE_NAME + " ("
+                    + SampleSpot._ID + " INTEGER PRIMARY KEY,"
+                    + SampleSpot.X + " FLOAT NOT NULL DEFAULT 0.00,"
+                    + SampleSpot.Y + " FLOAT NOT NULL DEFAULT 0.00,"
+                    + SampleSpot.D + " FLOAT NOT NULL DEFAULT 0.00,"
+                    + SampleSpot.COUNT + " INTEGER NOT NULL DEFAULT 0,"
+                    + SampleSpot.WORKSPOT + " INTEGER NOT NULL REFERENCES " + WORKSPOT_TABLE_NAME
+                    + "(" + WorkSpot._ID + ") ON UPDATE CASCADE"
+                    + ");");
+
 
             // 创建样本表
             /*db.execSQL("CREATE TABLE " + SAMPLE_TABLE_NAME + " ("

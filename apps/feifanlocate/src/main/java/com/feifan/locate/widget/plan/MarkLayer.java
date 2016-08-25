@@ -7,7 +7,11 @@ import android.graphics.PointF;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.MotionEvent;
 
+import com.feifan.locate.utils.LogUtils;
+
+import java.io.DataInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +83,7 @@ public class MarkLayer implements IPlanLayer {
         long flag = 1l << (marks.size() - 1);
         lockFlags ^= flag;
 
+        LogUtils.d("add mark(" + x + "," + y + ") successfully.");
         // temp
 //        lockAllPoints();
     }

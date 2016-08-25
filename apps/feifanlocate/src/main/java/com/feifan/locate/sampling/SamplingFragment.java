@@ -80,6 +80,9 @@ public class SamplingFragment extends AbsLoaderFragment implements View.OnClickL
     public void onClick(View v) {
         Intent intent = new Intent(getContext().getApplicationContext(), ToolbarActivity.class);
         intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotPlanFragment.class.getName());
+        Bundle args = new Bundle();
+        args.putInt(SpotPlanFragment.EXTRA_KEY_ZONE, ((ZoneModel)v.getTag()).id);
+        intent.putExtra(ToolbarActivity.EXTRA_KEY_ARGUMENTS, args);
         startActivity(intent);
     }
 
