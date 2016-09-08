@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- 菜单项ID－导出样本详情数据 -->
-    <item name="menu_sample_detail_export" type="id" />
-</resources>
