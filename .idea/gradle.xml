@@ -9,37 +9,21 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/apps" />
-            <option value="$PROJECT_DIR$/apps/app" />
-            <option value="$PROJECT_DIR$/apps/feifanlocate" />
-            <option value="$PROJECT_DIR$/baselib" />
-            <option value="$PROJECT_DIR$/commons" />
-            <option value="$PROJECT_DIR$/commons/compatlib" />
+            <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/libs" />
-            <option value="$PROJECT_DIR$/libs/base" />
-            <option value="$PROJECT_DIR$/libs/logger" />
-            <option value="$PROJECT_DIR$/libs/mybeacon" />
-            <option value="$PROJECT_DIR$/libs/ui" />
-            <option value="$PROJECT_DIR$/libs/utils" />
-            <option value="$PROJECT_DIR$/scanlib" />
+            <option value="$PROJECT_DIR$/libs/baselib" />
+            <option value="$PROJECT_DIR$/libs/planlib" />
+            <option value="$PROJECT_DIR$/libs/scanlib" />
           </set>
         </option>
         <option name="myModules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/apps" />
-            <option value="$PROJECT_DIR$/apps/app" />
-            <option value="$PROJECT_DIR$/apps/feifanlocate" />
-            <option value="$PROJECT_DIR$/baselib" />
-            <option value="$PROJECT_DIR$/commons" />
-            <option value="$PROJECT_DIR$/commons/compatlib" />
+            <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/libs" />
-            <option value="$PROJECT_DIR$/libs/base" />
-            <option value="$PROJECT_DIR$/libs/logger" />
-            <option value="$PROJECT_DIR$/libs/mybeacon" />
-            <option value="$PROJECT_DIR$/libs/ui" />
-            <option value="$PROJECT_DIR$/libs/utils" />
-            <option value="$PROJECT_DIR$/scanlib" />
+            <option value="$PROJECT_DIR$/libs/baselib" />
+            <option value="$PROJECT_DIR$/libs/planlib" />
+            <option value="$PROJECT_DIR$/libs/scanlib" />
           </set>
         </option>
       </GradleProjectSettings>

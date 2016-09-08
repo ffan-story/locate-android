@@ -2,21 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/apps/app/app.iml" filepath="$PROJECT_DIR$/apps/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/apps/apps.iml" filepath="$PROJECT_DIR$/apps/apps.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libs/base/base.iml" filepath="$PROJECT_DIR$/libs/base/base.iml" />
-      <module fileurl="file://$PROJECT_DIR$/baselib/baselib.iml" filepath="$PROJECT_DIR$/baselib/baselib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/commons/commons.iml" filepath="$PROJECT_DIR$/commons/commons.iml" />
-      <module fileurl="file://$PROJECT_DIR$/commons/compatlib/compatlib.iml" filepath="$PROJECT_DIR$/commons/compatlib/compatlib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/apps/feifanlocate/feifanlocate.iml" filepath="$PROJECT_DIR$/apps/feifanlocate/feifanlocate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/baselib/baselib.iml" filepath="$PROJECT_DIR$/libs/baselib/baselib.iml" />
       <module fileurl="file://$PROJECT_DIR$/libs/libs.iml" filepath="$PROJECT_DIR$/libs/libs.iml" />
       <module fileurl="file://$PROJECT_DIR$/locate-android.iml" filepath="$PROJECT_DIR$/locate-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libs/logger/logger.iml" filepath="$PROJECT_DIR$/libs/logger/logger.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libs/mybeacon/mybeacon.iml" filepath="$PROJECT_DIR$/libs/mybeacon/mybeacon.iml" />
-      <module fileurl="file://$PROJECT_DIR$/scanlib/scanlib.iml" filepath="$PROJECT_DIR$/scanlib/scanlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/planlib/planlib.iml" filepath="$PROJECT_DIR$/libs/planlib/planlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/scanlib/scanlib.iml" filepath="$PROJECT_DIR$/libs/scanlib/scanlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/scanlib/scanlibrary.iml" filepath="$PROJECT_DIR$/scanlib/scanlibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libs/ui/ui.iml" filepath="$PROJECT_DIR$/libs/ui/ui.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libs/utils/utils.iml" filepath="$PROJECT_DIR$/libs/utils/utils.iml" />
     </modules>
   </component>
 </project>
