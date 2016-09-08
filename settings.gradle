@@ -1,3 +1,4 @@
+include ':scanlib', ':baselib'
 include 'apps:feifanlocate'
 include 'libs:ui'
 include 'apps:app'

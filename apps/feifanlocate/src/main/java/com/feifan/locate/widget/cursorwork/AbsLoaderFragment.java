@@ -9,6 +9,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 
+import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.widget.ui.BaseFragment;
 
 /**
@@ -33,10 +34,6 @@ public abstract class AbsLoaderFragment extends BaseFragment implements LoaderMa
     protected abstract Uri getContentUri();
     /** 获得Adapter */
     protected abstract <A extends RecyclerCursorAdapter> A getAdapter();
-    /** Load数据后处理－在加载数据后调用 */
-    protected void onPostLoad(Cursor data) {
-        // TODO override me if needed
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -50,18 +47,33 @@ public abstract class AbsLoaderFragment extends BaseFragment implements LoaderMa
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String selection = args != null ? args.getString(LOADER_KEY_SELECTION) : null;
         String[] selectionArgs = args != null ? args.getStringArray(LOADER_KEY_SELECTION_ARGS) : null;
+        LogUtils.d("selection = " + selection + ",selectionArgs = " + args2string(selectionArgs));
         return new CursorLoader(getContext(), getContentUri(), null, selection, selectionArgs, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "onLoadFinished:we got " + data.getCount() + " data item from via loader " + loader.getId());
-        getAdapter().swapCursor(data);
-        onPostLoad(data);
+        if(getAdapter() != null) {
+            getAdapter().swapCursor(data);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        getAdapter().swapCursor(null);
+        if(getAdapter() != null) {
+            getAdapter().swapCursor(null);
+        }
+    }
+
+    private String args2string(String[] args) {
+        String result = "";
+        if(args != null && args.length != 0) {
+            for(String arg : args) {
+                result += arg + ",";
+            }
+            result = result.substring(0, result.length() - 1);
+        }
+        return result;
     }
 }

@@ -11,13 +11,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import java.util.HashMap;
 
+import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.provider.LocateData.Zone;
 import com.feifan.locate.provider.LocateData.WorkSpot;
 import com.feifan.locate.provider.LocateData.SampleSpot;
-import com.feifan.locate.utils.LogUtils;
 
 /**
  * Created by xuchunlei on 16/4/21.
@@ -108,11 +109,15 @@ public class LocateProvider extends ContentProvider {
         sWorkSpotProjectionMap.put(WorkSpot._ID, WorkSpot._ID);
         sWorkSpotProjectionMap.put(WorkSpot.X, WorkSpot.X);
         sWorkSpotProjectionMap.put(WorkSpot.Y, WorkSpot.Y);
+        sWorkSpotProjectionMap.put(WorkSpot.ZONE, WorkSpot.ZONE);
 
         sSampleSpotProjectionMap = new HashMap<String, String>();
         sSampleSpotProjectionMap.put(SampleSpot._ID, SampleSpot._ID);
         sSampleSpotProjectionMap.put(SampleSpot.X, SampleSpot.X);
         sSampleSpotProjectionMap.put(SampleSpot.Y, SampleSpot.Y);
+        sSampleSpotProjectionMap.put(SampleSpot.D, SampleSpot.D);
+        sSampleSpotProjectionMap.put(SampleSpot.STATUS, SampleSpot.STATUS);
+        sSampleSpotProjectionMap.put(SampleSpot.COUNT, SampleSpot.COUNT);
 
         /*sSampleProjectionMap = new HashMap<String, String>();
         sSampleProjectionMap.put(Sample._ID, Sample._ID);
@@ -295,7 +300,24 @@ public class LocateProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        // 支持级联删除和更新
+        db.execSQL("PRAGMA foreign_keys = ON;");
+        int count;
+        switch (sUriMatcher.match(uri)) {
+            case WORKSPOT:
+                count = db.delete(WORKSPOT_TABLE_NAME, selection, selectionArgs);
+                break;
+            case WORKSPOT_ID:
+                String workspotId = uri.getPathSegments().get(1);
+                count = db.delete(WORKSPOT_TABLE_NAME, WorkSpot._ID + "=" + workspotId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return count;
     }
 
     @Override
@@ -324,8 +346,8 @@ public class LocateProvider extends ContentProvider {
             // 创建采集点表
             db.execSQL("CREATE TABLE " + WORKSPOT_TABLE_NAME + " ("
                                        + WorkSpot._ID + " INTEGER PRIMARY KEY,"
-                                       + WorkSpot.X + " FLOAT NOT NULL DEFAULT 0.00,"
-                                       + WorkSpot.Y + " FLOAT NOT NULL DEFAULT 0.00,"
+                                       + WorkSpot.X + " TEXT NOT NULL DEFAULT 0.00,"
+                                       + WorkSpot.Y + " TEXT NOT NULL DEFAULT 0.00,"
                                        + WorkSpot.ZONE + " INTEGER NOT NULL REFERENCES " + ZONE_TABLE_NAME
                                                    + "(" + Zone._ID + ") ON UPDATE CASCADE"
                                        + ");");
@@ -337,8 +359,9 @@ public class LocateProvider extends ContentProvider {
                     + SampleSpot.Y + " FLOAT NOT NULL DEFAULT 0.00,"
                     + SampleSpot.D + " FLOAT NOT NULL DEFAULT 0.00,"
                     + SampleSpot.COUNT + " INTEGER NOT NULL DEFAULT 0,"
+                    + SampleSpot.STATUS + " INTEGER NOT NULL DEFAULT 1,"
                     + SampleSpot.WORKSPOT + " INTEGER NOT NULL REFERENCES " + WORKSPOT_TABLE_NAME
-                    + "(" + WorkSpot._ID + ") ON UPDATE CASCADE"
+                    + "(" + WorkSpot._ID + ") ON UPDATE CASCADE ON DELETE CASCADE"
                     + ");");
 
 

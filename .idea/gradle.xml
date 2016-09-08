@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/apps" />
             <option value="$PROJECT_DIR$/apps/app" />
             <option value="$PROJECT_DIR$/apps/feifanlocate" />
+            <option value="$PROJECT_DIR$/baselib" />
             <option value="$PROJECT_DIR$/commons" />
             <option value="$PROJECT_DIR$/commons/compatlib" />
             <option value="$PROJECT_DIR$/libs" />
@@ -20,6 +21,7 @@
             <option value="$PROJECT_DIR$/libs/mybeacon" />
             <option value="$PROJECT_DIR$/libs/ui" />
             <option value="$PROJECT_DIR$/libs/utils" />
+            <option value="$PROJECT_DIR$/scanlib" />
           </set>
         </option>
         <option name="myModules">
@@ -28,6 +30,7 @@
             <option value="$PROJECT_DIR$/apps" />
             <option value="$PROJECT_DIR$/apps/app" />
             <option value="$PROJECT_DIR$/apps/feifanlocate" />
+            <option value="$PROJECT_DIR$/baselib" />
             <option value="$PROJECT_DIR$/commons" />
             <option value="$PROJECT_DIR$/commons/compatlib" />
             <option value="$PROJECT_DIR$/libs" />
@@ -36,6 +39,7 @@
             <option value="$PROJECT_DIR$/libs/mybeacon" />
             <option value="$PROJECT_DIR$/libs/ui" />
             <option value="$PROJECT_DIR$/libs/utils" />
+            <option value="$PROJECT_DIR$/scanlib" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -8,12 +8,16 @@ package com.feifan.locate.widget.plan;
 public class PlanOrigin {
 
     // 内容层原点坐标
-    private float originX;
-    private float originY;
+    private float x;
+    private float y;
 
     public PlanOrigin(float x, float y) {
-        originX = x;
-        originY = y;
+        set(x, y);
+    }
+
+    public void set(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 
     /**
@@ -22,8 +26,8 @@ public class PlanOrigin {
      * @param transY
      */
     public void onMoveEvent(float transX, float transY) {
-        originX += transX;
-        originY += transY;
+        this.x += transX;
+        this.y += transY;
     }
 
     /**
@@ -33,15 +37,15 @@ public class PlanOrigin {
      * @param focusY
      */
     public void onScaleEvent(float scale, float focusX, float focusY) {
-        originX = (originX - focusX) * scale + focusX;
-        originY = (originY - focusY) * scale + focusY;
+        x = (x - focusX) * scale + focusX;
+        y = (y - focusY) * scale + focusY;
     }
 
-    public float getOriginX() {
-        return originX;
+    public float getX() {
+        return x;
     }
 
-    public float getOriginY() {
-        return originY;
+    public float getY() {
+        return y;
     }
 }

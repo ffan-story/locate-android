@@ -1,4 +1,8 @@
-package com.feifan.locate.utils;
+package com.feifan.baselib.utils;
+
+import android.os.Environment;
+import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,10 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.Locale;
-
-import android.os.Environment;
-import android.text.TextUtils;
-import android.util.Log;
 
 /**
  * 日志工具类

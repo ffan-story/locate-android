@@ -3,9 +3,11 @@ package com.feifan.locate.provider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.text.TextUtils;
+
+import com.feifan.baselib.utils.LogUtils;
 
 /**
  * Sample操作类
@@ -76,16 +78,52 @@ public class LocateData {
          * 添加采集点
          * @param context
          */
-        public static void  addSpot(Context context, float x, float y, int zone) {
+        public static void add(Context context, float x, float y, int zone) {
             final ContentResolver resolver = context.getContentResolver();
-
             final int COLUMN_COUNT = 5;
             ContentValues values = new ContentValues(COLUMN_COUNT);
-            values.put(X, x);
-            values.put(Y, y);
+            values.put(X, String.valueOf(x));
+            values.put(Y, String.valueOf(y));
             values.put(ZONE, zone);
             Uri result = resolver.insert(CONTENT_URI, values);
+            LogUtils.i("workspot:add a new spot(" + x + "," + y + ") at " + zone + " with " + result);
         }
+
+        /**
+         * 删除采集点
+         * @param context
+         * @param x
+         * @param y
+         * @param zone
+         */
+        public static void remove(Context context, float x, float y, int zone) {
+            final ContentResolver resolver = context.getContentResolver();
+            int count = resolver.delete(CONTENT_URI, X + "=? and " + Y + "=? and " + ZONE + "=?",
+                    new String[]{ String.valueOf(x), String.valueOf(y), String.valueOf(zone) });
+            LogUtils.i("workspot:delete " + count + " spot(" + x + "," + y + ") at zone " + zone);
+        }
+
+        /**
+         * 查找采集点
+         * @param context
+         * @param x
+         * @param y
+         * @param zone
+         * @return
+         */
+        public static Cursor find(Context context, float x, float y, int zone) {
+            LogUtils.i("workspot:find spot(" + x + "," + y + ") at zone " + zone);
+            final ContentResolver resolver = context.getContentResolver();
+            return resolver.query(CONTENT_URI, null, X + "=? and " + Y + "=? and " + ZONE + "=?",
+                    new String[]{ String.valueOf(x), String.valueOf(y), String.valueOf(zone) }, null);
+        }
+
+        // temp
+        public static Cursor findAll(Context context) {
+            final ContentResolver resolver = context.getContentResolver();
+            return resolver.query(CONTENT_URI, null, null, null, null);
+        }
+
     }
 
     /**
@@ -125,10 +163,17 @@ public class LocateData {
          */
         public static final String COUNT = "count";
         /**
+         * 字段名－状态
+         * TYPE:INTEGER
+         * 1-就绪；2-运行；3-暂停；4-完成
+         */
+        public static final String STATUS = "status";
+        /**
          * 字段名－采集点
          * TYPE:INTEGER
          */
         public static final String WORKSPOT = "workspot";
+
         /**
          * 添加样本点
          * @param context
@@ -136,14 +181,16 @@ public class LocateData {
         public static void add(Context context, float x, float y, float d, int wspot) {
             final ContentResolver resolver = context.getContentResolver();
 
-            final int COLUMN_COUNT = 5;
+            final int COLUMN_COUNT = 6;
             ContentValues values = new ContentValues(COLUMN_COUNT);
             values.put(X, x);
             values.put(Y, y);
             values.put(D, d);
             values.put(COUNT, 0);
+            values.put(STATUS, 1);
             values.put(WORKSPOT, wspot);
             Uri result = resolver.insert(CONTENT_URI, values);
+            LogUtils.d("samplespot:insert a samplespot at " + result);
         }
 
         /**

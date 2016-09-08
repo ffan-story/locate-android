@@ -15,9 +15,11 @@ import android.view.ViewGroup;
 import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.provider.LocateData.Zone;
+import com.feifan.locate.utils.SizeUtils;
 import com.feifan.locate.widget.cursorwork.AbsLoaderFragment;
 import com.feifan.locate.widget.cursorwork.RecyclerCursorAdapter;
 import com.feifan.locate.widget.cursorwork.SimpleCursorAdapter;
+import com.feifan.locate.widget.recycler.SpaceItemDecoration;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +60,7 @@ public class SamplingFragment extends AbsLoaderFragment implements View.OnClickL
             }
         };
         recyclerView.setAdapter(mAdapter);
-//        recyclerView.addItemDecoration(new SpaceItemDecoration(SizeUtils.dp2px(getContext(), 5)));
+        recyclerView.addItemDecoration(new SpaceItemDecoration(SizeUtils.dp2px(getContext(), 5)));
     }
 
     @Override
