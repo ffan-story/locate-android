@@ -69,6 +69,11 @@ public class ScanService extends Service {
 
     private final CycledLeScanCallback mScanCallback = new CycledLeScanCallback() {
         @Override
+        public void onCycleBegin() {
+//            LogUtils.e("time---------->" + System.currentTimeMillis());
+        }
+
+        @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
             mExecutor.execute(new ScanProcessor(new ScanData(device, rssi, scanRecord)));
         }

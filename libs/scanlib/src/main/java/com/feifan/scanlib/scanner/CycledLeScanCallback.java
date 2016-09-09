@@ -10,6 +10,11 @@ import android.bluetooth.BluetoothDevice;
 public interface CycledLeScanCallback {
 
     /**
+     * 循环开始回调
+     */
+    void onCycleBegin();
+
+    /**
      * 扫描数据回调
      * @param device
      * @param rssi

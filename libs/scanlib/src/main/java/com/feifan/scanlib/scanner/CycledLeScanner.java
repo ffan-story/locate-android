@@ -3,6 +3,7 @@ package com.feifan.scanlib.scanner;
 import android.bluetooth.BluetoothAdapter;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.feifan.baselib.utils.LogUtils;
 
@@ -59,17 +60,20 @@ public abstract class CycledLeScanner {
     }
 
     public void startAtInterval(int period) {
+        LogUtils.d("startAtInterval is called");
         this.period = period;
-
         mScanningEnabled = true;
-        scanDevice();
+        startDevice();
+        doScan();
     }
 
     public void stop() {
         mScanningEnabled = false;
-        if (adapter != null) {
-            stopScan();
-        }
+//        if (adapter != null) {
+//            stopScan();
+//        }
+        stopDevice();
+        LogUtils.d("stop is called");
     }
 
     protected void scheduleScanCycleStop() {
@@ -84,14 +88,14 @@ public abstract class CycledLeScanner {
                 public void run() {
                     scheduleScanCycleStop();
                 }
-            }, millisecondsUntilStop > 1000 ? 1000 : millisecondsUntilStop);
+            }, millisecondsUntilStop > period ? period : millisecondsUntilStop);
         } else {
             finishScanCycle();
         }
     }
 
-    private void scanDevice() {
-        LogUtils.d("startAtInterval called");
+    // 开启蓝牙设备
+    private void startDevice() {
         if (adapter == null) {
             LogUtils.e("No Bluetooth adapter.  beaconService cannot scan.");
         }
@@ -102,6 +106,7 @@ public abstract class CycledLeScanner {
             if (adapter != null) {
                 if (adapter.isEnabled()) {
                     try {
+                        callback.onCycleBegin();
                         startScan();
                     } catch (Exception e) {
                         LogUtils.e("Internal Android exception scanning for beacons", e);
@@ -113,17 +118,10 @@ public abstract class CycledLeScanner {
         } catch (Exception e) {
             LogUtils.e("Exception starting Bluetooth scan.  Perhaps Bluetooth is disabled or unavailable", e);
         }
-
-        mScanCycleStopTime = (SystemClock.elapsedRealtime() + period);
-        scheduleScanCycleStop();
-
-        LogUtils.d("scan started");
     }
 
-    private void finishScanCycle() {
-        LogUtils.d("Done with scan cycle");
-        callback.onCycleEnd();
-
+    // 关闭蓝牙设备
+    private void stopDevice() {
         if (adapter != null) {
             if (adapter.isEnabled()) {
                 try {
@@ -136,10 +134,24 @@ public abstract class CycledLeScanner {
                 LogUtils.d("Bluetooth is disabled.  Cannot scan for beacons.");
             }
         }
+    }
+
+    private void doScan() {
+//        startDevice();
+        mScanCycleStopTime = (SystemClock.elapsedRealtime() + period);
+        scheduleScanCycleStop();
+        LogUtils.d("scan started");
+    }
+
+    private void finishScanCycle() {
+        LogUtils.d("Done with scan cycle");
+        callback.onCycleEnd();
+
+//        stopDevice();
 
         // 启动下一次扫描
         if(mScanningEnabled) {
-            scanDevice();
+            doScan();
         }
     }
 
