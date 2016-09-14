@@ -6,11 +6,11 @@ import android.graphics.Paint;
 
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.planlib.PlanOrigin;
-import com.feifan.planlib.base.IOperableLayer;
-import com.feifan.planlib.base.ILayerPoint;
-import com.feifan.planlib.base.OnLayerListener;
-import com.feifan.planlib.base.OnOperationListener;
-import com.feifan.planlib.base.OnOperationListener.PointInfo;
+import com.feifan.planlib.IOperableLayer;
+import com.feifan.planlib.ILayerPoint;
+import com.feifan.planlib.OnLayerListener;
+import com.feifan.planlib.OnOperationListener;
+import com.feifan.planlib.OnOperationListener.PointInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -216,6 +216,7 @@ public class MarkLayer implements IOperableLayer {
 
     @Override
     public boolean remove(ILayerPoint point) {
+        boolean ret;
         int index = marks.indexOf(point);
         if(index != -1) {
             lockFlags ^= ~(1l << index);
@@ -223,10 +224,15 @@ public class MarkLayer implements IOperableLayer {
             LogUtils.i("remove " + point.toString() + " successfully");
             LogUtils.d("mark:remove at " + index + " position, lockFlags = " + lockFlags);
         }
-        boolean ret = marks.remove(point);
-        if(mOperationListener != null) {
-            mOperationListener.onDeletePoint(point);
+        if(mOperationListener != null) {  // 在外部移除点
+            ret = mOperationListener.onDeletePoint(point);
+            if(!ret) {
+                LogUtils.w("delete mark(" + point.getRawX() + "," + point.getRawY() + ") failed outside!");
+                return false;
+            }
         }
+
+        ret = marks.remove(point);
         LogUtils.i((ret ? "succeed" : "fail") + " to remove " + point.toString());
         return ret;
     }

@@ -1,5 +1,6 @@
 package com.feifan.locate.widget.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -10,14 +11,21 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.feifan.locate.IBackInterceptable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 封装了TitleBar右侧按钮功能
+ * Fragment基类
+ * <p>
+ *     封装了Toolbar右侧按钮功能和左侧返回按钮功能，一般与ToolbarActivity一起使用
+ * </p>
+ *
+ *
  * Created by xuchunlei on 16/4/25.
  */
-public abstract class BaseFragment extends Fragment implements MenuItem.OnMenuItemClickListener {
+public abstract class BaseFragment extends Fragment implements MenuItem.OnMenuItemClickListener, IBackInterceptable {
 
     private static final int NO_INTEGER = -1;
     private static final String NO_STRING = "n/a";
@@ -63,6 +71,16 @@ public abstract class BaseFragment extends Fragment implements MenuItem.OnMenuIt
     protected List<MenuInfo> getMenuList() {
 
         return new ArrayList<MenuInfo>();
+    }
+
+    @Override
+    public Intent getResult() {
+        return null;
+    }
+
+    @Override
+    public boolean isBackEnabled() {
+        return true;
     }
 
     /**

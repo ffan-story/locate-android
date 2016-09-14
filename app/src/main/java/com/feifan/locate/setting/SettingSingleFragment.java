@@ -1,6 +1,5 @@
 package com.feifan.locate.setting;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.feifan.locate.IBackInterceptable;
 import com.feifan.locate.R;
-import com.feifan.locate.ToolbarActivity.IResultable;
 import com.feifan.locate.utils.NumberUtils;
 import com.feifan.locate.widget.ui.BaseFragment;
 
@@ -22,7 +21,7 @@ import com.feifan.locate.widget.ui.BaseFragment;
  *
  * Created by xuchunlei on 16/9/8.
  */
-public class SettingSingleFragment extends BaseFragment implements IResultable{
+public class SettingSingleFragment extends BaseFragment {
 
     public static final String EXTRA_KEY_TITLE = "title";
     public static final String EXTRA_KEY_VALUE = "value";
@@ -48,6 +47,7 @@ public class SettingSingleFragment extends BaseFragment implements IResultable{
         mEdit.setText(mValue);
         if(NumberUtils.isNumeric(mValue)) {
             mEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
+            mEdit.setSelection(mValue.length());
         }
     }
 

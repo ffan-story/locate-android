@@ -32,8 +32,8 @@ import com.feifan.locate.provider.LocateData.WorkSpot;
 import com.feifan.locate.sampling.model.ZoneModel;
 import com.feifan.planlib.PlanView;
 import com.feifan.planlib.PlanView.OnPlanListener;
-import com.feifan.planlib.base.ILayerPoint;
-import com.feifan.planlib.base.OnOperationListener;
+import com.feifan.planlib.ILayerPoint;
+import com.feifan.planlib.OnOperationListener;
 import com.feifan.planlib.layer.MarkLayer;
 import com.feifan.planlib.layer.MarkPoint;
 
@@ -116,21 +116,21 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
         markLayer.setOperationListener(this);
         plan.addLayer(markLayer);
 
-        ImageView control = findView(R.id.spot_plan_lock);
-        control.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        ImageView control = findView(R.id.spot_plan_lock);
+//        control.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
 //                plan.lock();
-            }
-        });
-
-        ImageView clear = findView(R.id.spot_plan_clear);
-        clear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //plan
-            }
-        });
+//            }
+//        });
+//
+//        ImageView clear = findView(R.id.spot_plan_clear);
+//        clear.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //plan
+//            }
+//        });
 
         String[] items = getResources().getStringArray(R.array.menu);
         menu = new BubbleMenu(getContext(), items, new View.OnClickListener() {
@@ -140,8 +140,9 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
                     case 1:
                         if(currentPoint != null && currentPoint instanceof MarkPoint) {
                             ((MarkPoint)currentPoint).setLocked(true);
+                            doAddPointAndShowDetails(currentPoint);
                         }
-                        doAddPointAndShowDetails(currentPoint);
+
                         break;
 //                    case 2:
 //                        LogUtils.e("click 详情");
@@ -174,6 +175,14 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(currentPoint == null) { //被删除
+            menu.dismiss();
+        }
+        plan.invalidate();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -183,7 +192,9 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
                 if(resultCode == Activity.RESULT_OK) {
                     // 删除标记点
                     MarkPoint mark = data.getParcelableExtra(SpotDetailFragment.EXTRA_KEY_MARKPOINT);
-                    markLayer.remove(mark);
+                    if(markLayer.remove(mark)) {
+                        currentPoint = null;
+                    }
                 }
                 break;
         }
@@ -264,8 +275,8 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
     }
 
     @Override
-    public void onDeletePoint(ILayerPoint point) {
-        WorkSpot.remove(getContext(), point.getRawX(), point.getRawY(), zone.id);
+    public boolean onDeletePoint(ILayerPoint point) {
+        return WorkSpot.remove(getContext(), point.getId());
     }
 
     @Override

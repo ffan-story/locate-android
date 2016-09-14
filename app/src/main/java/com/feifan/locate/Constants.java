@@ -33,17 +33,31 @@ public class Constants {
             "floor"
     };
 
-    public static final String EXPORT_PATH_NAME;
+    // export
+    public static final String EXPORT_ROOT_PATH_NAME;    // 根目录
+    public static String EXPORT_PARENT_PATH_NAME;        // 父目录
 
     static {
-        EXPORT_PATH_NAME = Environment.getExternalStorageDirectory().getAbsolutePath().
+        EXPORT_ROOT_PATH_NAME = Environment.getExternalStorageDirectory().getAbsolutePath().
                 concat(File.separator).concat("locate").concat(File.separator);
-        File path = new File(EXPORT_PATH_NAME);
+    }
+
+    public static void setExportParentPathName(String parentPathName) {
+        EXPORT_PARENT_PATH_NAME = parentPathName.concat(File.separator);
+        createDirectory(getExportFilePath());
+    }
+
+    public static String getExportFilePath() {
+        return EXPORT_ROOT_PATH_NAME.concat(EXPORT_PARENT_PATH_NAME);
+    }
+
+    private static void createDirectory(String dirName) {
+        File path = new File(dirName);
         if(!path.exists()) {
             if (path.mkdirs()){//创建文件夹
-                LogUtils.i("create " + EXPORT_PATH_NAME);
+                LogUtils.i("create " + dirName);
             }else {
-                LogUtils.e("failed to create " + EXPORT_PATH_NAME);
+                LogUtils.e("failed to create " + dirName);
             }
         }
     }

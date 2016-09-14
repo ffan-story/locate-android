@@ -75,8 +75,6 @@ public class ScanManager {
         public void onServiceConnected(ComponentName name, IBinder service) {
             LogUtils.i("scan:connect to scan service");
             serviceMessenger = new Messenger(service);
-            // 测试代码
-
         }
 
         @Override

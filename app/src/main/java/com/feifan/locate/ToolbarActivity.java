@@ -1,13 +1,12 @@
 package com.feifan.locate;
 
-import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
-import com.feifan.locate.sampling.SpotPlanFragment;
+import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.widget.ui.BaseActivity;
 
 public class ToolbarActivity extends BaseActivity {
@@ -15,7 +14,7 @@ public class ToolbarActivity extends BaseActivity {
     public static final String EXTRA_KEY_FRAGMENT = "fragment";
     public static final String EXTRA_KEY_ARGUMENTS = "arguments";
 
-    private IResultable mResultListener;
+    private IBackInterceptable mInterceptor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +27,14 @@ public class ToolbarActivity extends BaseActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mResultListener != null) {
-                    setResult(RESULT_OK, mResultListener.getResult());
+                if(mInterceptor != null) {
+                    if(!mInterceptor.isBackEnabled()) {
+                        Toast.makeText(ToolbarActivity.this, "back is forbidden by some operation", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if(mInterceptor.getResult() != null) {
+                        setResult(RESULT_OK, mInterceptor.getResult());
+                    }
                 }
                 finish();
             }
@@ -47,12 +52,8 @@ public class ToolbarActivity extends BaseActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.toolbar_content, fragment)
                 .commitAllowingStateLoss();
-        if(fragment instanceof IResultable) {
-            mResultListener = (IResultable) fragment;
+        if(fragment instanceof IBackInterceptable) {
+            mInterceptor = (IBackInterceptable) fragment;
         }
-    }
-
-    public interface IResultable {
-        Intent getResult();
     }
 }

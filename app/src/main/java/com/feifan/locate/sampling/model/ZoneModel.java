@@ -5,7 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.feifan.locate.provider.LocateData;
-import com.feifan.locate.widget.cursorwork.SimpleCursorAdapter.CursorModel;
+import com.feifan.locate.widget.cursorwork.CursorModel;
 
 /**
  * 采样区域Model

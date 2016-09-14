@@ -7,30 +7,32 @@
     <com.feifan.planlib.PlanView
         android:id="@+id/spot_plan_img"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <LinearLayout
-        android:id="@+id/spot_plan_control_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
-        android:background="@color/colorPanelBackground">
-        <ImageView
-            android:id="@+id/spot_plan_lock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:src="@mipmap/ic_action_start"/>
-        <ImageView
-            android:id="@+id/spot_plan_clear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_plan_clear"
-            android:layout_margin="5dp" />
-        <TextView
-            android:id="@+id/board"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="false"/>
+    <!--<LinearLayout-->
+        <!--android:id="@+id/spot_plan_control_panel"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|left"-->
+        <!--android:background="@color/colorPanelBackground">-->
+        <!--<ImageView-->
+            <!--android:id="@+id/spot_plan_lock"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="5dp"-->
+            <!--android:src="@mipmap/ic_action_start"/>-->
+        <!--<ImageView-->
+            <!--android:id="@+id/spot_plan_clear"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@mipmap/ic_plan_clear"-->
+            <!--android:layout_margin="5dp" />-->
+        <!--<TextView-->
+            <!--android:id="@+id/board"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
+    <!--</LinearLayout>-->
 
 
 </FrameLayout>

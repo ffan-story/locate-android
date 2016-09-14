@@ -1,6 +1,7 @@
 package com.feifan.locate.utils;
 
 import com.feifan.baselib.utils.LogUtils;
+import com.feifan.locate.Constants;
 import com.feifan.scanlib.beacon.SampleBeacon;
 
 import java.io.BufferedWriter;
@@ -22,10 +23,11 @@ public class DataUtils {
      *
      */
     public static File exportToCSV(String[] titles, List<SampleBeacon> data, String fileName) {
+        String fullName = Constants.getExportFilePath().concat(fileName);
         if(data == null || data.size() == 0) {
             return null;
         }
-        File saveFile = new File(fileName);
+        File saveFile = new File(fullName);
         FileWriter fw;
         BufferedWriter bfw;
 

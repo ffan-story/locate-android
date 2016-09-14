@@ -4,7 +4,7 @@ import android.graphics.PointF;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.feifan.planlib.base.ILayerPoint;
+import com.feifan.planlib.ILayerPoint;
 
 /**
  * 标记点
@@ -168,7 +168,8 @@ public class MarkPoint implements ILayerPoint, Parcelable{
 
         if(o instanceof MarkPoint) {
             MarkPoint point = (MarkPoint)o;
-            return point.getRawX() == getRawX() && point.getRawY() == getRawY();
+//            return point.getRawX() == getRawX() && point.getRawY() == getRawY();
+            return id == point.id;
         }
 
         return false;
@@ -176,7 +177,8 @@ public class MarkPoint implements ILayerPoint, Parcelable{
 
     @Override
     public int hashCode() {
-        return mRawLoc.hashCode();
+        int result = 17;
+        return 31 * result + id;
     }
 
     @Override

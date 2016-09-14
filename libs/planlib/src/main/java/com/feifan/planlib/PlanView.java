@@ -12,11 +12,7 @@ import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
 
 import com.feifan.baselib.utils.LogUtils;
-import com.feifan.planlib.base.ILayer;
-import com.feifan.planlib.base.ILayer.LayerEvent;
-import com.feifan.planlib.base.IOperableLayer;
-import com.feifan.planlib.base.ILayerPoint;
-import com.feifan.planlib.base.OnLayerListener;
+import com.feifan.planlib.ILayer.LayerEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -332,11 +328,11 @@ public class PlanView extends ImageView implements OnLayerListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // 处理缩放手势
-        mScaleDetector.onTouchEvent(event);
-        // 处理手势
-        mGestureDetector.onTouchEvent(event);
 
+        // 处理缩放
+        mScaleDetector.onTouchEvent(event);
+        // 处理点击
+        mGestureDetector.onTouchEvent(event);
         // 平移图片
         if(mState == State.NONE || mState == State.DRAG) {
             switch (event.getAction()) {
@@ -352,6 +348,7 @@ public class PlanView extends ImageView implements OnLayerListener {
                         return false;
                     }
                     if(mState == State.DRAG) {
+                        LogUtils.d("you are translating the image");
                         float deltaX = event.getX() - lastTouch.x;
                         float deltaY = event.getY() - lastTouch.y;
 

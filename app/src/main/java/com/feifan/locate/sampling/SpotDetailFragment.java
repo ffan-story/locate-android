@@ -36,6 +36,7 @@ import com.feifan.scanlib.ScanManager;
 import com.feifan.locate.sampling.SampleSpotAdapter.OnSampleSpotClickListener;
 import com.feifan.scanlib.beacon.SampleBeacon;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -91,7 +92,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
                 case MSG_FINISH:
                     List<SampleBeacon> beacons = (List<SampleBeacon>) msg.obj;
                     String fileName = msg.getData().getString(MSG_DATA_KEY_FILENAME);
-                    DataUtils.exportToCSV(Constants.EXPORT_FILE_TITLES, beacons, Constants.EXPORT_PATH_NAME + fileName);
+                    DataUtils.exportToCSV(Constants.EXPORT_FILE_TITLES, beacons, fileName);
                     beacons.clear();
                     break;
                 default:
@@ -107,7 +108,6 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mSampleSpotId = getArguments().getInt(EXTRA_KEY_SAMPLESPOT_ID);
         mScanManager.setNotifier(new BeaconNotifier() {
             @Override
@@ -168,6 +168,10 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
         view.findViewById(R.id.spot_detail_remove).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(isRunning) {
+                    Toast.makeText(getContext(), "remove is forbidden while scanning", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 LogUtils.i("Mark " + mPoint.toString() + " is removed!");
                 getActivity().setResult(Activity.RESULT_OK, data);
                 getActivity().finish();
@@ -185,7 +189,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
             @Override
             public void onClick(View v) {
                 if(isRunning) {
-                    Toast.makeText(getContext(), "don't do anything while running scan", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "don't do anything while scanning", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Cursor cursor = SampleSpot.findByStatus(getContext(), SampleSpot.STATUS_READY, mPoint.getId());
@@ -267,6 +271,10 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
         return (A)mAdapter;
     }
 
+    @Override
+    public boolean isBackEnabled() {
+        return !isRunning;
+    }
 
     @Override
     public void onOperationClick(SampleSpotModel model) {
@@ -292,7 +300,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
             case SampleSpot.STATUS_FINISH:
                 String fileName = String.format("Loc(%.2f,%.2f,%.2f).csv",
                         mPoint.getRealX(), mPoint.getRealY(), mCurrentModel.direction);
-                Toast.makeText(getContext(), "view the result in " + Constants.EXPORT_PATH_NAME + fileName,
+                Toast.makeText(getContext(), "view the result in " + Constants.getExportFilePath() + fileName,
                         Toast.LENGTH_LONG).show();
                 break;
             case SampleSpot.STATUS_RUNNING:

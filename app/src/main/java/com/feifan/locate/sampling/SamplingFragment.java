@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.feifan.locate.Constants;
 import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.provider.LocateData.Zone;
@@ -83,6 +84,7 @@ public class SamplingFragment extends AbsLoaderFragment implements View.OnClickL
     @Override
     public void onClick(View v) {
         ZoneModel model = (ZoneModel)v.getTag();
+        Constants.setExportParentPathName(model.name);
 
         Intent intent = new Intent(getContext().getApplicationContext(), ToolbarActivity.class);
         intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotPlanFragment.class.getName());

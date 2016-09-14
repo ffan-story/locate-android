@@ -48,6 +48,7 @@ public class ScanService extends Service {
         BluetoothAdapter adapter = manager.getAdapter();
         mScanner = CycledLeScanner.createScanner(adapter, mScanCallback);
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+
     }
 
     @Nullable

@@ -2,6 +2,8 @@ package com.feifan.scanlib.beacon;
 
 import android.bluetooth.BluetoothDevice;
 
+import com.feifan.baselib.utils.LogUtils;
+
 /**
  * Created by bianying on 16/9/4.
  */
@@ -30,7 +32,20 @@ public class RawBeacon {
         beacon.minor = IBeaconUtils.calculateMinor(rawData);
         beacon.txPowser = IBeaconUtils.calculateTxPower(rawData);
         beacon.mac = device == null ? "" : device.getAddress();
+
+//        dump(rawData, beacon);
         return beacon;
+    }
+
+    private static void dump(byte[] rawData, RawBeacon beacon) {
+        if (((int)rawData[5] & 0xff) == 0x4c &&
+                ((int)rawData[6] & 0xff) == 0x00 &&
+                ((int)rawData[7] & 0xff) == 0x02 &&
+                ((int)rawData[8] & 0xff) == 0x15) {
+            LogUtils.w("I am a ibeacon");
+        }else {
+            LogUtils.e("I am not a ibeacon:" + beacon.toString());
+        }
     }
 
     @Override

@@ -6,8 +6,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
-import com.feifan.locate.provider.LocateData;
+import com.feifan.baselib.BuildConfig;
 import com.feifan.locate.provider.LocateData.Zone;
 import com.feifan.locate.widget.bottom.BottomBarLayout;
 
@@ -47,6 +48,34 @@ public class MainActivity extends AppCompatActivity {
                     values.put(Zone.NAME, "石景山万达广场F1");
                     values.put(Zone.PLAN, "zone_shijingshan_f1.jpg");
                     values.put(Zone.SCALE, 0.136);
+                    resolver.insert(Zone.CONTENT_URI, values);
+
+                    values.clear();
+                    values.put(Zone._ID, 3);
+                    values.put(Zone.NAME, "石景山万达广场F2");
+                    values.put(Zone.PLAN, "zone_shijingshan_f2.jpg");
+                    values.put(Zone.SCALE, 0.136);
+                    resolver.insert(Zone.CONTENT_URI, values);
+
+                    values.clear();
+                    values.put(Zone._ID, 4);
+                    values.put(Zone.NAME, "石景山万达广场F3");
+                    values.put(Zone.PLAN, "zone_shijingshan_f3.jpg");
+                    values.put(Zone.SCALE, 0.136);
+                    resolver.insert(Zone.CONTENT_URI, values);
+
+                    values.clear();
+                    values.put(Zone._ID, 5);
+                    values.put(Zone.NAME, "石景山万达广场B1");
+                    values.put(Zone.PLAN, "zone_shijingshan_b1.jpg");
+                    values.put(Zone.SCALE, 0.226);
+                    resolver.insert(Zone.CONTENT_URI, values);
+
+                    values.clear();
+                    values.put(Zone._ID, 6);
+                    values.put(Zone.NAME, "石景山万达广场B2");
+                    values.put(Zone.PLAN, "zone_shijingshan_b2.jpg");
+                    values.put(Zone.SCALE, 0.226);
                     resolver.insert(Zone.CONTENT_URI, values);
                 }
             });

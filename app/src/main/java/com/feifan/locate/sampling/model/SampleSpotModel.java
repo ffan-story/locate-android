@@ -4,7 +4,7 @@ import android.database.Cursor;
 
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.provider.LocateData.SampleSpot;
-import com.feifan.locate.widget.cursorwork.SimpleCursorAdapter.CursorModel;
+import com.feifan.locate.widget.cursorwork.CursorModel;
 
 /**
  * 样本点Model

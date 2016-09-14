@@ -20,7 +20,7 @@ import java.lang.reflect.Constructor;
  *
  * Created by xuchunlei on 16/5/6.
  */
-public class SimpleCursorAdapter<M extends SimpleCursorAdapter.CursorModel> extends RecyclerCursorAdapter<SimpleCursorAdapter.ViewHolder> {
+public class SimpleCursorAdapter<M extends CursorModel> extends RecyclerCursorAdapter<SimpleCursorAdapter.ViewHolder> {
 
     private static final String SIMPLE_TEXT_TAG = "SIMPLE_TEXT";
 
@@ -95,21 +95,5 @@ public class SimpleCursorAdapter<M extends SimpleCursorAdapter.CursorModel> exte
             mContentV.setText(model.toString());
             itemView.setTag(model);
         }
-    }
-
-    /**
-     * 支持游标数据的model
-     */
-    public static class CursorModel {
-        public int id;
-
-        public CursorModel() {
-
-        }
-
-        public CursorModel(Cursor cursor) {
-
-        }
-
     }
 }

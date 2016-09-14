@@ -149,15 +149,14 @@ public class LocateData {
         /**
          * 删除采集点
          * @param context
-         * @param x
-         * @param y
-         * @param zone
+         * @param id 点索引
          */
-        public static void remove(Context context, float x, float y, int zone) {
+        public static boolean remove(Context context, int id) {
             final ContentResolver resolver = context.getContentResolver();
-            int count = resolver.delete(CONTENT_URI, X + "=? and " + Y + "=? and " + ZONE + "=?",
-                    new String[]{ String.valueOf(x), String.valueOf(y), String.valueOf(zone) });
-            LogUtils.i("workspot:delete " + count + " spot(" + x + "," + y + ") at zone " + zone);
+//            int count = resolver.delete(CONTENT_URI, _ID + "=?", new String[]{ String.valueOf(id) });
+            int count = resolver.delete(Uri.withAppendedPath(CONTENT_URI, String.valueOf(id)), null, null);
+            LogUtils.i("workspot:delete " + count + " spot{ id=" + id + " }");
+            return count == 1;
         }
 
 //        /**
@@ -280,6 +279,9 @@ public class LocateData {
          * @param context
          */
         public static void updateScan(Context context, int count, int times, int id, int status) {
+            if(context == null) {
+                return;
+            }
             PARAMS.clear();
             PARAMS.put(TIMES, times);
             PARAMS.put(COUNT, count);

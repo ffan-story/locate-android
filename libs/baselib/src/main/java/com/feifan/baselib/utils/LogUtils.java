@@ -4,6 +4,8 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.feifan.baselib.BuildConfig;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,12 +37,13 @@ public class LogUtils {
     /**
      * 日志开关
      */
-    public static boolean allowD = true;
-    public static boolean allowE = true;
-    public static boolean allowI = true;
-    public static boolean allowV = true;
-    public static boolean allowW = true;
-    public static boolean allowWtf = true;
+    public static boolean ENABLED = true;
+    public static boolean allowD = ENABLED;
+    public static boolean allowE = ENABLED;
+    public static boolean allowI = ENABLED;
+    public static boolean allowV = ENABLED;
+    public static boolean allowW = ENABLED;
+    public static boolean allowWtf = ENABLED;
 
     private static String generateTag(StackTraceElement caller) {
         String tag = "%s.%s(Line:%d)";
