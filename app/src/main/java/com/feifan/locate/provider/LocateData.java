@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import retrofit2.http.Body;
+
 /**
  * Sample操作类
  *
@@ -27,6 +29,27 @@ public class LocateData {
      * SampleProvider使用的权限字符串
      */
     public static final String AUTHORITY = "com.feifan.locate";
+
+    /**
+     * 定位建筑定义
+     */
+    public static class Building implements BaseColumns {
+
+        /** 访问Building表的URL */
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/building");
+
+        /** {@link Building#CONTENT_URI}的MIME类型 */
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.building";
+
+        /** {@link Building#CONTENT_URI}子项的MIME类型 */
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.buiding";
+
+        /**
+         * 字段名－名称
+         *  TYPE:TEXT
+         */
+        public static final String NAME = "name";
+    }
 
     /**
      * 定位区域定义
@@ -55,6 +78,22 @@ public class LocateData {
          * 字段名-比例尺
          */
         public static final String SCALE = "scale";
+        /**
+         * 字段名-楼层编号
+         * TYPE:INTEGER
+         */
+        public static final String FLOOR_NO = "floorNO";
+        /**
+         * 字段名-楼层简称
+         * TYPE:TEXT
+         */
+        public static final String TITLE = "title";
+        /**
+         * 字段名－所属建筑
+         * TYPE:INTEGER
+         * FOREIGN-KEY:{@link Building#_ID}
+         */
+        public static final String BUILDING = "building";
     }
 
 

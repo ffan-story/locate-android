@@ -12,6 +12,7 @@ import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.widget.cursorwork.AbsLoaderFragment;
 
 /**
+ * 支持持久化
  * Created by xuchunlei on 16/8/24.
  */
 public abstract class AbsSensorFragment extends AbsLoaderFragment implements SensorEventListener {
@@ -49,7 +50,7 @@ public abstract class AbsSensorFragment extends AbsLoaderFragment implements Sen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-    // 获取加速传感器数据和地磁数据
+        // 获取加速传感器数据和地磁数据
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
             mGravity = event.values;
         if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)

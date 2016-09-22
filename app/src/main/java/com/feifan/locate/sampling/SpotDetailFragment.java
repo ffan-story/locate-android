@@ -27,6 +27,7 @@ import com.feifan.locate.setting.SettingSingleFragment;
 import com.feifan.locate.utils.DataUtils;
 import com.feifan.locate.utils.NumberUtils;
 import com.feifan.locate.utils.SizeUtils;
+import com.feifan.locate.widget.cursorwork.ICursorAdapter;
 import com.feifan.locate.widget.cursorwork.RecyclerCursorAdapter;
 import com.feifan.locate.widget.recycler.SpaceItemDecoration;
 import com.feifan.locate.widget.ui.AbsSensorFragment;
@@ -267,7 +268,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
     }
 
     @Override
-    protected <A extends RecyclerCursorAdapter> A getAdapter() {
+    protected <A extends ICursorAdapter> A getAdapter() {
         return (A)mAdapter;
     }
 

@@ -19,6 +19,7 @@ import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.provider.LocateData.Zone;
 import com.feifan.locate.utils.SizeUtils;
 import com.feifan.locate.widget.cursorwork.AbsLoaderFragment;
+import com.feifan.locate.widget.cursorwork.ICursorAdapter;
 import com.feifan.locate.widget.cursorwork.RecyclerCursorAdapter;
 import com.feifan.locate.widget.cursorwork.SimpleCursorAdapter;
 import com.feifan.locate.widget.recycler.SpaceItemDecoration;
@@ -77,7 +78,7 @@ public class SamplingFragment extends AbsLoaderFragment implements View.OnClickL
     }
 
     @Override
-    protected <A extends RecyclerCursorAdapter> A getAdapter() {
+    protected <A extends ICursorAdapter> A getAdapter() {
         return (A)mAdapter;
     }
 

@@ -23,7 +23,9 @@ import android.widget.Toast;
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
+import com.feifan.locate.utils.IOUtils;
 import com.feifan.locate.utils.NumberUtils;
+import com.feifan.locate.widget.cursorwork.ICursorAdapter;
 import com.feifan.locate.widget.cursorwork.RecyclerCursorAdapter;
 import com.feifan.locate.widget.popup.BubbleMenu;
 import com.feifan.locate.widget.ui.AbsSensorFragment;
@@ -96,17 +98,17 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
         // 初始化PlanView
         plan = findView(R.id.spot_plan_img);
         plan.setPlanScale(zone.scale);
+        InputStream ims = null;
         try {
-            // get input stream
-            InputStream ims = getContext().getAssets().open(zone.plan);
-            // load image as Drawable
+            ims = getContext().getAssets().open(zone.plan);
             Drawable d = Drawable.createFromStream(ims, null);
-            // set image to ImageView
             plan.setImageDrawable(d);
             plan.setPlanListener(this);
         }
         catch(IOException ex) {
             return;
+        }finally {
+            IOUtils.closeQuietly(ims);
         }
 
         // 添加标记层
@@ -216,7 +218,7 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
     }
 
     @Override
-    protected <A extends RecyclerCursorAdapter> A getAdapter() {
+    protected <A extends ICursorAdapter> A getAdapter() {
         return null;
     }
 
@@ -224,7 +226,7 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         super.onLoadFinished(loader, data);
         loadSpots(data);
-        // 停止加载
+        // 调用此方法表示只加载一次
         loader.stopLoading();
     }
 

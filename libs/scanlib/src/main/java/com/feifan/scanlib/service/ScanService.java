@@ -131,19 +131,6 @@ public class ScanService extends Service {
 
     /*---------END---------*/
 
-//    private final IScanService.Stub mBinder = new IScanService.Stub() {
-//
-//        @Override
-//        public void startScan(float x, float y, float initRadian) throws RemoteException {
-//            LogUtils.e("start scan at (" + x + "," + y +"), initRadian-->" + initRadian);
-//            mScanner.start(ScanService.this);
-//        }
-//
-//        @Override
-//        public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
-//
-//        }
-//    };
 
     /*-----------------进程间通讯---------------*/
 

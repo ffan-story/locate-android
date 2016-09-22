@@ -81,6 +81,7 @@ public class SimpleGridCursorAdapter<M extends CursorModel> extends RecyclerCurs
         }
 
         public void bind(M model) {
+            itemView.setTag(model);
             TextView titleV = (TextView) itemView.findViewById(ID_TITLE);
             titleV.setText(model.toString());
         }

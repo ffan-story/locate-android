@@ -12,6 +12,16 @@
     <string name="spot_detail_sample_text">采样</string>
     <string name="spot_detail_remove_text">移除该采集点</string>
     <string name="spot_detail_peroid_text">采样周期(单位:毫秒)</string>
+    <string name="spot_detail_remove_flag_text">同时删除文件</string>
+
+    <!-- 实时定位界面 -->
+    <string name="realtime_plan_title_text">实时定位平面图</string>
+    <string name="realtime_plan_menu_setting_text">设置</string>
+
+    <!-- 定位控制面板 -->
+    <string name="locating_panel_online_text">在线定位</string>
+    <string name="locating_panel_scan_period_text">数据累计时间:</string>
+    <string name="locating_panel_request_period_text">数据请求时间:</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

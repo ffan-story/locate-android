@@ -17,6 +17,7 @@ import java.util.HashMap;
 
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.Constants;
+import com.feifan.locate.provider.LocateData.Building;
 import com.feifan.locate.provider.LocateData.Zone;
 import com.feifan.locate.provider.LocateData.WorkSpot;
 import com.feifan.locate.provider.LocateData.SampleSpot;
@@ -33,6 +34,8 @@ public class LocateProvider extends ContentProvider {
     // 数据库版本
     private static final int DATABASE_VERSION = 1;
 
+    // 数据库表名－定位建筑
+    private static final String BUILDING_TABLE_NAME = "building";
     // 数据库表名－定位区域
     private static final String ZONE_TABLE_NAME = "zone";
     // 数据库表名－采集点
@@ -52,7 +55,9 @@ public class LocateProvider extends ContentProvider {
     private DatabaseHelper mOpenHelper;
 
     private static UriMatcher sUriMatcher;
-    private static final int ZONE = 1;
+    private static final int BUILDING = 1;
+    private static final int BUILDING_ID = BUILDING + 1;
+    private static final int ZONE = BUILDING_ID + 1;
     private static final int ZONE_ID = ZONE + 1;
     private static final int WORKSPOT = ZONE_ID + 1;
     private static final int WORKSPOT_ID = WORKSPOT + 1;
@@ -68,6 +73,9 @@ public class LocateProvider extends ContentProvider {
     private static final int BEACON_DETAIL_SAMPLE = BEACON_DETAIL_ID + 1; // 外键－样本
     private static final int SAMPLE_DETAIL = BEACON_DETAIL_SAMPLE + 1;*/
 //    private static final int SAMPLE_DETAIL_ID = SAMPLE_DETAIL + 1;
+
+    // 定位建筑表映射集合
+    private static HashMap<String, String> sBuildingProjectionMap;
 
     // 定位区域表列映射集合
     private static HashMap<String, String> sZoneProjectionMap;
@@ -86,6 +94,8 @@ public class LocateProvider extends ContentProvider {
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        sUriMatcher.addURI(AUTHORITY, "building", BUILDING);
+        sUriMatcher.addURI(AUTHORITY, "building/#", BUILDING_ID);
         sUriMatcher.addURI(AUTHORITY, "zone", ZONE);
         sUriMatcher.addURI(AUTHORITY, "zone/#", ZONE_ID);
         sUriMatcher.addURI(AUTHORITY, "workspot", WORKSPOT);
@@ -101,11 +111,17 @@ public class LocateProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "beacon/sample/#", BEACON_DETAIL_SAMPLE);
         sUriMatcher.addURI(AUTHORITY, "sample_detail", SAMPLE_DETAIL);*/
 
+        sBuildingProjectionMap = new HashMap<>();
+        sBuildingProjectionMap.put(Building._ID, Building._ID);
+        sBuildingProjectionMap.put(Building.NAME, Building.NAME);
+
         sZoneProjectionMap = new HashMap<String, String>();
         sZoneProjectionMap.put(Zone._ID, Zone._ID);
         sZoneProjectionMap.put(Zone.NAME, Zone.NAME);
         sZoneProjectionMap.put(Zone.PLAN, Zone.PLAN);
         sZoneProjectionMap.put(Zone.SCALE, Zone.SCALE);
+        sZoneProjectionMap.put(Zone.FLOOR_NO, Zone.FLOOR_NO);
+        sZoneProjectionMap.put(Zone.TITLE, Zone.TITLE);
 //        sZoneProjectionMap.put(Zone.REMOTE_ID, Zone.REMOTE_ID);
 
         sWorkSpotProjectionMap = new HashMap<String, String>();
@@ -163,6 +179,10 @@ public class LocateProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         switch (sUriMatcher.match(uri)) {
+            case BUILDING:
+                qb.setTables(BUILDING_TABLE_NAME);
+                qb.setProjectionMap(sBuildingProjectionMap);
+                break;
             case ZONE:          // 查询定位区域整表
                 qb.setTables(ZONE_TABLE_NAME);
                 qb.setProjectionMap(sZoneProjectionMap);
@@ -211,6 +231,10 @@ public class LocateProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         switch (sUriMatcher.match(uri)) {
+            case BUILDING:
+                return Building.CONTENT_TYPE;
+            case BUILDING_ID:
+                return Building.CONTENT_ITEM_TYPE;
             case ZONE:
                 return Zone.CONTENT_TYPE;
             case ZONE_ID:
@@ -252,6 +276,10 @@ public class LocateProvider extends ContentProvider {
         String tableName;
 
         switch (sUriMatcher.match(uri)) {
+            case BUILDING:
+                contentUri = Building.CONTENT_URI;
+                tableName = BUILDING_TABLE_NAME;
+                break;
             case ZONE:
                 contentUri = Zone.CONTENT_URI;
                 tableName = ZONE_TABLE_NAME;
@@ -357,11 +385,21 @@ public class LocateProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
 
             // 创建定位区域
+            db.execSQL("CREATE TABLE " + BUILDING_TABLE_NAME + " ("
+                    + Building._ID + " INTEGER PRIMARY KEY,"
+                    + Building.NAME + " TEXT"
+                    + ");");
+
+            // 创建定位区域
             db.execSQL("CREATE TABLE " + ZONE_TABLE_NAME + " ("
                                        + Zone._ID + " INTEGER PRIMARY KEY,"
                                        + Zone.NAME + " TEXT,"
                                        + Zone.PLAN + " TEXT,"
-                                       + Zone.SCALE + " FLOAT NOT NULL DEFAULT 1.00"
+                                       + Zone.SCALE + " FLOAT NOT NULL DEFAULT 1.00,"
+                                       + Zone.FLOOR_NO + " INTEGER NOT NULL DEFAULT 0,"
+                                       + Zone.TITLE + " TEXT,"
+                                       + Zone.BUILDING + " INTEGER NOT NULL REFERENCES " + BUILDING_TABLE_NAME
+                                                       + "(" + Building._ID + ")"
                                        + ");");
 
             // 创建采集点表

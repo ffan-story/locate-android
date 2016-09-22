@@ -1,5 +1,7 @@
 package com.feifan.locatelib.online;
 
+import com.feifan.locatelib.network.HttpResult;
+
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 import rx.Observable;
@@ -10,6 +12,11 @@ import rx.Observable;
  * Created by xuchunlei on 16/9/14.
  */
 public interface RxFingerLocateService {
+    /**
+     * 请求地址
+     */
+    String BASE_URL = "http://123.56.144.204/";
+
     @POST("fix")
-    Observable<LocateResultBean> getLocation(@Body LocateQueryData data);
+    Observable<HttpResult<LocateInfo>> getLocation(@Body LocateQueryData data);
 }

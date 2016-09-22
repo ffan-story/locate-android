@@ -2,13 +2,19 @@ package com.feifan.locatelib.network;
 
 import android.content.Context;
 import android.os.Environment;
+import android.text.TextUtils;
+
+import com.feifan.baselib.utils.LogUtils;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -26,8 +32,14 @@ public class ServiceFactory {
     // 默认的缓存目录是当前路径下的locate目录
     private String cacheDir = "locate";
 
-    private ServiceFactory() {
+    private Map<String, Retrofit> retrofitStore;
 
+    private ServiceFactory() {
+        retrofitStore = new HashMap<>();
+    }
+
+    public static ServiceFactory getInstance() {
+        return INSTANCE;
     }
 
     /**
@@ -39,8 +51,9 @@ public class ServiceFactory {
      * @param context
      */
     public void initialize(Context context) {
-        if(context != null) {
+        if(context != null && cacheDir == null) {
             cacheDir = context.getExternalCacheDir().getAbsolutePath();
+            LogUtils.d("initialize ServiceFactory instance");
         }
     }
 
@@ -66,25 +79,45 @@ public class ServiceFactory {
             e.printStackTrace();
         }
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(getOkHttpClient())
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
+        Retrofit retrofit = null;
+        if(!TextUtils.isEmpty(baseUrl)) {
+            retrofit = retrofitStore.get(baseUrl);
+            if(retrofit == null) {
+                retrofit = new Retrofit.Builder()
+                        .baseUrl(baseUrl)
+                        .client(getOkHttpClient())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                        .build();
+                retrofitStore.put(baseUrl, retrofit);
+            }
+        }
+
+        if(retrofit == null) {
+            throw new NullPointerException("create retrofit instance failed.");
+        }
+
         return retrofit.create(clazz);
     }
 
     private OkHttpClient getOkHttpClient() {
         //定制OkHttp
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+
         //设置超时时间
         httpClientBuilder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         httpClientBuilder.writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         httpClientBuilder.readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+
         //设置缓存
         File httpCacheDirectory = new File(cacheDir, "OkHttpCache");
         httpClientBuilder.cache(new Cache(httpCacheDirectory, 10 * 1024 * 1024));
+
+        //设置日志
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        httpClientBuilder.addInterceptor(logging);
+
         return httpClientBuilder.build();
     }
 

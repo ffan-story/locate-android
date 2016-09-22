@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
  *
  * Created by xuchunlei on 16/4/21.
  */
-public abstract class RecyclerCursorAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public abstract class RecyclerCursorAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> implements ICursorAdapter {
 
     // 数据游标
     private Cursor mCursor;
@@ -41,6 +41,7 @@ public abstract class RecyclerCursorAdapter<VH extends RecyclerView.ViewHolder> 
         return mCursor.getLong(mIdIndex);
     }
 
+    @Override
     public Cursor swapCursor(Cursor newCursor) {
         if(newCursor == mCursor) {
             return null;

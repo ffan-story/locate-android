@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 
 import com.feifan.baselib.utils.LogUtils;
@@ -33,7 +34,7 @@ public abstract class AbsLoaderFragment extends BaseFragment implements LoaderMa
     /** 获得ContentProvider的Uri */
     protected abstract Uri getContentUri();
     /** 获得Adapter */
-    protected abstract <A extends RecyclerCursorAdapter> A getAdapter();
+    protected abstract <A extends ICursorAdapter> A getAdapter();
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

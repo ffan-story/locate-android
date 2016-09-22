@@ -337,7 +337,9 @@ public class PlanView extends ImageView implements OnLayerListener {
         if(mState == State.NONE || mState == State.DRAG) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:          // 拖拽开始
-                    currentPoint = mOperableLayer.findPointByTouch(event.getX(), event.getY());
+                    if(mOperableLayer != null) {
+                        currentPoint = mOperableLayer.findPointByTouch(event.getX(), event.getY());
+                    }
                     lastTouch.set(event.getX(), event.getY());
                     setState(State.DRAG);
                     lEvent.action = LayerEvent.ACTION_BEGIN;
