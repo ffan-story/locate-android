@@ -11,23 +11,31 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.feifan.baselib.utils.LogUtils;
+import com.feifan.locate.R;
 import com.feifan.locate.sampling.model.ZoneModel;
 import com.feifan.locate.utils.IOUtils;
 import com.feifan.locate.utils.ImageUtils;
 import com.feifan.locate.utils.ScreenUtils;
 import com.feifan.locate.widget.cursorwork.CursorPagerAdapter;
+import com.feifan.planlib.ILayer;
 import com.feifan.planlib.PlanView;
+import com.feifan.planlib.layer.TraceLayer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by xuchunlei on 16/9/21.
  */
 public class PlanPagerAdapter extends CursorPagerAdapter<PlanView> {
 
+    Bitmap bmp;
+
     public PlanPagerAdapter(Context context, Class<PlanView> clazz) {
         super(context, clazz);
+        bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.plan_location);
     }
 
     @Override
@@ -36,13 +44,18 @@ public class PlanPagerAdapter extends CursorPagerAdapter<PlanView> {
         try {
             ZoneModel zone = new ZoneModel(cursor);
             is = mContext.getAssets().open(zone.plan);
-//            Drawable d = Drawable.createFromStream(is, null);
             BitmapFactory.Options options = ImageUtils.getOptionsFromStream(is);
             options.inSampleSize = ImageUtils.calculateInSampleSize(options,
                     ScreenUtils.getScreenWidth() / 2, ScreenUtils.getScreenHeight() / 2);
             options.inJustDecodeBounds = false;
             view.setImageBitmap(BitmapFactory.decodeStream(is, null ,options));
-//            view.setImageDrawable(d);
+
+            // 添加定位图层
+            TraceLayer layer = new TraceLayer();
+            layer.setDrawBitmap(bmp);
+            view.addLayer(layer);
+            view.setPlanScale(zone.scale);
+
         }
         catch(IOException ex) {
             LogUtils.e(ex.getMessage());
@@ -51,14 +64,5 @@ public class PlanPagerAdapter extends CursorPagerAdapter<PlanView> {
             IOUtils.closeQuietly(is);
         }
     }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        super.destroyItem(container, position, object);
-//        ImageView v = (ImageView)object;
-//        ((BitmapDrawable)v.getDrawable()).getBitmap().recycle();
-//        v.setImageDrawable(null);
-    }
-
 
 }

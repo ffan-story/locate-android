@@ -10,6 +10,8 @@ import com.feifan.locate.widget.bottom.BottomBarLayout;
 
 import java.util.concurrent.Executors;
 
+import com.networkbench.agent.impl.NBSAppAgent;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String SHARED_PREFERENCES_KEY = "com.feifan.locate.prefs";
@@ -38,5 +40,9 @@ public class MainActivity extends AppCompatActivity {
             mSharedPrefs.edit().putBoolean(INITIALIZE_DATA_FLAG, true).apply();
 
         }
+
+        // 听云
+        NBSAppAgent.setLicenseKey("df2d2dbb298442df85130003ec659578").
+                withLocationServiceEnabled(true).start(this.getApplicationContext());
     }
 }

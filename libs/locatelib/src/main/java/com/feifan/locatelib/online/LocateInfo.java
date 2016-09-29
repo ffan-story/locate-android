@@ -13,4 +13,6 @@ public class LocateInfo {
 
     @SerializedName("loc_y")
     public float y;
+
+    public int floor;
 }

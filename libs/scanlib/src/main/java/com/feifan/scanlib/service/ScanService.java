@@ -19,6 +19,7 @@ import com.feifan.scanlib.beacon.RawBeacon;
 import com.feifan.scanlib.scanner.CycledLeScanCallback;
 import com.feifan.scanlib.scanner.CycledLeScanner;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.List;

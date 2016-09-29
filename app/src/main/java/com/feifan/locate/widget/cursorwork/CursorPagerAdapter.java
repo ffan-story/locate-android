@@ -74,7 +74,7 @@ public abstract class CursorPagerAdapter<T extends View> extends PagerAdapter im
 
         T item = null;
 
-        // 在创建集合中查找
+        // 在缓存中查找
         if (mItems.size() > position) {
             item = mItems.get(position);
             if (item != null) {
@@ -87,7 +87,6 @@ public abstract class CursorPagerAdapter<T extends View> extends PagerAdapter im
             container.addView(item);
             LogUtils.d("position " + position + " instance created");
         }
-
         return item;
     }
 
@@ -97,7 +96,7 @@ public abstract class CursorPagerAdapter<T extends View> extends PagerAdapter im
         if(mItems.remove(position) != null) {
             LogUtils.d("destroy " + position + " item");
         }else {
-            LogUtils.w("destroy " + position + " item failed");
+            LogUtils.w("destroy " + position + " item failed, not found");
         }
 
     }
@@ -138,6 +137,7 @@ public abstract class CursorPagerAdapter<T extends View> extends PagerAdapter im
         try {
             Constructor<T> constructor = mClazz.getConstructor(Context.class);
             item = constructor.newInstance(mContext);
+            item.setTag(position);
             renderView(item, mCursor, position);
             mItems.put(position, item);
         } catch (Exception ex) {

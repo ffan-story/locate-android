@@ -6,6 +6,10 @@
     <string name="main_bottombar_tab_item_title_locating">定位</string>
     <string name="main_bottombar_tab_item_title_config">设置</string>
 
+    <!-- 采集区域 -->
+    <string name="sampling_mac_text">采集Mac地址</string>
+    <string name="sampling_uuid_text">采集UUID</string>
+
     <!-- 采集点 -->
     <string name="spot_plan_title_text">采集点平面图</string>
     <string name="spot_detail_title_text">采集点详情</string>

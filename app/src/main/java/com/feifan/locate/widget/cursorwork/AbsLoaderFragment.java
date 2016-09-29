@@ -28,6 +28,8 @@ public abstract class AbsLoaderFragment extends BaseFragment implements LoaderMa
     protected static final String LOADER_KEY_SELECTION = "selection";
     /** 创建Loader时的参数－selectionArgs */
     protected static final String LOADER_KEY_SELECTION_ARGS = "selectionArgs";
+    /** 创建Loader时的参数-orderBy */
+    protected static final String LOADER_KEY_ORDER_BY = "orderBy";
 
     /** 生成Loader的ID */
     protected abstract int getLoaderId();
@@ -48,8 +50,9 @@ public abstract class AbsLoaderFragment extends BaseFragment implements LoaderMa
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String selection = args != null ? args.getString(LOADER_KEY_SELECTION) : null;
         String[] selectionArgs = args != null ? args.getStringArray(LOADER_KEY_SELECTION_ARGS) : null;
+        String orderBy = args != null ? args.getString(LOADER_KEY_ORDER_BY) : null;
         LogUtils.d("selection = " + selection + ",selectionArgs = " + args2string(selectionArgs));
-        return new CursorLoader(getContext(), getContentUri(), null, selection, selectionArgs, null);
+        return new CursorLoader(getContext(), getContentUri(), null, selection, selectionArgs, orderBy);
     }
 
     @Override

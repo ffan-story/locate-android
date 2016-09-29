@@ -14,6 +14,8 @@ public class IBeaconUtils {
 
     }
 
+
+
     public static String calculateUUID(byte[] raw) {
         StringBuilder builder = new StringBuilder();
 

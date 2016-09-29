@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.content.res.XmlResourceParser;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.XmlRes;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.util.Xml;
 
+import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.R;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -51,7 +54,6 @@ public class BottomBarUtils {
 
             final int depth = parser.getDepth();
 
-
             int type;
             // 遍历条件：元素深度大于跟节点深度（一般为0）或未遍历到事件结束标签，且未遍历到文档末尾
             while (((type = parser.next()) != XmlPullParser.END_TAG ||
@@ -68,11 +70,12 @@ public class BottomBarUtils {
                     int titleResId =  a.getResourceId(R.styleable.tab_item_title, NO_INTEGER);
                     int iconResId = a.getResourceId(R.styleable.tab_item_icon, NO_INTEGER);
                     String fragmentName = a.getString(R.styleable.tab_item_fragment);
+                    Bundle fragmentArgs = createArgs(a.getString(R.styleable.tab_item_fragmentArgs));
 
                     // 实例化一个tab
                     BottomItem tab;
                     if(fragmentName != null) {
-                        tab = new BottomFragmentItem(iconResId, titleResId, fragmentName);
+                        tab = new BottomFragmentItem(iconResId, titleResId, fragmentName, fragmentArgs);
                     } else {
                         tab = new BottomItem(iconResId, titleResId);
                     }
@@ -147,5 +150,47 @@ public class BottomBarUtils {
             throw new XmlPullParserException("Unexpected start tag: found " + parser.getName() +
                     ", expected " + firstElementName);
         }
+    }
+
+    private static Bundle createArgs(String fragmentArgs) {
+        if(fragmentArgs != null) {
+            Bundle args = new Bundle();
+
+            int previous = 0;
+            int currentKeyPos;
+            int currentValuePos;
+            while ((currentKeyPos = fragmentArgs.indexOf(':', previous)) > -1) {
+
+                // 找到key
+                String key = fragmentArgs.substring(previous, currentKeyPos);
+
+                // 查找value
+                currentValuePos = fragmentArgs.indexOf(';', currentKeyPos);
+                String value;
+                if(currentValuePos != -1) {
+                    value = fragmentArgs.substring(currentKeyPos + 1, currentValuePos);
+                    previous = currentValuePos + 1;
+                }else {
+                    value = fragmentArgs.substring(currentKeyPos + 1, fragmentArgs.length());
+                    previous = fragmentArgs.length();
+                }
+
+                // value类型和真实值
+                char typeChar = value.charAt(0);
+                String realValue = value.substring(2, value.length() - 1);
+                switch (typeChar) {
+                    case 's':
+                        args.putString(key, realValue);
+                        break;
+                    case 'i':
+                        args.putInt(key, Integer.valueOf(realValue));
+                        break;
+                }
+
+                LogUtils.d("fragment args parse to " + "type " + typeChar + " " + key + ":" + realValue);
+            }
+            return args;
+        }
+        return null;
     }
 }

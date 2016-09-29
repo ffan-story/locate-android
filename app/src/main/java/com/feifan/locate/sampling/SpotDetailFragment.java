@@ -23,6 +23,7 @@ import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.provider.LocateData.SampleSpot;
 import com.feifan.locate.sampling.model.SampleSpotModel;
+import com.feifan.locate.sampling.model.ZoneModel;
 import com.feifan.locate.setting.SettingSingleFragment;
 import com.feifan.locate.utils.DataUtils;
 import com.feifan.locate.utils.NumberUtils;
@@ -50,6 +51,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
 
     public static final String EXTRA_KEY_MARKPOINT = "markpoint";
     public static final String EXTRA_KEY_SAMPLESPOT_ID = "samplespot_id";
+    public static final String EXTRA_KEY_FLOOR = "floor";
 
     // RequestCode
     private static final int REQUEST_CODE_PERIOD = 1;
@@ -65,13 +67,14 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
     private int mCount = 0;
     private float mDegree;    //实时角度
     private MarkPoint mPoint;
+    private int mFloor;
     private transient boolean mConfirmed = false; // 是否确定方位，启动扫描
 
     // scan
     private ScanManager mScanManager = ScanManager.getInstance();
     private AtomicInteger mCurrentCount = new AtomicInteger(0);
     private List<SampleBeacon> mCache = new ArrayList<>();
-    private static ExportHandler mHandler = new ExportHandler();
+    private static ExportHandler mHandler;
     private boolean isRunning = false;
 
     // sql
@@ -82,8 +85,10 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
         public static final String MSG_DATA_KEY_FILENAME = "filename";
         public static final int MSG_FINISH = 2;
 
-        public ExportHandler() {
+        private String building;
 
+        public ExportHandler(String building) {
+            this.building = building;
         }
 
         @Override
@@ -92,6 +97,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
             switch (msg.what) {
                 case MSG_FINISH:
                     List<SampleBeacon> beacons = (List<SampleBeacon>) msg.obj;
+                    DataFixer.FixBeacons(building, beacons);
                     String fileName = msg.getData().getString(MSG_DATA_KEY_FILENAME);
                     DataUtils.exportToCSV(Constants.EXPORT_FILE_TITLES, beacons, fileName);
                     beacons.clear();
@@ -110,6 +116,10 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSampleSpotId = getArguments().getInt(EXTRA_KEY_SAMPLESPOT_ID);
+        mFloor = getArguments().getInt(EXTRA_KEY_FLOOR);
+        String building = getArguments().getString(Constants.EXTRA_KEY_BUILDING);
+        mHandler = new ExportHandler(building);
+
         mScanManager.setNotifier(new BeaconNotifier() {
             @Override
             public void onBeaconsReceived(Collection<SampleBeacon> beacons) {
@@ -140,7 +150,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
                         beacon.loc_d = mCurrentModel.direction;
                         beacon.direction = mDegree;
                         beacon.time = time;
-                        beacon.floor = 1;
+                        beacon.floor = mFloor;
                     }
                 }
                 mCurrentCount.getAndIncrement();

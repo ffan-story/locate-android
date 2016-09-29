@@ -10,6 +10,12 @@ import android.graphics.Canvas;
  * Created by xuchunlei on 16/8/19.
  */
 public interface ILayer {
+
+    /**
+     * 图层名-用于查找
+     * @return
+     */
+    String getName();
     /**
      * image坐标系原点
      * @param origin

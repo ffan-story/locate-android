@@ -24,6 +24,7 @@ public class RawBeacon {
     public byte[] rawData;
 
     public static RawBeacon fromScanData(BluetoothDevice device, int rssi, byte[] rawData){
+
         RawBeacon beacon = new RawBeacon();
         beacon.rssi = rssi;
         beacon.rawData = rawData;
@@ -42,7 +43,7 @@ public class RawBeacon {
                 ((int)rawData[6] & 0xff) == 0x00 &&
                 ((int)rawData[7] & 0xff) == 0x02 &&
                 ((int)rawData[8] & 0xff) == 0x15) {
-            LogUtils.w("I am a ibeacon");
+            LogUtils.w("I am a ibeacon:" + beacon.toString());
         }else {
             LogUtils.e("I am not a ibeacon:" + beacon.toString());
         }

@@ -3,11 +3,13 @@
              xmlns:app="http://schemas.android.com/apk/res-auto"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.feifan.locate.sampling.ZoneFragment">
+             tools:context="com.feifan.locate.common.BuildingFragment">
+
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/sampling_zone_list"
+        android:id="@+id/locating_zone_grid"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layoutManager="LinearLayoutManager" />
+        android:layout_height="match_parent"
+        app:layoutManager="GridLayoutManager"
+        app:spanCount="2"/>
 
 </FrameLayout>

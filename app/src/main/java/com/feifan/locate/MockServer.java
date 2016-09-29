@@ -20,16 +20,22 @@ public class MockServer {
         ContentValues values = new ContentValues();
         values.put(LocateData.Building._ID, 1);
         values.put(LocateData.Building.NAME, "金地中心A座");
+        values.put(LocateData.Building.CODE, "A22");
+        values.put(LocateData.Building.MIN_FLOOR, 22);
         resolver.insert(LocateData.Building.CONTENT_URI, values);
 
         values.clear();
         values.put(LocateData.Building._ID, 2);
         values.put(LocateData.Building.NAME, "金地中心B座");
+        values.put(LocateData.Building.CODE, "B31");
+        values.put(LocateData.Building.MIN_FLOOR, 31);
         resolver.insert(LocateData.Building.CONTENT_URI, values);
 
         values.clear();
         values.put(LocateData.Building._ID, 3);
         values.put(LocateData.Building.NAME, "石景山万达广场");
+        values.put(LocateData.Building.CODE, "android_860100010060300001");
+        values.put(LocateData.Building.MIN_FLOOR, -2);
         resolver.insert(LocateData.Building.CONTENT_URI, values);
     }
 
@@ -39,7 +45,7 @@ public class MockServer {
         values.put(LocateData.Zone._ID, 1);
         values.put(LocateData.Zone.NAME, "金地中心B座31层");
         values.put(LocateData.Zone.PLAN, "zone_jindi_b31.png");
-        values.put(LocateData.Zone.SCALE, 0.1);
+        values.put(LocateData.Zone.SCALE, 0.033);
         values.put(LocateData.Zone.FLOOR_NO, 31);
         values.put(LocateData.Zone.TITLE, "F31");
         values.put(LocateData.Zone.BUILDING, 2);

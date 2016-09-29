@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.feifan.baselib.utils.LogUtils;
+import com.feifan.locate.Constants;
 import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.utils.IOUtils;
@@ -117,22 +118,6 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
         markLayer.setMarkIcon(bmpMark);
         markLayer.setOperationListener(this);
         plan.addLayer(markLayer);
-
-//        ImageView control = findView(R.id.spot_plan_lock);
-//        control.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                plan.lock();
-//            }
-//        });
-//
-//        ImageView clear = findView(R.id.spot_plan_clear);
-//        clear.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //plan
-//            }
-//        });
 
         String[] items = getResources().getStringArray(R.array.menu);
         menu = new BubbleMenu(getContext(), items, new View.OnClickListener() {
@@ -346,10 +331,14 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
         WorkSpot.update(getContext(), false, mark.getId());
 
         // 打开详情界面
-        args.putParcelable(SpotDetailFragment.EXTRA_KEY_MARKPOINT, (Parcelable) mark);
-        args.putInt(SpotDetailFragment.EXTRA_KEY_SAMPLESPOT_ID, sampleId);
+        // query
         args.putString(LOADER_KEY_SELECTION, "workspot=?");
         args.putStringArray(LOADER_KEY_SELECTION_ARGS, new String[]{ String.valueOf(mark.getId()) });
+        // others
+        args.putParcelable(SpotDetailFragment.EXTRA_KEY_MARKPOINT, (Parcelable) mark);
+        args.putInt(SpotDetailFragment.EXTRA_KEY_SAMPLESPOT_ID, sampleId);
+        args.putInt(SpotDetailFragment.EXTRA_KEY_FLOOR, zone.floorNo);
+        args.putString(Constants.EXTRA_KEY_BUILDING, getArguments().getString(Constants.EXTRA_KEY_BUILDING));
         startActivityForResult(detailIntent, REQUEST_CODE_DETAIL);
     }
 }

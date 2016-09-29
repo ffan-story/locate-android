@@ -49,6 +49,15 @@ public class LocateData {
          *  TYPE:TEXT
          */
         public static final String NAME = "name";
+        /**
+         * 字段名-编码
+         */
+        public static final String CODE = "code";
+        /**
+         * 字段名-起始楼层
+         * TYPE:INTEGER
+         */
+        public static final String MIN_FLOOR = "minFloor";
     }
 
     /**
@@ -361,6 +370,50 @@ public class LocateData {
             PARAMS.put(WORKSPOT, workSpotId);
             return find(CONTENT_URI, context, PARAMS);
         }
+    }
+
+    /**
+     * Mac地址表定义
+     * <pre>
+     *     保存Mac地址与UUID、major和minor的映射关系
+     * </pre>
+     */
+    public static class Mac {
+        /** 访问Mac表的URL */
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/mac");
+
+        /** {@link Mac#CONTENT_URI}的MIME类型 */
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.mac";
+
+        /** {@link Mac#CONTENT_URI}子项的MIME类型 */
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.mac";
+
+        /**
+         * 字段名－mac地址
+         *  TYPE:STRING
+         */
+        public static final String ADDRESS = "address";
+        /**
+         * 字段名－uuid
+         * TYPE:STRING
+         */
+        public static final String UUID = "uuid";
+        /**
+         * 字段名-major
+         * TYPE:INTEGER
+         */
+        public static final String MAJOR = "major";
+        /**
+         * 字段名-minor
+         * TYPE:INTEGER
+         */
+        public static final String MINOR = "minor";
+        /**
+         * 字段名-building
+         * TYPE:STRING
+         * FROM {@link Building#CODE}
+         */
+        public static final String BUILDING = "building";
     }
 
     private static ContentValues createValues(Map<String, Object> params) {

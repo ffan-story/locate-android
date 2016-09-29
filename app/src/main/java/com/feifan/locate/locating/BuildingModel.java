@@ -13,21 +13,31 @@ import com.feifan.locate.widget.cursorwork.CursorModel;
 public class BuildingModel extends CursorModel implements Parcelable {
 
     public String name;
+    public String code;
+    public int minFloor;
 
     public BuildingModel(Cursor cursor) {
         int idIndex = cursor.getColumnIndexOrThrow(Building._ID);
         id = cursor.getInt(idIndex);
         int nameIndex = cursor.getColumnIndexOrThrow(Building.NAME);
         name = cursor.getString(nameIndex);
+        int codeIndex = cursor.getColumnIndexOrThrow(Building.CODE);
+        code = cursor.getString(codeIndex);
+        int minFloorIndex = cursor.getColumnIndexOrThrow(Building.MIN_FLOOR);
+        minFloor = cursor.getInt(minFloorIndex);
     }
 
     protected BuildingModel(Parcel in) {
         name = in.readString();
+        code = in.readString();
+        minFloor = in.readInt();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
+        dest.writeString(code);
+        dest.writeInt(minFloor);
     }
 
     @Override

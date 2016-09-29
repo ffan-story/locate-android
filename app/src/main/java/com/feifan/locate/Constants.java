@@ -19,6 +19,8 @@ public class Constants {
      */
     public static final int SCAN_DEFAULT_TIMES = 100;
 
+    public static final String EXTRA_KEY_BUILDING = "building";
+
     public static final String[] EXPORT_FILE_TITLES = new String[]{
             "UUID",
             "major",

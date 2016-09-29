@@ -91,7 +91,6 @@ public class CycledLeScannerForLollipop extends CycledLeScanner {
                 public void onScanResult(int callbackType, ScanResult scanResult) {
                     callback.onLeScan(scanResult.getDevice(),
                             scanResult.getRssi(), scanResult.getScanRecord().getBytes());
-
                 }
 
                 @Override

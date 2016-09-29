@@ -74,6 +74,6 @@ public class SampleBeacon extends RawBeacon implements Parcelable{
         return uuid + "," + major + "," + minor + "," + rssi
                 + "," + accuracy + "," + direction + "," + time
                 + "," + loc_x + "," + loc_y + "," + loc_d
-                + "," + floor;
+                + "," + floor + "," + mac;
     }
 }

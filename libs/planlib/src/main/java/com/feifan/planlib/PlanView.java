@@ -15,7 +15,9 @@ import com.feifan.baselib.utils.LogUtils;
 import com.feifan.planlib.ILayer.LayerEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用于平面图操作的ImageView
@@ -79,6 +81,7 @@ public class PlanView extends ImageView implements OnLayerListener {
 
     // 图层
     private List<ILayer> mLayers;
+    private Map<String, ILayer> mLayerMap;
     private IOperableLayer mOperableLayer;       // 可控图层，只能同时操控一个可控图层
     private OnPlanListener mPlanListener;
     private boolean inited = false;
@@ -104,6 +107,7 @@ public class PlanView extends ImageView implements OnLayerListener {
         setState(State.NONE);
 
         mLayers = new ArrayList<>();
+        mLayerMap = new HashMap<>();
     }
 
     @Override
@@ -143,13 +147,21 @@ public class PlanView extends ImageView implements OnLayerListener {
     }
 
     public void addLayer(ILayer layer) {
+        if(mLayerMap.containsKey(layer.getName())) {
+            throw new UnsupportedOperationException("layer " + layer.getName() + " existed");
+        }
         layer.setOnLayerListener(this);
         mLayers.add(layer);
+        mLayerMap.put(layer.getName(), layer);
 
         // 可控图层
         if(layer instanceof IOperableLayer) {
             mOperableLayer = (IOperableLayer)layer;
         }
+    }
+
+    public ILayer getLayer(String name) {
+        return mLayerMap.get(name);
     }
 
     public void setPlanListener(OnPlanListener listener) {
@@ -328,6 +340,12 @@ public class PlanView extends ImageView implements OnLayerListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        if (scale == minScale) { // 恢复初始大小允许滑动切换
+            getParent().requestDisallowInterceptTouchEvent(false);
+        } else {
+            getParent().requestDisallowInterceptTouchEvent(true);
+        }
 
         // 处理缩放
         mScaleDetector.onTouchEvent(event);

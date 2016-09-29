@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.Build;
 import android.text.TextUtils;
 
 import java.util.HashMap;
@@ -114,8 +115,10 @@ public class LocateProvider extends ContentProvider {
         sBuildingProjectionMap = new HashMap<>();
         sBuildingProjectionMap.put(Building._ID, Building._ID);
         sBuildingProjectionMap.put(Building.NAME, Building.NAME);
+        sBuildingProjectionMap.put(Building.CODE, Building.CODE);
+        sBuildingProjectionMap.put(Building.MIN_FLOOR, Building.MIN_FLOOR);
 
-        sZoneProjectionMap = new HashMap<String, String>();
+        sZoneProjectionMap = new HashMap<>();
         sZoneProjectionMap.put(Zone._ID, Zone._ID);
         sZoneProjectionMap.put(Zone.NAME, Zone.NAME);
         sZoneProjectionMap.put(Zone.PLAN, Zone.PLAN);
@@ -124,14 +127,14 @@ public class LocateProvider extends ContentProvider {
         sZoneProjectionMap.put(Zone.TITLE, Zone.TITLE);
 //        sZoneProjectionMap.put(Zone.REMOTE_ID, Zone.REMOTE_ID);
 
-        sWorkSpotProjectionMap = new HashMap<String, String>();
+        sWorkSpotProjectionMap = new HashMap<>();
         sWorkSpotProjectionMap.put(WorkSpot._ID, WorkSpot._ID);
         sWorkSpotProjectionMap.put(WorkSpot.X, WorkSpot.X);
         sWorkSpotProjectionMap.put(WorkSpot.Y, WorkSpot.Y);
         sWorkSpotProjectionMap.put(WorkSpot.MOVABLE, WorkSpot.MOVABLE);
         sWorkSpotProjectionMap.put(WorkSpot.ZONE, WorkSpot.ZONE);
 
-        sSampleSpotProjectionMap = new HashMap<String, String>();
+        sSampleSpotProjectionMap = new HashMap<>();
         sSampleSpotProjectionMap.put(SampleSpot._ID, SampleSpot._ID);
         sSampleSpotProjectionMap.put(SampleSpot.X, SampleSpot.X);
         sSampleSpotProjectionMap.put(SampleSpot.Y, SampleSpot.Y);
@@ -222,7 +225,7 @@ public class LocateProvider extends ContentProvider {
         }
         // 执行查询
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-        Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, null);
+        Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
         // 设置监听游标的uri，当数据变更时通过该uri可监控到
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
@@ -387,7 +390,9 @@ public class LocateProvider extends ContentProvider {
             // 创建定位区域
             db.execSQL("CREATE TABLE " + BUILDING_TABLE_NAME + " ("
                     + Building._ID + " INTEGER PRIMARY KEY,"
-                    + Building.NAME + " TEXT"
+                    + Building.NAME + " TEXT,"
+                    + Building.CODE + " TEXT NOT NULL UNIQUE,"
+                    + Building.MIN_FLOOR + " INTEGER DEFAULT 0"
                     + ");");
 
             // 创建定位区域

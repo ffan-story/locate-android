@@ -21,8 +21,6 @@ import java.util.List;
  */
 public class MarkLayer implements IOperableLayer {
 
-    private static final String TAG = "MarkerLayer";
-
     // 标记点
     private List<MarkPoint> marks = new ArrayList<>();
     private List<MarkPoint> pendingMarks;
@@ -55,10 +53,6 @@ public class MarkLayer implements IOperableLayer {
         markHeight = bmpMark.getHeight() * 1.1f;
     }
 
-    public void setPlanLayerListener(OnLayerListener listener) {
-        this.mListener = listener;
-    }
-
     public void setPendingData(List<MarkPoint> data) {
         this.pendingMarks = data;
         // 更新状态
@@ -87,6 +81,16 @@ public class MarkLayer implements IOperableLayer {
      */
     public boolean hasUnLockedPoints() {
         return lockFlags != -1l;
+    }
+
+    /**
+     * 图层名-用于查找
+     *
+     * @return
+     */
+    @Override
+    public String getName() {
+        return "mark";
     }
 
     @Override
@@ -126,7 +130,7 @@ public class MarkLayer implements IOperableLayer {
                         float x = (point.getLocX() - event.x) * event.scale + event.x;
                         float y = (point.getLocY() - event.y) * event.scale + event.y;
                         point.set(x, y);
-                    } else {                // 缩放后的坐标
+                    } else {                 // 缩放后的坐标
                         float x = (point.getLocX() - origin.getX()) / lastScale;
                         float y = (point.getLocY() - origin.getY()) / lastScale;
                         point.setRaw(x, y);
@@ -143,7 +147,8 @@ public class MarkLayer implements IOperableLayer {
                     canvas.drawBitmap(bmpMark,
                             point.getLocX() - bmpMark.getWidth() * 0.5f,
                             point.getLocY() - bmpMark.getHeight(), null);
-                    canvas.drawText(point.toString(), point.getLocX() - bmpMark.getWidth(), point.getLocY() + bmpMark.getHeight(), mPaint);
+                    canvas.drawText(point.toString(), point.getLocX() - bmpMark.getWidth(),
+                            point.getLocY() + bmpMark.getHeight(), mPaint);
                 }
             }
         }
@@ -194,6 +199,7 @@ public class MarkLayer implements IOperableLayer {
             }
         } else { //在内部创建坐标点
             point = new MarkPoint(x, y, rx, ry, planScale);
+            // FIXME: 16/9/27 id maybe equal while delete some points before
             point.setId(marks.size() + 1);
         }
 

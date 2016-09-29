@@ -1,19 +1,24 @@
 package com.feifan.locatelib.network;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 
 import com.feifan.baselib.utils.LogUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -101,22 +106,36 @@ public class ServiceFactory {
     }
 
     private OkHttpClient getOkHttpClient() {
-        //定制OkHttp
+        // 定制OkHttp
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
 
-        //设置超时时间
+        // 设置超时时间
         httpClientBuilder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         httpClientBuilder.writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         httpClientBuilder.readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
 
-        //设置缓存
+        // 设置缓存
         File httpCacheDirectory = new File(cacheDir, "OkHttpCache");
         httpClientBuilder.cache(new Cache(httpCacheDirectory, 10 * 1024 * 1024));
 
-        //设置日志
+        // 设置日志
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClientBuilder.addInterceptor(logging);
+
+        // 设置headers
+        httpClientBuilder.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request original = chain.request();
+
+                // Request customization: add request headers
+                Request.Builder requestBuilder = original.newBuilder()
+                        .header("User-Agent", Build.MODEL);
+                Request request = requestBuilder.build();
+                return chain.proceed(request);
+            }
+        });
 
         return httpClientBuilder.build();
     }

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.support.annotation.IdRes;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
@@ -15,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.R;
@@ -40,6 +42,9 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
 
     private FrameLayout.LayoutParams mParams;
 
+    //test
+    private TextView logView;
+
     public LocatingPanel(Context context) {
         this(context, null);
     }
@@ -58,6 +63,9 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
         setPadding(spacing, spacing, spacing, spacing);
 
         mPreferences = context.getSharedPreferences(PREFERENCE_LOCATING_SETTINGS, Context.MODE_PRIVATE);
+
+        //test
+        logView = (TextView)findViewById(R.id.text_response);
     }
 
     @Override
@@ -72,6 +80,15 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
         }
         mPreferences.registerOnSharedPreferenceChangeListener(listener);
         mListener = listener;
+    }
+
+    // test
+    public void updateLog(String logText) {
+        if(logView != null) {
+            logView.setText(logText);
+        }else {
+            logView = (TextView)findViewById(R.id.text_response);
+        }
     }
 
     @Override

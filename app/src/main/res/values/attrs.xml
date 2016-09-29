@@ -6,5 +6,6 @@
         <attr name="item_icon" format="reference" />
         <attr name="item_title" format="reference" />
         <attr name="item_fragment" format="string" />
+        <attr name="item_fragmentArgs" format="string"/>
     </declare-styleable>
 </resources>

@@ -88,6 +88,18 @@ public class MarkPoint implements ILayerPoint, Parcelable{
         mRawLoc.set(x, y);
     }
 
+    /**
+     * 设置真实坐标
+     *
+     * @param x
+     * @param y
+     */
+    @Override
+    public void setReal(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
     @Override
     public void setScale(float scale) {
         this.mPlanScale = scale;

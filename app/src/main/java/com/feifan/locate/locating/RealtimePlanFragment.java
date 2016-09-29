@@ -6,6 +6,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.Loader;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.R;
+import com.feifan.locate.common.BuildingFragment;
 import com.feifan.locate.locating.config.LocatingPanel;
 import com.feifan.locate.provider.LocateData.Zone;
 import com.feifan.locate.widget.cursorwork.AbsLoaderFragment;
@@ -31,6 +34,7 @@ import com.feifan.locatelib.online.LocateInfo;
 import com.feifan.locatelib.online.LocateQueryData;
 import com.feifan.locatelib.online.RxFingerLocateService;
 import com.feifan.planlib.PlanView;
+import com.feifan.planlib.layer.TraceLayer;
 import com.feifan.scanlib.BeaconNotifier;
 import com.feifan.scanlib.ScanManager;
 import com.feifan.scanlib.beacon.SampleBeacon;
@@ -38,6 +42,7 @@ import com.feifan.scanlib.beacon.SampleBeacon;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -50,8 +55,6 @@ import rx.functions.Action1;
  * Created by xuchunlei on 16/9/18.
  */
 public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedPreferenceChangeListener {
-
-    public static final String EXTRA_KEY_BUILDING = "building";
 
     @IdRes
     private static final int ID_MENU_SETTING = 1;
@@ -70,16 +73,26 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
     private int mScanPeriod = 3000;
 
     // network
-    private LocateQueryData queryData = new LocateQueryData();
+    private transient LocateQueryData queryData = new LocateQueryData();
     private Observable<Long> queryEngine;
     private Subscription querySubscription;
     private RxFingerLocateService locateService;
+
+    // locate
+    private int currentFloor = -100;
+    private TraceLayer currentPlanLayer;
+    private int floorCount = 0;
+    private int minFloor = 0;
+    private int computeFloor; // 用于计算的楼层参数
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
         ServiceFactory.getInstance().initialize(getContext());
+        BuildingModel buildingModel = getArguments().getParcelable(BuildingFragment.EXTRA_KEY_BUILDING);
+        setTitle(buildingModel.name);
+        minFloor = buildingModel.minFloor;
 
         // scan
         mScanManager.setAutoStart(true, context.getPackageName(), mScanPeriod);
@@ -87,9 +100,10 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
 
         // query
         queryData.algorithm = "centroid";
-        queryData.position = "A22";
+        queryData.position = buildingModel.code;
         locateService = ServiceFactory.getInstance().createService(RxFingerLocateService.class);
         startQueryAtInterval(3);
+        LogUtils.i("we are locating in " + queryData.position + " now");
     }
 
     @Nullable
@@ -102,9 +116,6 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        BuildingModel buildingModel = getArguments().getParcelable(EXTRA_KEY_BUILDING);
-        setTitle(buildingModel.name);
-
         mPager = findView(R.id.realtime_plan_pager);
         mAdapter = new PlanPagerAdapter(getContext(), PlanView.class);
         mPager.setAdapter(mAdapter);
@@ -113,19 +124,6 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
         mPanel = (LocatingPanel) getLayoutInflater(savedInstanceState).inflate(R.layout.layout_locating_panel,
                 null, false);
         mPanel.setConfigChangeListener(this);
-
-//        Handler h = new Handler(){
-//            int curPos = 0;
-//            @Override
-//            public void handleMessage(Message msg) {
-//                super.handleMessage(msg);
-////                mPager.setCurrentItem(curPos % 6);
-//                mPager.setCurrentItem(curPos++ % 6, false);
-//                sendEmptyMessageDelayed(9, 2000);
-//            }
-//        };
-//        h.sendEmptyMessage(9);
-
     }
 
     /**
@@ -156,6 +154,12 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         super.onLoadFinished(loader, data);
         mIndicator.setupWithViewPager(mPager);
+        floorCount = data.getCount();
+        computeFloor = floorCount + minFloor;
+        LogUtils.d("floorCount=" + floorCount + ",minFloor=" + minFloor + ",computeFloor=" + computeFloor);
+
+        // test
+//        simulate();
     }
 
     @Override
@@ -166,7 +170,7 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
             @Override
             public void onBeaconsReceived(Collection<SampleBeacon> beacons) {
                 LogUtils.i("we got " + (beacons == null ? 0 : beacons.size()) + " beacon samples");
-                Map<String, Float> sData = DataProcessor.processBeaconData(beacons);
+                Map<String, Float> sData = DataProcessor.processBeaconData(queryData.position, beacons);
                 queryData.upDateTensor(sData);
             }
         });
@@ -225,6 +229,8 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
                 querySubscription.unsubscribe();
             }
             startQueryAtInterval(period);
+        } else if(key.equals(LocatingPanel.KEY_ALGORITHM)) {
+            queryData.algorithm = sharedPreferences.getString(key, queryData.algorithm);
         }
     }
 
@@ -233,23 +239,91 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
         querySubscription = queryEngine.subscribe(new Action1<Long>() {
             @Override
             public void call(Long aLong) {
-                locateService.getLocation(queryData)
-                        .compose(TransformUtils.<HttpResult<LocateInfo>>defaultSchedulers())
-                        .subscribe(new HttpResultSubscriber<LocateInfo>() {
+                if(!queryData.tensor.isEmpty()) {
+                    locateService.getLocation(queryData)
+                            .compose(TransformUtils.<HttpResult<LocateInfo>>defaultSchedulers())
+                            .subscribe(new HttpResultSubscriber<LocateInfo>() {
 
-                            @Override
-                            protected void _onError(Throwable e) {
-                                LogUtils.e(e.getMessage());
-                            }
-
-                            @Override
-                            protected void _onSuccess(LocateInfo data) {
-                                if (data != null) {
-                                    LogUtils.e(data.x + "," + data.y + " at " + System.currentTimeMillis());
+                                @Override
+                                protected void _onError(Throwable e) {
+                                    LogUtils.e(e.getMessage());
+                                    //test
+                                    mPanel.updateLog(e.getMessage());
                                 }
-                            }
-                        });
+
+                                @Override
+                                protected void _onSuccess(LocateInfo data) {
+                                    if (data != null) {
+                                        LogUtils.d("we are in (" + data.x + "," + data.y + "," + data.floor + ") at "
+                                                + System.currentTimeMillis());
+                                        //test debug
+                                        mPanel.updateLog(data.x + "," + data.y + "," + data.floor);
+
+                                        // 切换楼层
+                                        if(currentFloor != data.floor) {
+                                            currentFloor = data.floor;
+                                            int pos = computePositionByFloor(currentFloor);
+                                            LogUtils.i("switch to floor " + currentFloor + " with position " + pos);
+                                            mPager.setCurrentItem(pos, false);
+                                            PlanView plan = (PlanView) mPager.findViewWithTag(pos);
+                                            currentPlanLayer = (TraceLayer) plan.getLayer("trace");
+                                        }
+
+                                        currentPlanLayer.drawTracePoint(data.x, data.y);
+                                    }
+                                }
+                            });
+                }
             }
         });
+    }
+
+    private int computePositionByFloor(int floor) {
+        // an implementation
+//        int compansation = (floor ^ minFloor) >= 0 ? 0 : 1;
+//        return  (floorCount - 1) - (floor - minFloor) + compansation;
+
+        // an optimization
+        int compansation = (floor ^ minFloor) >= 0 ? -1 : 0;
+        return  computeFloor - floor + compansation;
+    }
+
+    private void simulate() {
+        // todo remove me while release
+
+        // we simulate floor switching
+        currentFloor = 0;
+        final Random randomFloor = new Random(6);
+        final Random randomInterval = new Random(10);
+        Handler h1 = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+//                mPager.setCurrentItem(curPos % 6);
+                currentFloor = randomFloor.nextInt(6) + minFloor;
+                if(currentFloor != 0) {
+                    int pos = computePositionByFloor(currentFloor);
+                    LogUtils.i("floor " + currentFloor + "'s position is " + pos);
+                    mPager.setCurrentItem(pos, false);
+                    currentPlanLayer = (TraceLayer) ((PlanView)mPager.findViewWithTag(pos)).getLayer("trace");
+                }
+                sendEmptyMessageDelayed(9, randomInterval.nextInt(20) * 1000);
+            }
+        };
+        h1.sendEmptyMessage(9);
+
+        // we simulate locating
+        final Random randomX = new Random(1000);
+        final Random randomY = new Random(1001);
+        Handler h2 = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                currentPlanLayer.drawTracePoint(randomX.nextFloat() * 200, randomY.nextFloat() * 100);
+                sendEmptyMessageDelayed(9, 5000);
+
+            }
+        };
+        h2.sendEmptyMessage(9);
     }
 }

@@ -52,20 +52,22 @@ public abstract class BaseFragment extends Fragment implements MenuItem.OnMenuIt
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         LogUtils.d("onCreateOptionsMenu is called");
-//        inflater.inflate(R.menu.top_menu, menu);
         List<MenuInfo> infoList = getMenuList();
+
         if(infoList != null) {
+            int actionType =
+                    infoList.size() == 1 ? MenuItem.SHOW_AS_ACTION_IF_ROOM : MenuItem.SHOW_AS_ACTION_NEVER;
             for(MenuInfo info : infoList) {
                 MenuItem item;
                 if(info.titleRes != NO_RES) {
-                    item = menu.add(Menu.NONE, info.id, 1, info.titleRes);
+                    item = menu.add(info.groupId, info.id, 1, info.titleRes);
                 }else {
-                    item = menu.add(Menu.NONE, info.id, 1, NO_STRING);
+                    item = menu.add(info.groupId, info.id, 1, NO_STRING);
                 }
                 if(info.iconRes != NO_RES) {
                     item.setIcon(info.iconRes);
                 }
-                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                item.setShowAsAction(actionType);
                 item.setOnMenuItemClickListener(this);
             }
         }
@@ -149,17 +151,21 @@ public abstract class BaseFragment extends Fragment implements MenuItem.OnMenuIt
         public int id;
         public int iconRes;
         public int titleRes;
+        public int groupId;
 
         public MenuInfo(@IdRes int id, @DrawableRes int iconRes, @StringRes int titleRes) {
             this.id = id;
             this.iconRes = iconRes;
             this.titleRes = titleRes;
+            this.groupId = Menu.NONE;
         }
 
         public MenuInfo(@IdRes int id, @DrawableRes int iconRes) {
-            this.id = id;
-            this.iconRes = iconRes;
-            this.titleRes = NO_RES;
+            this(id, iconRes, NO_RES);
+        }
+
+        public void setGroupId(int groupId) {
+            this.groupId = groupId;
         }
     }
 }

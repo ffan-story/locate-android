@@ -64,7 +64,7 @@ public interface ILayerPoint {
     void offset(float deltaX, float deltaY);
 
     /**
-     * 平移计算坐标
+     * 平移平面图坐标
      * @param deltaX
      * @param deltaY
      */
@@ -78,14 +78,24 @@ public interface ILayerPoint {
     void set(float x, float y);
 
     /**
-     * 设置计算坐标
+     * 设置平面图坐标
      * @param x
      * @param y
      */
     void setRaw(float x, float y);
 
     /**
+     * 设置真实坐标
+     * @param x
+     * @param y
+     */
+    void setReal(float x, float y);
+
+    /**
      * 设置比例尺
+     * <p>
+     *     平面图坐标与实际坐标的比值
+     * </p>
      * @param scale
      */
     void setScale(float scale);
