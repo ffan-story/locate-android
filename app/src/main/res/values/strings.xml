@@ -27,6 +27,22 @@
     <string name="locating_panel_scan_period_text">数据累计时间:</string>
     <string name="locating_panel_request_period_text">数据请求时间:</string>
 
+    <!-- 设置 -->
+    <string name="setting_sensor_title">传感器</string>
+    <string name="setting_sensor_detection_title">检测</string>
+    <string name="setting_sensor_detection_subtitle">查看详情</string>
+    <string name="setting_sensor_detail_title">传感器详情</string>
+    <string name="setting_sensor_sampling_title">采样</string>
+    <string name="setting_sensor_sampling_subtitle">采集并上传数据</string>
+
+    <!-- 设置#传感器扫描 -->
+    <string name="setting_sensor_scan_title">扫描数据</string>
+    <string name="setting_sensor_scan_selection_title">选取传感器</string>
+    <string name="setting_sensor_scan_accelerometer_title">加速传感器</string>
+    <string name="setting_sensor_scan_linear_accelerometer_title">线性加速传感器</string>
+    <string name="setting_sensor_scan_gravimeter_title">重力传感器</string>
+    <string name="setting_sensor_scan_magnetometer_title">磁力传感器</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

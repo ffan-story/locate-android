@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.feifan.locate.widget.settingwork.SettingLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:setting="http://schemas.android.com/apk/res-auto">
+    <com.feifan.locate.widget.settingwork.ToggleItemView
+        style="@style/SettingItemContainer"
+        setting:showTitle="@string/setting_sensor_scan_title"/>
+    <com.feifan.locate.widget.settingwork.SettingGroupView
+        style="@style/SettingGroupContainer"
+        android:text="@string/setting_sensor_scan_selection_title"/>
+    <com.feifan.locate.widget.settingwork.TextItemView
+        style="@style/SettingItemContainer"
+        setting:showTitle="@string/setting_sensor_scan_accelerometer_title" />
+    <com.feifan.locate.widget.settingwork.TextItemView
+        style="@style/SettingItemContainer"
+        setting:showTitle="@string/setting_sensor_scan_linear_accelerometer_title" />
+    <com.feifan.locate.widget.settingwork.TextItemView
+        style="@style/SettingItemContainer"
+        setting:showTitle="@string/setting_sensor_scan_gravimeter_title" />
+    <com.feifan.locate.widget.settingwork.TextItemView
+        style="@style/SettingItemContainer"
+        setting:showTitle="@string/setting_sensor_scan_magnetometer_title" />
+</com.feifan.locate.widget.settingwork.SettingLayout>

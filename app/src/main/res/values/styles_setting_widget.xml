@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SettingItemContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/setting_item_height</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:paddingLeft">@dimen/setting_item_lr_padding</item>
+        <item name="android:paddingRight">@dimen/setting_item_lr_padding</item>
+    </style>
+
+    <style name="SettingGroupContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/setting_group_height</item>
+        <item name="android:background">@color/setting_view_group_bg</item>
+        <item name="android:paddingLeft">@dimen/setting_item_lr_padding</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

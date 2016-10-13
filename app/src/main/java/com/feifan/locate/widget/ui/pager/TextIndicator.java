@@ -195,7 +195,7 @@ public class TextIndicator extends LinearLayout implements View.OnClickListener 
          */
         @Override
         public void onPageScrollStateChanged(int state) {
-            LogUtils.e("onPageScrollStateChanged---->" + state);
+
         }
     }
 }

@@ -23,13 +23,11 @@ import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.provider.LocateData.SampleSpot;
 import com.feifan.locate.sampling.model.SampleSpotModel;
-import com.feifan.locate.sampling.model.ZoneModel;
 import com.feifan.locate.setting.SettingSingleFragment;
 import com.feifan.locate.utils.DataUtils;
 import com.feifan.locate.utils.NumberUtils;
 import com.feifan.locate.utils.SizeUtils;
 import com.feifan.locate.widget.cursorwork.ICursorAdapter;
-import com.feifan.locate.widget.cursorwork.RecyclerCursorAdapter;
 import com.feifan.locate.widget.recycler.SpaceItemDecoration;
 import com.feifan.locate.widget.ui.AbsSensorFragment;
 import com.feifan.planlib.layer.MarkPoint;
@@ -38,7 +36,6 @@ import com.feifan.scanlib.ScanManager;
 import com.feifan.locate.sampling.SampleSpotAdapter.OnSampleSpotClickListener;
 import com.feifan.scanlib.beacon.SampleBeacon;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -143,13 +140,11 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
                     SampleSpot.updateScan(getContext(), mCount, mCurrentCount.get() + 1, mCurrentModel.id, SampleSpot.STATUS_RUNNING);
 
                     // 保存附加信息
-                    final double time = System.currentTimeMillis() / 1000d;
                     for(SampleBeacon beacon : beacons) {
                         beacon.loc_x = mPoint.getRealX();
                         beacon.loc_y = mPoint.getRealY();
                         beacon.loc_d = mCurrentModel.direction;
                         beacon.direction = mDegree;
-                        beacon.time = time;
                         beacon.floor = mFloor;
                     }
                 }
@@ -164,7 +159,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
         if(isAdded()) {
             mScanManager.bind(getContext());
         }
-        return inflater.inflate(R.layout.fragment_spot_detail, container, false);
+        return inflater.inflate(R.layout.fragment_sample_detail, container, false);
     }
 
     @Override
@@ -176,7 +171,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
         final Intent data = new Intent();
         data.putExtra(EXTRA_KEY_MARKPOINT, mPoint);
 
-        view.findViewById(R.id.spot_detail_remove).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.sample_detail_remove).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isRunning) {
@@ -189,14 +184,14 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
             }
         });
 
-        view.findViewById(R.id.spot_detail_period).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.sample_detail_period).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                startConfig("采样周期", String.valueOf(1000), REQUEST_CODE_PERIOD);
             }
         });
 
-        view.findViewById(R.id.spot_detail_sample_add).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.sample_detail_sample_add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isRunning) {
@@ -216,13 +211,12 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
         });
 
         // 加载样本列表
-        RecyclerView recyclerView = findView(R.id.spot_detail_sample_list);
+        RecyclerView recyclerView = findView(R.id.sample_detail_sample_list);
         recyclerView.addItemDecoration(new SpaceItemDecoration(SizeUtils.dp2px(getContext(), 1)));
         mAdapter = new SampleSpotAdapter(this);
         recyclerView.setAdapter(mAdapter);
 
-        mInfoV = findView(R.id.spot_detail_info);
-
+        mInfoV = findView(R.id.sample_detail_info);
 
     }
 
@@ -261,7 +255,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements OnSampleSpo
     protected void onOrientationChanged(float radian) {
         // 更新样本列表
         mDegree = NumberUtils.degree(radian);
-        //将新角度更新到数据库
+
         if(!mConfirmed && mInfoV != null) {
             mInfoV.setText(String.format("(%f, %f, %f)", mPoint.getRealX(), mPoint.getRealY(), mDegree));
         }

@@ -9,6 +9,7 @@ import android.provider.BaseColumns;
 
 import com.feifan.baselib.utils.LogUtils;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -230,6 +231,39 @@ public class LocateData {
         }
     }
 
+    public interface SampleColumns extends BaseColumns {
+        /**
+         * 字段名－样本名称
+         *  TYPE:TEXT
+         */
+        String _NAME = "name";
+        /**
+         * 字段名－样本总数
+         *  TYPE:INTEGER
+         */
+        String _TOTAL ="total";
+        /**
+         * 字段名－采集状态
+         *  TYPE:INTEGER
+         *  VALUE:
+         *  {@link SampleColumns#STATUS_NONE},
+         *  {@link SampleColumns#STATUS_READY},
+         *  {@link SampleColumns#STATUS_RUNNING},
+         *  {@link SampleColumns#STATUS_FINISH}
+         */
+        String _STATUS = "status";
+        /**
+         * 字段名－采集进度
+         *  TYPE:TEXT
+         */
+        String _PROGRESS = "progress";
+
+        int STATUS_NONE = 0;
+        int STATUS_READY = STATUS_NONE + 1;
+        int STATUS_RUNNING = STATUS_READY + 1;
+        int STATUS_FINISH = STATUS_RUNNING + 1;
+    }
+
     /**
      * 样本点定义
      * <pre>
@@ -373,48 +407,142 @@ public class LocateData {
     }
 
     /**
-     * Mac地址表定义
-     * <pre>
-     *     保存Mac地址与UUID、major和minor的映射关系
-     * </pre>
+     * 采集路线表定义
+     *
      */
-    public static class Mac {
-        /** 访问Mac表的URL */
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/mac");
+    public static class WorkLine implements BaseColumns {
+        /** 访问WorkLine表的URL */
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/workline");
 
-        /** {@link Mac#CONTENT_URI}的MIME类型 */
-        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.mac";
+        /** {@link WorkLine#CONTENT_URI}的MIME类型 */
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.workline";
 
-        /** {@link Mac#CONTENT_URI}子项的MIME类型 */
-        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.mac";
+        /** {@link WorkLine#CONTENT_URI}子项的MIME类型 */
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.workline";
 
         /**
-         * 字段名－mac地址
-         *  TYPE:STRING
+         * 字段名－采集线路端点1
+         *  TYPE:INTEGER
+         *  FOREIGN KEY:WorkSpot(_id)
          */
-        public static final String ADDRESS = "address";
+        public static final String SPOT_ONE = "spotOne";
+
         /**
-         * 字段名－uuid
-         * TYPE:STRING
+         * 字段名－采集线路端点2
+         *  TYPE:INTEGER
+         *  FOREIGN KEY:WorkSpot(_id)
          */
-        public static final String UUID = "uuid";
+        public static final String SPOT_TWO = "spotTwo";
+
         /**
-         * 字段名-major
+         * 字段名－定位区域
          * TYPE:INTEGER
          */
-        public static final String MAJOR = "major";
-        /**
-         * 字段名-minor
-         * TYPE:INTEGER
-         */
-        public static final String MINOR = "minor";
-        /**
-         * 字段名-building
-         * TYPE:STRING
-         * FROM {@link Building#CODE}
-         */
-        public static final String BUILDING = "building";
+        public static final String ZONE = "zone";
+
     }
+
+    /**
+     * 采样路线表定义
+     */
+    public static class SampleLine implements SampleColumns {
+        /** 访问WorkLine表的URL */
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/sampleline");
+
+        /** {@link SampleLine#CONTENT_URI}的MIME类型 */
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.sampleline";
+
+        /** {@link SampleLine#CONTENT_URI}子项的MIME类型 */
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.sampleline";
+
+        /**
+         * 字段名-方向
+         */
+        public static final String D = "d";
+
+        /**
+         * 字段名－工作线路
+         * TYPE:INTEGER
+         * FOREIGN KEY:WorkLine(_ID)
+         */
+        public static final String WORKLINE = "workLine";
+
+        // 更新
+        private static final Map<String, Object> PARAMS = new HashMap<>();
+
+        public static void updateStatus(Context context, int status, float direction, int id) {
+            if(context == null) {
+                return;
+            }
+            PARAMS.clear();
+            PARAMS.put(_STATUS, status);
+            PARAMS.put(D, direction);
+            updateData(CONTENT_URI, context, PARAMS, id);
+        }
+
+        /**
+         * 更新样本数据
+         * <p>
+         *     数量、扫描次数和状态
+         * </p>
+         * @param context
+         */
+        public static void updateScan(Context context, int total, String progress, int id) {
+            if(context == null) {
+                return;
+            }
+            PARAMS.clear();
+            PARAMS.put(_PROGRESS, progress);
+            PARAMS.put(_TOTAL, total);
+
+            updateData(CONTENT_URI, context, PARAMS, id);
+        }
+
+    }
+
+//    /**
+//     * Mac地址表定义
+//     * <pre>
+//     *     保存Mac地址与UUID、major和minor的映射关系
+//     * </pre>
+//     */
+//    public static class Mac implements BaseColumns {
+//        /** 访问Mac表的URL */
+//        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/mac");
+//
+//        /** {@link Mac#CONTENT_URI}的MIME类型 */
+//        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.mac";
+//
+//        /** {@link Mac#CONTENT_URI}子项的MIME类型 */
+//        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.mac";
+//
+//        /**
+//         * 字段名－mac地址
+//         *  TYPE:STRING
+//         */
+//        public static final String ADDRESS = "address";
+//        /**
+//         * 字段名－uuid
+//         * TYPE:STRING
+//         */
+//        public static final String UUID = "uuid";
+//        /**
+//         * 字段名-major
+//         * TYPE:INTEGER
+//         */
+//        public static final String MAJOR = "major";
+//        /**
+//         * 字段名-minor
+//         * TYPE:INTEGER
+//         */
+//        public static final String MINOR = "minor";
+//        /**
+//         * 字段名-building
+//         * TYPE:STRING
+//         * FROM {@link Building#CODE}
+//         */
+//        public static final String BUILDING = "building";
+//    }
 
     private static ContentValues createValues(Map<String, Object> params) {
         final Set<Entry<String, Object>> entrySet = params.entrySet();

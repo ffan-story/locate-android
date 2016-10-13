@@ -21,6 +21,9 @@ public class Constants {
 
     public static final String EXTRA_KEY_BUILDING = "building";
 
+    /**
+     * 导出文件列-普通采集
+     */
     public static final String[] EXPORT_FILE_TITLES = new String[]{
             "UUID",
             "major",
@@ -34,6 +37,8 @@ public class Constants {
             "loc_d",
             "floor"
     };
+
+//    public static final String[] EXPORT_FILE_TITLES_LI
 
     // export
     public static final String EXPORT_ROOT_PATH_NAME;    // 根目录

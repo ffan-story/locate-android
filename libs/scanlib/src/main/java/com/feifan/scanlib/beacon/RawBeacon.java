@@ -22,16 +22,18 @@ public class RawBeacon {
     public String mac;
     /** 原始数据 */
     public byte[] rawData;
+    /** 是否伪造 */
+    public boolean fake = false;
 
     public static RawBeacon fromScanData(BluetoothDevice device, int rssi, byte[] rawData){
 
         RawBeacon beacon = new RawBeacon();
         beacon.rssi = rssi;
         beacon.rawData = rawData;
-        beacon.uuid = IBeaconUtils.calculateUUID(rawData);
-        beacon.major = IBeaconUtils.calculateMajor(rawData);
-        beacon.minor = IBeaconUtils.calculateMinor(rawData);
-        beacon.txPowser = IBeaconUtils.calculateTxPower(rawData);
+        beacon.uuid = BeaconUtils.calculateUUID(rawData);
+        beacon.major = BeaconUtils.calculateMajor(rawData);
+        beacon.minor = BeaconUtils.calculateMinor(rawData);
+        beacon.txPowser = BeaconUtils.calculateTxPower(rawData);
         beacon.mac = device == null ? "" : device.getAddress();
 
 //        dump(rawData, beacon);

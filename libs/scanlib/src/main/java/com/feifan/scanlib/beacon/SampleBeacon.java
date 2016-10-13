@@ -15,6 +15,7 @@ public class SampleBeacon extends RawBeacon implements Parcelable{
     public float loc_y;
     public float loc_d;
     public int floor;
+    public int group;
 
     public SampleBeacon(RawBeacon beacon) {
         update(beacon);
@@ -27,7 +28,7 @@ public class SampleBeacon extends RawBeacon implements Parcelable{
         rssi = in.readInt();
         mac = in.readString();
         txPowser = in.readInt();
-//        time = in.readLong();
+        time = in.readDouble();
 //        direction = in.readFloat();
     }
 
@@ -39,7 +40,7 @@ public class SampleBeacon extends RawBeacon implements Parcelable{
         dest.writeInt(rssi);
         dest.writeString(mac);
         dest.writeInt(txPowser);
-//        dest.writeLong(time);
+        dest.writeDouble(time);
 //        dest.writeFloat(direction);
     }
 
@@ -74,6 +75,6 @@ public class SampleBeacon extends RawBeacon implements Parcelable{
         return uuid + "," + major + "," + minor + "," + rssi
                 + "," + accuracy + "," + direction + "," + time
                 + "," + loc_x + "," + loc_y + "," + loc_d
-                + "," + floor + "," + mac;
+                + "," + floor;
     }
 }

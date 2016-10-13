@@ -141,6 +141,11 @@ public class ScanService extends Service {
     public static final int MSG_START_SCAN = 1;
     public static final int MSG_STOP_SCAN = 2;
 
+    /**
+     * Target we publish for clients to send messages to IncomingHandler.
+     */
+    final Messenger mMessenger = new Messenger(new IncomingHandler(this));
+
     static class IncomingHandler extends Handler {
         private final WeakReference<ScanService> mService;
         private DataCallback mCallback = null;
@@ -174,11 +179,6 @@ public class ScanService extends Service {
             }
         }
     }
-
-    /**
-     * Target we publish for clients to send messages to IncomingHandler.
-     */
-    final Messenger mMessenger = new Messenger(new IncomingHandler(this));
 
     /*--------------END---------------*/
 }

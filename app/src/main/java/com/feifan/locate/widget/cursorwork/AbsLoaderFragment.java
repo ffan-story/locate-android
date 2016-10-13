@@ -35,7 +35,12 @@ public abstract class AbsLoaderFragment extends BaseFragment implements LoaderMa
     protected abstract int getLoaderId();
     /** 获得ContentProvider的Uri */
     protected abstract Uri getContentUri();
-    /** 获得Adapter */
+    /**
+     * 获得Adapter
+     * <pre>
+     *     本方法会多次调用,在该方法中创建Adapter时请注意
+     * </pre>
+     */
     protected abstract <A extends ICursorAdapter> A getAdapter();
 
     @Override

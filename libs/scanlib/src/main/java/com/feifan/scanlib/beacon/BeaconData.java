@@ -20,10 +20,10 @@ public class BeaconData implements Parcelable {
 
     protected BeaconData(Parcel in) {
         LogUtils.d("parsing RangingData");
-        Parcelable[] parcelables  = in.readParcelableArray(this.getClass().getClassLoader());
-        mBeacons = new ArrayList<SampleBeacon>(parcelables.length);
-        for (int i = 0; i < parcelables.length; i++) {
-            mBeacons.add((SampleBeacon) parcelables[i]);
+        Parcelable[] parcelablesBeacons = in.readParcelableArray(this.getClass().getClassLoader());
+        mBeacons = new ArrayList<SampleBeacon>(parcelablesBeacons.length);
+        for (int i = 0; i < parcelablesBeacons.length; i++) {
+            mBeacons.add((SampleBeacon) parcelablesBeacons[i]);
         }
     }
 

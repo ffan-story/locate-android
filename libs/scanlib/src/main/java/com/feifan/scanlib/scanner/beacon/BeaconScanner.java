@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothAdapter.LeScanCallback;
 import android.bluetooth.BluetoothDevice;
 
 import com.feifan.baselib.utils.LogUtils;
-import com.feifan.scanlib.beacon.IBeaconUtils;
+import com.feifan.scanlib.beacon.BeaconUtils;
 
 /**
  * 蓝牙扫描器
@@ -67,10 +67,10 @@ public class BeaconScanner implements LeScanCallback {
         void reload(BluetoothDevice device, int rssi, byte[] rawData){
             this.rssi = rssi;
             this.rawData = rawData;
-            this.uuid = IBeaconUtils.calculateUUID(rawData);
-            this.major = IBeaconUtils.calculateMajor(rawData);
-            this.minor = IBeaconUtils.calculateMinor(rawData);
-            this.txPowser = IBeaconUtils.calculateTxPower(rawData);
+            this.uuid = BeaconUtils.calculateUUID(rawData);
+            this.major = BeaconUtils.calculateMajor(rawData);
+            this.minor = BeaconUtils.calculateMinor(rawData);
+            this.txPowser = BeaconUtils.calculateTxPower(rawData);
             this.mac = device == null ? "" : device.getAddress();
             this.time = System.currentTimeMillis();
         }

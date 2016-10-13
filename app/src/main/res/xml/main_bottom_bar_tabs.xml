@@ -5,7 +5,7 @@
         bottombar:item_icon="@mipmap/ic_action_sampling"
         bottombar:item_title="@string/main_bottombar_tab_item_title_sampling"
         bottombar:item_fragment="com.feifan.locate.common.BuildingFragment"
-        bottombar:item_fragmentArgs="fragment:s{com.feifan.locate.sampling.SamplingFragment}"/>
+        bottombar:item_fragmentArgs="fragment:s{com.feifan.locate.sampling.ZoneFragment}"/>
     <tab
         bottombar:id="@+id/main_tab_item_locating"
         bottombar:item_icon="@mipmap/ic_action_locating"

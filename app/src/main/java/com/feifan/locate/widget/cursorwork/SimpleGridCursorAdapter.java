@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.feifan.locate.utils.ScreenUtils;
+
 import java.lang.reflect.Constructor;
 
 /**
@@ -52,7 +54,7 @@ public class SimpleGridCursorAdapter<M extends CursorModel> extends RecyclerCurs
         FrameLayout layout = new FrameLayout(context);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                240
+                ScreenUtils.getScreenHeight() / 4
         );
         layout.setLayoutParams(params);
         layout.setBackgroundColor(Color.CYAN);

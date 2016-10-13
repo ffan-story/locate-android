@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="setting_item_title_text">#FF000000</color>
+    <color name="setting_item_subtitle_text">#FFCCCCCC</color>
+    <color name="setting_view_group_bg">#FAFBFA</color>
+    <color name="setting_item_divider_color">#C8C7CC</color>
+</resources>

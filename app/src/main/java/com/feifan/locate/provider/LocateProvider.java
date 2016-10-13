@@ -11,7 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
 
 import java.util.HashMap;
@@ -22,6 +21,9 @@ import com.feifan.locate.provider.LocateData.Building;
 import com.feifan.locate.provider.LocateData.Zone;
 import com.feifan.locate.provider.LocateData.WorkSpot;
 import com.feifan.locate.provider.LocateData.SampleSpot;
+import com.feifan.locate.provider.LocateData.WorkLine;
+import com.feifan.locate.provider.LocateData.SampleLine;
+//import com.feifan.locate.provider.LocateData.Mac;
 
 /**
  * Created by xuchunlei on 16/4/21.
@@ -43,6 +45,14 @@ public class LocateProvider extends ContentProvider {
     private static final String WORKSPOT_TABLE_NAME = "workspot";
     // 数据库表名－样本点
     private static final String SAMPLESPOT_TABLE_NAME = "samplespot";
+    // 数据库表名-采集路线
+    private static final String WORKLINE_TABLE_NAME = "workline";
+    // 数据库表名-样本路线
+    private static final String SAMPLELINE_TABLE_NAME = "sampleline";
+
+    // 数据库表名-Mac地址映射
+    private static final String MAC_TABLE_NAME = "mac";
+
     // 数据库表名－样本
     private static final String SAMPLE_TABLE_NAME = "sample";
     // 数据库表名－BeaconUUID
@@ -64,8 +74,15 @@ public class LocateProvider extends ContentProvider {
     private static final int WORKSPOT_ID = WORKSPOT + 1;
     private static final int SAMPLESPOT = WORKSPOT_ID + 1;
     private static final int SAMPLESPOT_ID = SAMPLESPOT + 1;
+    private static final int WORKLINE = SAMPLESPOT_ID + 1;
+    private static final int WORKLINE_ID = WORKLINE + 1;
+    private static final int SAMPLELINE = WORKLINE_ID + 1;
+    private static final int SAMPLELINE_ID = SAMPLELINE + 1;
 
-/*    private static final int SAMPLE = SPOT_ID + 1;
+/*
+    private static final int MAC = SAMPLESPOT_ID + 1;
+    private static final int MAC_ID = MAC + 1;
+    private static final int SAMPLE = SPOT_ID + 1;
     private static final int SAMPLE_ID = SAMPLE + 1;
     private static final int BEACON_UUID = SAMPLE_ID + 1;
     private static final int BEACON_UUID_ID = BEACON_UUID + 1;
@@ -77,13 +94,20 @@ public class LocateProvider extends ContentProvider {
 
     // 定位建筑表映射集合
     private static HashMap<String, String> sBuildingProjectionMap;
-
     // 定位区域表列映射集合
     private static HashMap<String, String> sZoneProjectionMap;
     // 采集点表列映射集合
     private static HashMap<String, String> sWorkSpotProjectionMap;
     // 样本点表列映射集合
     private static HashMap<String, String> sSampleSpotProjectionMap;
+    // 采集路线表映射集合
+    private static HashMap<String, String> sWorkLineProjectionMap;
+    // 样本路线表映射集合
+    private static HashMap<String, String> sSampleLineProjectionMap;
+
+    // Mac地址表映射集合
+//    private static HashMap<String, String> sMacProjectionMap;
+
     // 样本表列映射集合
 //    private static HashMap<String, String> sSampleProjectionMap;
     // 样本详情表列映射集合
@@ -103,7 +127,14 @@ public class LocateProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "workspot/#", WORKSPOT_ID);
         sUriMatcher.addURI(AUTHORITY, "samplespot", SAMPLESPOT);
         sUriMatcher.addURI(AUTHORITY, "samplespot/#", SAMPLESPOT_ID);
-        /*sUriMatcher.addURI(AUTHORITY, "sample", SAMPLE);
+        sUriMatcher.addURI(AUTHORITY, "workline", WORKLINE);
+        sUriMatcher.addURI(AUTHORITY, "workline/#", WORKLINE_ID);
+        sUriMatcher.addURI(AUTHORITY, "sampleline", SAMPLELINE);
+        sUriMatcher.addURI(AUTHORITY, "sampleline/#", SAMPLELINE_ID);
+        /*
+        sUriMatcher.addURI(AUTHORITY, "mac", MAC);
+        sUriMatcher.addURI(AUTHORITY, "mac/#", MAC_ID);
+        sUriMatcher.addURI(AUTHORITY, "sample", SAMPLE);
         sUriMatcher.addURI(AUTHORITY, "sample/#", SAMPLE_ID);
         sUriMatcher.addURI(AUTHORITY, "beacon_uuid", BEACON_UUID);
         sUriMatcher.addURI(AUTHORITY, "beacon_uuid/#", BEACON_UUID_ID);
@@ -143,6 +174,28 @@ public class LocateProvider extends ContentProvider {
         sSampleSpotProjectionMap.put(SampleSpot.COUNT, SampleSpot.COUNT);
         sSampleSpotProjectionMap.put(SampleSpot.TOTAL, SampleSpot.TOTAL);
         sSampleSpotProjectionMap.put(SampleSpot.TIMES, SampleSpot.TIMES);
+
+        sWorkLineProjectionMap = new HashMap<>();
+        sWorkLineProjectionMap.put(WorkLine._ID, WorkLine._ID);
+        sWorkLineProjectionMap.put(WorkLine.SPOT_ONE, WorkLine.SPOT_ONE);
+        sWorkLineProjectionMap.put(WorkLine.SPOT_TWO, WorkLine.SPOT_TWO);
+        sWorkLineProjectionMap.put(WorkLine.ZONE, WorkLine.ZONE);
+
+        sSampleLineProjectionMap = new HashMap<>();
+        sSampleLineProjectionMap.put(SampleLine._ID, SampleLine._ID);
+        sSampleLineProjectionMap.put(SampleLine._NAME, SampleLine._NAME);
+        sSampleLineProjectionMap.put(SampleLine._TOTAL, SampleLine._TOTAL);
+        sSampleLineProjectionMap.put(SampleLine._PROGRESS, SampleLine._PROGRESS);
+        sSampleLineProjectionMap.put(SampleLine._STATUS, SampleLine._STATUS);
+        sSampleLineProjectionMap.put(SampleLine.D, SampleLine.D);
+        sSampleLineProjectionMap.put(SampleLine.WORKLINE, SampleLine.WORKLINE);
+
+//        sMacProjectionMap = new HashMap<>();
+//        sMacProjectionMap.put(Mac._ID, Mac._ID);
+//        sMacProjectionMap.put(Mac.ADDRESS, Mac.ADDRESS);
+//        sMacProjectionMap.put(Mac.UUID, Mac.UUID);
+//        sMacProjectionMap.put(Mac.MAJOR, Mac.MAJOR);
+//        sMacProjectionMap.put(Mac.MINOR, Mac.MINOR);
 
         /*sSampleProjectionMap = new HashMap<String, String>();
         sSampleProjectionMap.put(Sample._ID, Sample._ID);
@@ -198,6 +251,18 @@ public class LocateProvider extends ContentProvider {
                 qb.setTables(SAMPLESPOT_TABLE_NAME);
                 qb.setProjectionMap(sSampleSpotProjectionMap);
                 break;
+            case WORKLINE:
+                qb.setTables(WORKLINE_TABLE_NAME);
+                qb.setProjectionMap(sWorkLineProjectionMap);
+                break;
+            case SAMPLELINE:
+                qb.setTables(SAMPLELINE_TABLE_NAME);
+                qb.setProjectionMap(sSampleLineProjectionMap);
+                break;
+//            case MAC:
+//                qb.setTables(MAC_TABLE_NAME);
+//                qb.setProjectionMap(sMacProjectionMap);
+//                break;
             /*case SAMPLE:        // 查询样本整表
                 qb.setTables(SAMPLE_TABLE_NAME);
                 qb.setProjectionMap(sSampleProjectionMap);
@@ -226,6 +291,7 @@ public class LocateProvider extends ContentProvider {
         // 执行查询
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+
         // 设置监听游标的uri，当数据变更时通过该uri可监控到
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
@@ -250,6 +316,18 @@ public class LocateProvider extends ContentProvider {
                 return SampleSpot.CONTENT_TYPE;
             case SAMPLESPOT_ID:
                 return SampleSpot.CONTENT_ITEM_TYPE;
+            case WORKLINE:
+                return WorkLine.CONTENT_TYPE;
+            case WORKLINE_ID:
+                return WorkLine.CONTENT_ITEM_TYPE;
+            case SAMPLELINE:
+                return SampleLine.CONTENT_TYPE;
+            case SAMPLELINE_ID:
+                return SampleLine.CONTENT_ITEM_TYPE;
+//            case MAC:
+//                return Mac.CONTENT_TYPE;
+//            case MAC_ID:
+//                return Mac.CONTENT_ITEM_TYPE;
             /*case SAMPLE:
                 return Sample.CONTENT_TYPE;
             case SAMPLE_ID:
@@ -295,6 +373,18 @@ public class LocateProvider extends ContentProvider {
                 contentUri = SampleSpot.CONTENT_URI;
                 tableName = SAMPLESPOT_TABLE_NAME;
                 break;
+            case WORKLINE:
+                contentUri = WorkLine.CONTENT_URI;
+                tableName = WORKLINE_TABLE_NAME;
+                break;
+            case SAMPLELINE:
+                contentUri = SampleLine.CONTENT_URI;
+                tableName = SAMPLELINE_TABLE_NAME;
+                break;
+//            case MAC:
+//                contentUri = Mac.CONTENT_URI;
+//                tableName = MAC_TABLE_NAME;
+//                break;
             /*case SAMPLE:
                 contentUri = Sample.CONTENT_URI;
                 tableName = SAMPLE_TABLE_NAME;
@@ -368,6 +458,9 @@ public class LocateProvider extends ContentProvider {
             case SAMPLESPOT:
                 count = db.update(SAMPLESPOT_TABLE_NAME, values, selection, selectionArgs);
                 break;
+            case SAMPLELINE:
+                count = db.update(SAMPLELINE_TABLE_NAME, values, selection, selectionArgs);
+                break;
             default:
                 count = 0;
         }
@@ -431,6 +524,39 @@ public class LocateProvider extends ContentProvider {
                     + "(" + WorkSpot._ID + ") ON UPDATE CASCADE ON DELETE CASCADE"
                     + ");");
 
+            // 创建采集线路表
+            db.execSQL("CREATE TABLE " + WORKLINE_TABLE_NAME + " ("
+                    + WorkLine._ID + " INTEGER PRIMARY KEY,"
+                    + WorkLine.SPOT_ONE + " INTEGER NOT NULL REFERENCES " + WORKSPOT_TABLE_NAME
+                    + "(" + WorkSpot._ID + ") ON DELETE CASCADE,"
+                    + WorkLine.SPOT_TWO + " INTEGER NOT NULL REFERENCES " + WORKSPOT_TABLE_NAME
+                    + "(" + WorkSpot._ID + ") ON DELETE CASCADE,"
+                    + WorkLine.ZONE + " INTEGER NOT NULL REFERENCES " + ZONE_TABLE_NAME
+                    + "(" + Zone._ID + ") ON UPDATE CASCADE"
+                    + ");");
+
+            // 创建样本线路表
+            db.execSQL("CREATE TABLE " + SAMPLELINE_TABLE_NAME + " ("
+                    + SampleLine._ID + " INTEGER PRIMARY KEY,"
+                    + SampleLine._NAME + " TEXT,"
+                    + SampleLine._TOTAL + " INTEGER NOT NULL DEFAULT 0,"
+                    + SampleLine._PROGRESS + " TEXT DEFAULT '0.00',"
+                    + SampleLine._STATUS + " INTEGER NOT NULL DEFAULT 1,"
+                    + SampleLine.D + " FLOAT NOT NULL DEFAULT 0.00,"
+                    + SampleLine.WORKLINE + " INTEGER NOT NULL REFERENCES " + WORKLINE_TABLE_NAME
+                    + "(" + WorkLine._ID + ") ON UPDATE CASCADE ON DELETE CASCADE"
+                    + ");");
+
+            // 创建Mac地址映射表
+//            db.execSQL("CREATE TABLE " + MAC_TABLE_NAME + " ("
+//                    + Mac._ID + " INTEGER PRIMARY KEY,"
+//                    + Mac.ADDRESS + " TEXT NOT NULL,"
+//                    + Mac.UUID + " TEXT NOT NULL,"
+//                    + Mac.MAJOR + " INTEGER NOT NULL DEFAULT 0,"
+//                    + Mac.MINOR + " INTEGER NOT NULL DEFAULT 0,"
+//                    + Mac.BUILDING + " TEXT NOT NULL REFERENCES " + BUILDING_TABLE_NAME
+//                    + "(" + Building.CODE + ")"
+//                    + ");");
 
             // 创建样本表
             /*db.execSQL("CREATE TABLE " + SAMPLE_TABLE_NAME + " ("

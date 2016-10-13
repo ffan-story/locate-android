@@ -80,7 +80,9 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
         zone = getArguments().getParcelable(EXTRA_KEY_ZONE);
 
         detailIntent = new Intent(getContext().getApplicationContext(), ToolbarActivity.class);
-        detailIntent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotDetailFragment.class.getName());
+//        detailIntent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotDetailFragment.class.getName());
+        // FIXME temp for test
+        detailIntent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, LineDetailFragment.class.getName());
         args = new Bundle();
         detailIntent.putExtra(ToolbarActivity.EXTRA_KEY_ARGUMENTS, args);
     }
@@ -332,8 +334,10 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
 
         // 打开详情界面
         // query
-        args.putString(LOADER_KEY_SELECTION, "workspot=?");
-        args.putStringArray(LOADER_KEY_SELECTION_ARGS, new String[]{ String.valueOf(mark.getId()) });
+        // FIXME enable me later
+//        args.putString(LOADER_KEY_SELECTION, "workspot=?");
+//        args.putStringArray(LOADER_KEY_SELECTION_ARGS, new String[]{ String.valueOf(mark.getId()) });
+
         // others
         args.putParcelable(SpotDetailFragment.EXTRA_KEY_MARKPOINT, (Parcelable) mark);
         args.putInt(SpotDetailFragment.EXTRA_KEY_SAMPLESPOT_ID, sampleId);

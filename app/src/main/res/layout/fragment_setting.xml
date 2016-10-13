@@ -1,13 +1,24 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
+             xmlns:setting="http://schemas.android.com/apk/res-auto"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context=".setting.SettingFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.feifan.locate.widget.settingwork.SettingLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="hello, setting"/>
-
+        android:layout_height="wrap_content">
+        <com.feifan.locate.widget.settingwork.SettingGroupView
+            style="@style/SettingGroupContainer"
+            android:text="@string/setting_sensor_title"/>
+        <com.feifan.locate.widget.settingwork.TextItemView
+            android:id="@+id/setting_sensor_detection"
+            style="@style/SettingItemContainer"
+            setting:showTitle="@string/setting_sensor_detection_title"
+            setting:showSubTitle="@string/setting_sensor_detection_subtitle"/>
+        <com.feifan.locate.widget.settingwork.TextItemView
+            android:id="@+id/setting_sensor_sampling"
+            style="@style/SettingItemContainer"
+            setting:showTitle="@string/setting_sensor_sampling_title"
+            setting:showSubTitle="@string/setting_sensor_sampling_subtitle"/>
+    </com.feifan.locate.widget.settingwork.SettingLayout>
 </FrameLayout>

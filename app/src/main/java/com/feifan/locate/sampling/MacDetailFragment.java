@@ -22,7 +22,7 @@ import com.feifan.locate.widget.cursorwork.SimpleCursorAdapter;
 public class MacDetailFragment extends AbsLoaderFragment {
 
     // 使用异步加载组件时分配的ID，不能与其他数据使用的ID相同
-    private static final int LOADER_ID = 6;
+//    private static final int LOADER_ID = 6;
 
     private SimpleCursorAdapter<MacModel> mAdapter;
 
@@ -42,7 +42,8 @@ public class MacDetailFragment extends AbsLoaderFragment {
      */
     @Override
     protected int getLoaderId() {
-        return LOADER_ID;
+//        return LOADER_ID;
+        return 0;
     }
 
     /**
