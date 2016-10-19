@@ -3,11 +3,11 @@ package com.feifan.planlib.layer;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import com.feifan.baselib.utils.LogUtils;
 import com.feifan.planlib.ILayer;
 import com.feifan.planlib.OnLayerListener;
 import com.feifan.planlib.PlanOrigin;
-import com.feifan.planlib.LayerPoint;
+import com.feifan.planlib.entity.AutoPoint;
+import com.feifan.planlib.entity.LayerPoint;
 
 /**
  * 跟踪轨迹图层
@@ -21,7 +21,7 @@ import com.feifan.planlib.LayerPoint;
 public class TraceLayer implements ILayer {
 
     // draw
-    private LayerPoint mCurrentPoint = new LayerPoint();
+    private AutoPoint mCurrentPoint = new AutoPoint();
     private Bitmap mBmp;
     private float mPlanScale;
     private PlanOrigin mOrigin;
@@ -80,7 +80,7 @@ public class TraceLayer implements ILayer {
         mLastScale *= event.scale;
         float x = (mCurrentPoint.getLocX() - event.x) * event.scale + event.x;
         float y = (mCurrentPoint.getLocY() - event.y) * event.scale + event.y;
-        mCurrentPoint.set(x, y);
+        mCurrentPoint.setDraw(x, y);
     }
 
     /**
@@ -116,7 +116,7 @@ public class TraceLayer implements ILayer {
             // 绘制坐标
             float locX = mCurrentPoint.getRawX() * mLastScale + mOrigin.getX();
             float locY = mCurrentPoint.getRawY() * mLastScale + mOrigin.getY();
-            mCurrentPoint.set(locX, locY);
+            mCurrentPoint.setDraw(locX, locY);
 
             mListener.notifyLayerDataChanged();
         }

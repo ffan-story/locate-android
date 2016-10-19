@@ -19,7 +19,7 @@ public final class DataFixer {
     private static final Map<String, Map<String, FixItem>> FIXER_CACHE;
     private static final String KEY_A22 = "A22";
     private static final String KEY_B31 = "B31";
-    private static final String KEY_860100010060300001 = "860100010060300001";
+    private static final String KEY_860100010060300001 = "android_860100010060300001";
     static {
         FIXER_CACHE = new HashMap<>();
 

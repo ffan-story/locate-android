@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.feifan.locate.provider.ProviderHelper;
 import com.feifan.locate.widget.bottom.BottomBarLayout;
 
 import java.util.concurrent.Executors;
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         barLayout.setTabs(R.xml.main_bottom_bar_tabs);
 
         if(!mSharedPrefs.getBoolean(INITIALIZE_DATA_FLAG, false)) {
-            Executors.newSingleThreadExecutor().execute(new Runnable() {
+            ProviderHelper.runOnWorkerThread(new Runnable() {
                 @Override
                 public void run() {
                     ContentResolver resolver = getContentResolver();
@@ -36,6 +37,12 @@ public class MainActivity extends AppCompatActivity {
                     MockServer.requestZoneData(resolver);
                 }
             });
+//            Executors.newSingleThreadExecutor().execute(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                }
+//            });
 
             mSharedPrefs.edit().putBoolean(INITIALIZE_DATA_FLAG, true).apply();
 

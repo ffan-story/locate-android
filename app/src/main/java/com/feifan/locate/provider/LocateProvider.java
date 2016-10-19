@@ -23,6 +23,9 @@ import com.feifan.locate.provider.LocateData.WorkSpot;
 import com.feifan.locate.provider.LocateData.SampleSpot;
 import com.feifan.locate.provider.LocateData.WorkLine;
 import com.feifan.locate.provider.LocateData.SampleLine;
+import com.feifan.locate.provider.LocateData.LineSpot;
+
+import static com.feifan.locate.provider.TableFactory.WORKLINE_TABLE_NAME;
 //import com.feifan.locate.provider.LocateData.Mac;
 
 /**
@@ -36,19 +39,6 @@ public class LocateProvider extends ContentProvider {
     private static final String DATABASE_NAME = "sample.db";
     // 数据库版本
     private static final int DATABASE_VERSION = 1;
-
-    // 数据库表名－定位建筑
-    private static final String BUILDING_TABLE_NAME = "building";
-    // 数据库表名－定位区域
-    private static final String ZONE_TABLE_NAME = "zone";
-    // 数据库表名－采集点
-    private static final String WORKSPOT_TABLE_NAME = "workspot";
-    // 数据库表名－样本点
-    private static final String SAMPLESPOT_TABLE_NAME = "samplespot";
-    // 数据库表名-采集路线
-    private static final String WORKLINE_TABLE_NAME = "workline";
-    // 数据库表名-样本路线
-    private static final String SAMPLELINE_TABLE_NAME = "sampleline";
 
     // 数据库表名-Mac地址映射
     private static final String MAC_TABLE_NAME = "mac";
@@ -74,7 +64,9 @@ public class LocateProvider extends ContentProvider {
     private static final int WORKSPOT_ID = WORKSPOT + 1;
     private static final int SAMPLESPOT = WORKSPOT_ID + 1;
     private static final int SAMPLESPOT_ID = SAMPLESPOT + 1;
-    private static final int WORKLINE = SAMPLESPOT_ID + 1;
+    private static final int LINESPOT = SAMPLESPOT_ID + 1;
+    private static final int LINESPOT_ID = LINESPOT + 1;
+    private static final int WORKLINE = LINESPOT_ID + 1;
     private static final int WORKLINE_ID = WORKLINE + 1;
     private static final int SAMPLELINE = WORKLINE_ID + 1;
     private static final int SAMPLELINE_ID = SAMPLELINE + 1;
@@ -100,6 +92,8 @@ public class LocateProvider extends ContentProvider {
     private static HashMap<String, String> sWorkSpotProjectionMap;
     // 样本点表列映射集合
     private static HashMap<String, String> sSampleSpotProjectionMap;
+    // 采集路线点表映射集合
+    private static HashMap<String, String> sLineSpotProjectionMap;
     // 采集路线表映射集合
     private static HashMap<String, String> sWorkLineProjectionMap;
     // 样本路线表映射集合
@@ -127,6 +121,8 @@ public class LocateProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "workspot/#", WORKSPOT_ID);
         sUriMatcher.addURI(AUTHORITY, "samplespot", SAMPLESPOT);
         sUriMatcher.addURI(AUTHORITY, "samplespot/#", SAMPLESPOT_ID);
+        sUriMatcher.addURI(AUTHORITY, "linespot", LINESPOT);
+        sUriMatcher.addURI(AUTHORITY, "linespot/#", LINESPOT_ID);
         sUriMatcher.addURI(AUTHORITY, "workline", WORKLINE);
         sUriMatcher.addURI(AUTHORITY, "workline/#", WORKLINE_ID);
         sUriMatcher.addURI(AUTHORITY, "sampleline", SAMPLELINE);
@@ -156,7 +152,6 @@ public class LocateProvider extends ContentProvider {
         sZoneProjectionMap.put(Zone.SCALE, Zone.SCALE);
         sZoneProjectionMap.put(Zone.FLOOR_NO, Zone.FLOOR_NO);
         sZoneProjectionMap.put(Zone.TITLE, Zone.TITLE);
-//        sZoneProjectionMap.put(Zone.REMOTE_ID, Zone.REMOTE_ID);
 
         sWorkSpotProjectionMap = new HashMap<>();
         sWorkSpotProjectionMap.put(WorkSpot._ID, WorkSpot._ID);
@@ -175,11 +170,26 @@ public class LocateProvider extends ContentProvider {
         sSampleSpotProjectionMap.put(SampleSpot.TOTAL, SampleSpot.TOTAL);
         sSampleSpotProjectionMap.put(SampleSpot.TIMES, SampleSpot.TIMES);
 
+        sLineSpotProjectionMap = new HashMap<>();
+        sLineSpotProjectionMap.put(LineSpot._ID, LineSpot._ID);
+        sLineSpotProjectionMap.put(LineSpot.X, LineSpot.X);
+        sLineSpotProjectionMap.put(LineSpot.Y, LineSpot.Y);
+        sLineSpotProjectionMap.put(LineSpot.MOVABLE, LineSpot.MOVABLE);
+        sLineSpotProjectionMap.put(LineSpot.ZONE, LineSpot.ZONE);
+
         sWorkLineProjectionMap = new HashMap<>();
-        sWorkLineProjectionMap.put(WorkLine._ID, WorkLine._ID);
-        sWorkLineProjectionMap.put(WorkLine.SPOT_ONE, WorkLine.SPOT_ONE);
-        sWorkLineProjectionMap.put(WorkLine.SPOT_TWO, WorkLine.SPOT_TWO);
-        sWorkLineProjectionMap.put(WorkLine.ZONE, WorkLine.ZONE);
+        sWorkLineProjectionMap.put(
+                WORKLINE_TABLE_NAME + "." + WorkLine._ID,
+                WORKLINE_TABLE_NAME + "." + WorkLine._ID + " AS " + WorkLine._ID);
+        sWorkLineProjectionMap.put(WorkLine.SPOT_ONE, WorkLine.SPOT_ONE + " AS one_id");
+        sWorkLineProjectionMap.put("spotOne." + LineSpot.X, "spotOne." + LineSpot.X + " AS one_x");
+        sWorkLineProjectionMap.put("spotOne." + LineSpot.Y, "spotOne." + LineSpot.Y + " AS one_y");
+        sWorkLineProjectionMap.put(WorkLine.SPOT_TWO, WorkLine.SPOT_TWO + " AS two_id");
+        sWorkLineProjectionMap.put("spotTwo." + LineSpot.X, "spotTwo." + LineSpot.X + " AS two_x");
+        sWorkLineProjectionMap.put("spotTwo." + LineSpot.Y, "spotTwo." + LineSpot.Y + " AS two_y");
+        sWorkLineProjectionMap.put(
+                WORKLINE_TABLE_NAME + "." + WorkLine.ZONE,
+                WORKLINE_TABLE_NAME + "." + WorkLine.ZONE + " AS " + WorkLine.ZONE);
 
         sSampleLineProjectionMap = new HashMap<>();
         sSampleLineProjectionMap.put(SampleLine._ID, SampleLine._ID);
@@ -236,27 +246,34 @@ public class LocateProvider extends ContentProvider {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         switch (sUriMatcher.match(uri)) {
             case BUILDING:
-                qb.setTables(BUILDING_TABLE_NAME);
+                qb.setTables(TableFactory.BUILDING_TABLE_NAME);
                 qb.setProjectionMap(sBuildingProjectionMap);
                 break;
             case ZONE:          // 查询定位区域整表
-                qb.setTables(ZONE_TABLE_NAME);
+                qb.setTables(TableFactory.ZONE_TABLE_NAME);
                 qb.setProjectionMap(sZoneProjectionMap);
                 break;
             case WORKSPOT:
-                qb.setTables(WORKSPOT_TABLE_NAME);
+                qb.setTables(TableFactory.WORKSPOT_TABLE_NAME);
                 qb.setProjectionMap(sWorkSpotProjectionMap);
                 break;
             case SAMPLESPOT:
-                qb.setTables(SAMPLESPOT_TABLE_NAME);
+                qb.setTables(TableFactory.SAMPLESPOT_TABLE_NAME);
                 qb.setProjectionMap(sSampleSpotProjectionMap);
                 break;
+            case LINESPOT:
+                qb.setTables(TableFactory.LINESPOT_TABLE_NAME);
+                qb.setProjectionMap(sLineSpotProjectionMap);
+                break;
             case WORKLINE:
-                qb.setTables(WORKLINE_TABLE_NAME);
+                qb.setTables(TableFactory.getWorkLineQueryTable());
                 qb.setProjectionMap(sWorkLineProjectionMap);
+                qb.appendWhere(WORKLINE_TABLE_NAME + "." + WorkLine.SPOT_ONE + "=spotOne." + LineSpot._ID);
+                qb.appendWhere(" and ");
+                qb.appendWhere(WORKLINE_TABLE_NAME + "." + WorkLine.SPOT_TWO + "=spotTwo." + LineSpot._ID);
                 break;
             case SAMPLELINE:
-                qb.setTables(SAMPLELINE_TABLE_NAME);
+                qb.setTables(TableFactory.SAMPLELINE_TABLE_NAME);
                 qb.setProjectionMap(sSampleLineProjectionMap);
                 break;
 //            case MAC:
@@ -316,6 +333,10 @@ public class LocateProvider extends ContentProvider {
                 return SampleSpot.CONTENT_TYPE;
             case SAMPLESPOT_ID:
                 return SampleSpot.CONTENT_ITEM_TYPE;
+            case LINESPOT:
+                return LineSpot.CONTENT_TYPE;
+            case LINESPOT_ID:
+                return LineSpot.CONTENT_ITEM_TYPE;
             case WORKLINE:
                 return WorkLine.CONTENT_TYPE;
             case WORKLINE_ID:
@@ -359,19 +380,23 @@ public class LocateProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case BUILDING:
                 contentUri = Building.CONTENT_URI;
-                tableName = BUILDING_TABLE_NAME;
+                tableName = TableFactory.BUILDING_TABLE_NAME;
                 break;
             case ZONE:
                 contentUri = Zone.CONTENT_URI;
-                tableName = ZONE_TABLE_NAME;
+                tableName = TableFactory.ZONE_TABLE_NAME;
                 break;
             case WORKSPOT:
                 contentUri = WorkSpot.CONTENT_URI;
-                tableName = WORKSPOT_TABLE_NAME;
+                tableName = TableFactory.WORKSPOT_TABLE_NAME;
                 break;
             case SAMPLESPOT:
                 contentUri = SampleSpot.CONTENT_URI;
-                tableName = SAMPLESPOT_TABLE_NAME;
+                tableName = TableFactory.SAMPLESPOT_TABLE_NAME;
+                break;
+            case LINESPOT:
+                contentUri = LineSpot.CONTENT_URI;
+                tableName = TableFactory.LINESPOT_TABLE_NAME;
                 break;
             case WORKLINE:
                 contentUri = WorkLine.CONTENT_URI;
@@ -379,7 +404,7 @@ public class LocateProvider extends ContentProvider {
                 break;
             case SAMPLELINE:
                 contentUri = SampleLine.CONTENT_URI;
-                tableName = SAMPLELINE_TABLE_NAME;
+                tableName = TableFactory.SAMPLELINE_TABLE_NAME;
                 break;
 //            case MAC:
 //                contentUri = Mac.CONTENT_URI;
@@ -433,11 +458,16 @@ public class LocateProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case WORKSPOT:
-                count = db.delete(WORKSPOT_TABLE_NAME, selection, selectionArgs);
+                count = db.delete(TableFactory.WORKSPOT_TABLE_NAME, selection, selectionArgs);
                 break;
             case WORKSPOT_ID:
                 String workspotId = uri.getPathSegments().get(1);
-                count = db.delete(WORKSPOT_TABLE_NAME, WorkSpot._ID + "=" + workspotId
+                count = db.delete(TableFactory.WORKSPOT_TABLE_NAME, WorkSpot._ID + "=" + workspotId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            case LINESPOT_ID:
+                String linespotId = uri.getPathSegments().get(1);
+                count = db.delete(TableFactory.LINESPOT_TABLE_NAME, LineSpot._ID + "=" + linespotId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
             default:
@@ -453,13 +483,13 @@ public class LocateProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case WORKSPOT:
-                count = db.update(WORKSPOT_TABLE_NAME, values, selection, selectionArgs);
+                count = db.update(TableFactory.WORKSPOT_TABLE_NAME, values, selection, selectionArgs);
                 break;
             case SAMPLESPOT:
-                count = db.update(SAMPLESPOT_TABLE_NAME, values, selection, selectionArgs);
+                count = db.update(TableFactory.SAMPLESPOT_TABLE_NAME, values, selection, selectionArgs);
                 break;
             case SAMPLELINE:
-                count = db.update(SAMPLELINE_TABLE_NAME, values, selection, selectionArgs);
+                count = db.update(TableFactory.SAMPLELINE_TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 count = 0;
@@ -481,71 +511,25 @@ public class LocateProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
 
             // 创建定位区域
-            db.execSQL("CREATE TABLE " + BUILDING_TABLE_NAME + " ("
-                    + Building._ID + " INTEGER PRIMARY KEY,"
-                    + Building.NAME + " TEXT,"
-                    + Building.CODE + " TEXT NOT NULL UNIQUE,"
-                    + Building.MIN_FLOOR + " INTEGER DEFAULT 0"
-                    + ");");
+            TableFactory.createBuildingTable(db);
 
             // 创建定位区域
-            db.execSQL("CREATE TABLE " + ZONE_TABLE_NAME + " ("
-                                       + Zone._ID + " INTEGER PRIMARY KEY,"
-                                       + Zone.NAME + " TEXT,"
-                                       + Zone.PLAN + " TEXT,"
-                                       + Zone.SCALE + " FLOAT NOT NULL DEFAULT 1.00,"
-                                       + Zone.FLOOR_NO + " INTEGER NOT NULL DEFAULT 0,"
-                                       + Zone.TITLE + " TEXT,"
-                                       + Zone.BUILDING + " INTEGER NOT NULL REFERENCES " + BUILDING_TABLE_NAME
-                                                       + "(" + Building._ID + ")"
-                                       + ");");
+            TableFactory.createZoneTable(db);
 
             // 创建采集点表
-            db.execSQL("CREATE TABLE " + WORKSPOT_TABLE_NAME + " ("
-                                       + WorkSpot._ID + " INTEGER PRIMARY KEY,"
-                                       + WorkSpot.X + " TEXT NOT NULL DEFAULT 0.00,"
-                                       + WorkSpot.Y + " TEXT NOT NULL DEFAULT 0.00,"
-                                       + WorkSpot.MOVABLE + " BOOLEAN NOT NULL DEFAULT TRUE,"
-                                       + WorkSpot.ZONE + " INTEGER NOT NULL REFERENCES " + ZONE_TABLE_NAME
-                                                   + "(" + Zone._ID + ") ON UPDATE CASCADE"
-                                       + ");");
+            TableFactory.createWorkSpotTable(db);
 
             // 创建样本点表
-            db.execSQL("CREATE TABLE " + SAMPLESPOT_TABLE_NAME + " ("
-                    + SampleSpot._ID + " INTEGER PRIMARY KEY,"
-                    + SampleSpot.X + " FLOAT NOT NULL DEFAULT 0.00,"
-                    + SampleSpot.Y + " FLOAT NOT NULL DEFAULT 0.00,"
-                    + SampleSpot.D + " FLOAT NOT NULL DEFAULT 0.00,"
-                    + SampleSpot.COUNT + " INTEGER NOT NULL DEFAULT 0,"
-                    + SampleSpot.TOTAL + " INTEGER NOT NULL DEFAULT " + Constants.SCAN_DEFAULT_TIMES + ","
-                    + SampleSpot.TIMES + " INTEGER NOT NULL DEFAULT 0,"
-                    + SampleSpot.STATUS + " INTEGER NOT NULL DEFAULT 1,"
-                    + SampleSpot.WORKSPOT + " INTEGER NOT NULL REFERENCES " + WORKSPOT_TABLE_NAME
-                    + "(" + WorkSpot._ID + ") ON UPDATE CASCADE ON DELETE CASCADE"
-                    + ");");
+            TableFactory.createSampleSpotTable(db);
 
-            // 创建采集线路表
-            db.execSQL("CREATE TABLE " + WORKLINE_TABLE_NAME + " ("
-                    + WorkLine._ID + " INTEGER PRIMARY KEY,"
-                    + WorkLine.SPOT_ONE + " INTEGER NOT NULL REFERENCES " + WORKSPOT_TABLE_NAME
-                    + "(" + WorkSpot._ID + ") ON DELETE CASCADE,"
-                    + WorkLine.SPOT_TWO + " INTEGER NOT NULL REFERENCES " + WORKSPOT_TABLE_NAME
-                    + "(" + WorkSpot._ID + ") ON DELETE CASCADE,"
-                    + WorkLine.ZONE + " INTEGER NOT NULL REFERENCES " + ZONE_TABLE_NAME
-                    + "(" + Zone._ID + ") ON UPDATE CASCADE"
-                    + ");");
+            // 创建采集路线点表
+            TableFactory.createLineSpotTable(db);
 
-            // 创建样本线路表
-            db.execSQL("CREATE TABLE " + SAMPLELINE_TABLE_NAME + " ("
-                    + SampleLine._ID + " INTEGER PRIMARY KEY,"
-                    + SampleLine._NAME + " TEXT,"
-                    + SampleLine._TOTAL + " INTEGER NOT NULL DEFAULT 0,"
-                    + SampleLine._PROGRESS + " TEXT DEFAULT '0.00',"
-                    + SampleLine._STATUS + " INTEGER NOT NULL DEFAULT 1,"
-                    + SampleLine.D + " FLOAT NOT NULL DEFAULT 0.00,"
-                    + SampleLine.WORKLINE + " INTEGER NOT NULL REFERENCES " + WORKLINE_TABLE_NAME
-                    + "(" + WorkLine._ID + ") ON UPDATE CASCADE ON DELETE CASCADE"
-                    + ");");
+            // 创建采集路线表
+            TableFactory.createWorkLineTable(db);
+
+            // 创建样本路线表
+            TableFactory.createSampleLineTable(db);
 
             // 创建Mac地址映射表
 //            db.execSQL("CREATE TABLE " + MAC_TABLE_NAME + " ("

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.feifan.locate.Constants;
 import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.locating.BuildingModel;
@@ -32,7 +33,6 @@ public class BuildingFragment extends AbsLoaderFragment implements View.OnClickL
     public static final String EXTRA_KEY_BUILDING = "building";
 
     // data
-    private static final int LOADER_ID = 4; // 使用异步加载组件时分配的ID，不能与其他数据使用的ID相同
     private SimpleGridCursorAdapter<BuildingModel> mAdapter;
 
     public BuildingFragment() {
@@ -64,7 +64,7 @@ public class BuildingFragment extends AbsLoaderFragment implements View.OnClickL
 
     @Override
     protected int getLoaderId() {
-        return LOADER_ID;
+        return Constants.LOADER_ID_BUILDING;
     }
 
     @Override

@@ -13,4 +13,11 @@ public interface OnLayerListener {
      * 图层数据变更通知
      */
     void notifyLayerDataChanged();
+
+    /**
+     * 图层数据变更通知
+     *
+     * @param point 变更的点数据
+     */
+    void notifyLayerDataChanged(ILayerPoint point);
 }

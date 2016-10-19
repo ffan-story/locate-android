@@ -1,5 +1,7 @@
 package com.feifan.planlib;
 
+import android.os.Parcelable;
+
 /**
  * 平面图坐标点
  * <pre>
@@ -22,13 +24,13 @@ public interface ILayerPoint {
     int getId();
 
     /**
-     * 获取实际位置横坐标
+     * 获取平面图位置横坐标
      * @return
      */
     float getRawX();
 
     /**
-     * 获取实际位置纵坐标
+     * 获取平面图位置纵坐标
      * @return
      */
     float getRawY();
@@ -75,7 +77,7 @@ public interface ILayerPoint {
      * @param x
      * @param y
      */
-    void set(float x, float y);
+    void setDraw(float x, float y);
 
     /**
      * 设置平面图坐标
@@ -100,4 +102,15 @@ public interface ILayerPoint {
      */
     void setScale(float scale);
 
+    /**
+     * 是否可移动
+     * @return
+     */
+    boolean isMovable();
+
+    /**
+     * 设置移动标记
+     * @param movable
+     */
+    void setMovable(boolean movable);
 }

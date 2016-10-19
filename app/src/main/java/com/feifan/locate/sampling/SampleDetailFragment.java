@@ -37,7 +37,7 @@ import java.util.List;
 public abstract class SampleDetailFragment<M extends SampleModel> extends AbsLoaderFragment
         implements OrientationListener, OnSampleClickListener<M> {
 
-    public static final String EXTRA_KEY_SAMPLE_KEY = "sampleKey";
+    public static final String EXTRA_KEY_WORK = "work";
     public static final String EXTRA_KEY_FLOOR = "floor";
 
     // view
@@ -46,47 +46,14 @@ public abstract class SampleDetailFragment<M extends SampleModel> extends AbsLoa
     // data
     protected SampleAdapter<M> mAdapter;
     protected int mFloor;
-
+    private String mBuilding;
 
     // scan
     protected ScanManager mScanManager = ScanManager.getInstance();
     protected List<SampleBeacon> mCache = new ArrayList<>();
     protected float mAzimuth; // 磁方位角度
-    protected transient boolean mConfirmed = false; // 是否确定方位，启动扫描
+    private transient boolean mConfirmed = false; // 是否确定方位，启动扫描
     private OrientationManager mOrientationManager;
-
-    // export
-    private static ExportHandler mHandler;
-    private static class ExportHandler extends Handler {
-
-        public static final String MSG_DATA_KEY_FILE_NAME = "name";
-        public static final String MSG_DATA_KEY_FILE_TITLES = "titles";
-        public static final int MSG_FINISH = 2;
-
-        private String building;
-
-        public ExportHandler(String building) {
-            this.building = building;
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case MSG_FINISH:
-                    List<SampleBeacon> beacons = (List<SampleBeacon>) msg.obj;
-                    DataFixer.FixBeacons(building, beacons);
-                    String fileName = msg.getData().getString(MSG_DATA_KEY_FILE_NAME);
-                    String[] titles = msg.getData().getStringArray(MSG_DATA_KEY_FILE_TITLES);
-                    DataUtils.exportToCSV(titles, beacons, fileName);
-                    beacons.clear();
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,8 +62,7 @@ public abstract class SampleDetailFragment<M extends SampleModel> extends AbsLoa
         mFloor = getArguments().getInt(EXTRA_KEY_FLOOR);
 
         mOrientationManager = OrientationManager.getInstance(getContext());
-        String building = getArguments().getString(Constants.EXTRA_KEY_BUILDING);
-        mHandler = new ExportHandler(building);
+        mBuilding = getArguments().getString(Constants.EXTRA_KEY_BUILDING);
         mScanManager.setNotifier(onCreateNotifier());
     }
 
@@ -145,6 +111,17 @@ public abstract class SampleDetailFragment<M extends SampleModel> extends AbsLoa
     }
 
     /**
+     * 保存数据到文件
+     * @param titles
+     * @param fileName
+     */
+    protected void save(String[] titles, String fileName) {
+        DataFixer.FixBeacons(mBuilding, mCache);
+        DataUtils.exportToCSV(titles, mCache, fileName);
+        mCache.clear();
+    }
+
+    /**
      * 创建beacon数据的通知对象
      * <pre>
      *     用来处理扫描得到的beacon数据
@@ -153,7 +130,12 @@ public abstract class SampleDetailFragment<M extends SampleModel> extends AbsLoa
      */
     protected abstract BeaconNotifier onCreateNotifier();
 
-    private void showValue(String value) {
-        LogUtils.e(value);
+    /**
+     * 锁定方向
+     *
+     * @param lock true锁定,false解锁
+     */
+    protected void lockOrientation(boolean lock) {
+        mConfirmed = lock;
     }
 }

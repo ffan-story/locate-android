@@ -19,8 +19,6 @@ public class ZoneModel extends CursorModel implements Parcelable {
 
     public ZoneModel(Cursor cursor) {
         super(cursor);
-        int idIndex = cursor.getColumnIndexOrThrow(LocateData.Zone._ID);
-        id = cursor.getInt(idIndex);
         int nameIndex = cursor.getColumnIndexOrThrow(LocateData.Zone.NAME);
         name = cursor.getString(nameIndex);
         int planIndex = cursor.getColumnIndexOrThrow(LocateData.Zone.PLAN);

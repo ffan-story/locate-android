@@ -8,16 +8,15 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import com.feifan.baselib.utils.LogUtils;
+import com.feifan.locate.provider.Columns.SampleColumns;
+import com.feifan.locate.provider.Columns.SpotColumns;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import retrofit2.http.Body;
 
 /**
  * Sample操作类
@@ -110,7 +109,7 @@ public class LocateData {
     /**
      * 采集点定义
      */
-    public static class WorkSpot implements BaseColumns {
+    public static class WorkSpot implements SpotColumns, BaseColumns {
 
         /** 访问Spot表的URL */
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/workspot");
@@ -121,16 +120,6 @@ public class LocateData {
         /** {@link WorkSpot#CONTENT_URI}子项的MIME类型 */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.workspot";
 
-        /**
-         * 字段名－x轴坐标
-         *  TYPE:FLOAT
-         */
-        public static final String X = "x";
-        /**
-         * 字段名－y轴坐标
-         * TYPE:FLOAT
-         */
-        public static final String Y = "y";
         /**
          * 字段名－移动
          * TYPE:BOOLEAN
@@ -152,7 +141,7 @@ public class LocateData {
          */
         public static int add(Context context, float x, float y, int zone) {
             final ContentResolver resolver = context.getContentResolver();
-            final int COLUMN_COUNT = 3;
+            final int COLUMN_COUNT = 4;
             ContentValues values = new ContentValues(COLUMN_COUNT);
             values.put(X, String.valueOf(x));
             values.put(Y, String.valueOf(y));
@@ -229,39 +218,6 @@ public class LocateData {
             parmas.put(ZONE, zoneId);
             return find(CONTENT_URI, context, parmas);
         }
-    }
-
-    public interface SampleColumns extends BaseColumns {
-        /**
-         * 字段名－样本名称
-         *  TYPE:TEXT
-         */
-        String _NAME = "name";
-        /**
-         * 字段名－样本总数
-         *  TYPE:INTEGER
-         */
-        String _TOTAL ="total";
-        /**
-         * 字段名－采集状态
-         *  TYPE:INTEGER
-         *  VALUE:
-         *  {@link SampleColumns#STATUS_NONE},
-         *  {@link SampleColumns#STATUS_READY},
-         *  {@link SampleColumns#STATUS_RUNNING},
-         *  {@link SampleColumns#STATUS_FINISH}
-         */
-        String _STATUS = "status";
-        /**
-         * 字段名－采集进度
-         *  TYPE:TEXT
-         */
-        String _PROGRESS = "progress";
-
-        int STATUS_NONE = 0;
-        int STATUS_READY = STATUS_NONE + 1;
-        int STATUS_RUNNING = STATUS_READY + 1;
-        int STATUS_FINISH = STATUS_RUNNING + 1;
     }
 
     /**
@@ -407,6 +363,63 @@ public class LocateData {
     }
 
     /**
+     * 采集路线点表定义
+     */
+    public static class LineSpot implements SpotColumns, BaseColumns {
+
+        /** 访问LineSpot表的URL */
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/linespot");
+
+        /** {@link LineSpot#CONTENT_URI}的MIME类型 */
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.linespot";
+
+        /** {@link LineSpot#CONTENT_URI}子项的MIME类型 */
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.linespot";
+
+        /**
+         * 字段名－移动
+         * TYPE:BOOLEAN
+         */
+        public static final String MOVABLE = "movable";
+
+        /**
+         * 字段名－定位区域
+         * TYPE:INTEGER
+         */
+        public static final String ZONE = "zone";
+
+        /**
+         * 添加采集路线点
+         * @param context
+         */
+        public static int add(Context context, float x, float y, int zone) {
+            final ContentResolver resolver = context.getContentResolver();
+            final int COLUMN_COUNT = 4;
+            ContentValues values = new ContentValues(COLUMN_COUNT);
+            values.put(X, String.valueOf(x));
+            values.put(Y, String.valueOf(y));
+            values.put(MOVABLE, true);
+            values.put(ZONE, zone);
+            Uri result = resolver.insert(CONTENT_URI, values);
+            LogUtils.i("linespot:add a new spot(" + x + "," + y + ") at " + zone + " with " + result);
+            return Integer.valueOf(result.getLastPathSegment());
+        }
+
+        /**
+         * 删除采集路线点
+         * @param context
+         * @param id
+         * @return
+         */
+        public static boolean remove(Context context, int id) {
+            final ContentResolver resolver = context.getContentResolver();
+            int count = resolver.delete(Uri.withAppendedPath(CONTENT_URI, String.valueOf(id)), null, null);
+            LogUtils.i("linespot:delete " + count + " spot{ id=" + id + " }");
+            return count == 1;
+        }
+    }
+
+    /**
      * 采集路线表定义
      *
      */
@@ -440,12 +453,24 @@ public class LocateData {
          */
         public static final String ZONE = "zone";
 
+        public static int add(Context context, int pointOneId, int pointTwoId, int zone) {
+            final ContentResolver resolver = context.getContentResolver();
+            final int COLUMN_COUNT = 4;
+            ContentValues values = new ContentValues(COLUMN_COUNT);
+            values.put(SPOT_ONE, pointOneId);
+            values.put(SPOT_TWO, pointTwoId);
+            values.put(ZONE, zone);
+            Uri result = resolver.insert(CONTENT_URI, values);
+            LogUtils.i("workline:add a new line(" + pointOneId + "-" + pointTwoId + ") at " + zone + " with " + result);
+            return Integer.valueOf(result.getLastPathSegment());
+        }
+
     }
 
     /**
      * 采样路线表定义
      */
-    public static class SampleLine implements SampleColumns {
+    public static class SampleLine implements SampleColumns, BaseColumns {
         /** 访问WorkLine表的URL */
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/sampleline");
 
@@ -470,6 +495,24 @@ public class LocateData {
         // 更新
         private static final Map<String, Object> PARAMS = new HashMap<>();
 
+        public static int add(Context context, String name, int workLineId) {
+            final ContentResolver resolver = context.getContentResolver();
+            final int COLUMN_COUNT = 2;
+            ContentValues values = new ContentValues(COLUMN_COUNT);
+            values.put(_NAME, name);
+            values.put(WORKLINE, workLineId);
+            Uri result = resolver.insert(CONTENT_URI, values);
+            LogUtils.i("sampleline:add a new sample line(" + name + ") at work line " + workLineId + " with " + result);
+            return Integer.valueOf(result.getLastPathSegment());
+        }
+
+        /**
+         * 更新样本路线状态
+         * @param context
+         * @param status
+         * @param direction
+         * @param id
+         */
         public static void updateStatus(Context context, int status, float direction, int id) {
             if(context == null) {
                 return;
@@ -478,6 +521,20 @@ public class LocateData {
             PARAMS.put(_STATUS, status);
             PARAMS.put(D, direction);
             updateData(CONTENT_URI, context, PARAMS, id);
+        }
+
+        /**
+         * 查找采集路线下某状态的样本路线
+         * @param context
+         * @param status
+         * @param workLineId
+         * @return
+         */
+        public static Cursor findByStatus(Context context, int status, int workLineId) {
+            PARAMS.clear();
+            PARAMS.put(_STATUS, status);
+            PARAMS.put(WORKLINE, workLineId);
+            return find(CONTENT_URI, context, PARAMS);
         }
 
         /**

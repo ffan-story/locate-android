@@ -33,4 +33,10 @@ public interface IOperableLayer extends ILayer {
      * @return
      */
     ILayerPoint findPointByTouch(float x, float y);
+
+    /**
+     * 设置操作回调
+     * @param callback
+     */
+    void setCallback(OnOperationCallback callback);
 }

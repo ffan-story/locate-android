@@ -46,8 +46,8 @@ public class DataUtils {
             int rowCount = data.size();
             for (int i = 0; i < rowCount; i++) {
                 SampleBeacon item = data.get(i);
-                LogUtils.v("export " + (i + 1) + " data item(" + item.toFormattedString() + ")");
-                bfw.write(item.toFormattedString());
+                LogUtils.v("export " + (i + 1) + " data item(" + item.toFormattedString(titles) + ")");
+                bfw.write(item.toFormattedString(titles));
                 // 写好每条记录后换行
                 bfw.newLine();
             }

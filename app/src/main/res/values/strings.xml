@@ -18,6 +18,11 @@
     <string name="spot_detail_peroid_text">采样周期(单位:毫秒)</string>
     <string name="spot_detail_remove_flag_text">同时删除文件</string>
 
+    <!-- 采集路线 -->
+    <string name="line_plan_menu_title_confirm">确认</string>
+    <string name="line_plan_menu_title_cancel">取消</string>
+    <string name="line_picker_title_text">选择样本路线</string>
+
     <!-- 实时定位界面 -->
     <string name="realtime_plan_title_text">实时定位平面图</string>
     <string name="realtime_plan_menu_setting_text">设置</string>

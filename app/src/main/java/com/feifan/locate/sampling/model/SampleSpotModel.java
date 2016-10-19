@@ -21,8 +21,6 @@ public class SampleSpotModel extends CursorModel {
 
     public SampleSpotModel(Cursor cursor) {
         super(cursor);
-        int idIndex = cursor.getColumnIndexOrThrow(SampleSpot._ID);
-        id = cursor.getInt(idIndex);
         int directionIndex = cursor.getColumnIndexOrThrow(SampleSpot.D);
         direction = cursor.getFloat(directionIndex);
         int countIndex = cursor.getColumnIndexOrThrow(SampleSpot.COUNT);

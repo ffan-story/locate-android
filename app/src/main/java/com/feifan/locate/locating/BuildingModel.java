@@ -17,8 +17,7 @@ public class BuildingModel extends CursorModel implements Parcelable {
     public int minFloor;
 
     public BuildingModel(Cursor cursor) {
-        int idIndex = cursor.getColumnIndexOrThrow(Building._ID);
-        id = cursor.getInt(idIndex);
+        super(cursor);
         int nameIndex = cursor.getColumnIndexOrThrow(Building.NAME);
         name = cursor.getString(nameIndex);
         int codeIndex = cursor.getColumnIndexOrThrow(Building.CODE);

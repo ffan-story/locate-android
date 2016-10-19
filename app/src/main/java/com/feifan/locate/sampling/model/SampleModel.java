@@ -2,7 +2,7 @@ package com.feifan.locate.sampling.model;
 
 import android.database.Cursor;
 
-import com.feifan.locate.provider.LocateData.SampleColumns;
+import com.feifan.locate.provider.Columns.SampleColumns;
 import com.feifan.locate.widget.cursorwork.CursorModel;
 
 /**
@@ -21,8 +21,7 @@ public class SampleModel extends CursorModel {
     public int status;
 
     public SampleModel(Cursor cursor) {
-        int idIndex = cursor.getColumnIndexOrThrow(SampleColumns._ID);
-        id = cursor.getInt(idIndex);
+        super(cursor);
         int nameIndex = cursor.getColumnIndexOrThrow(SampleColumns._NAME);
         name = cursor.getString(nameIndex);
         int totalIndex = cursor.getColumnIndexOrThrow(SampleColumns._TOTAL);

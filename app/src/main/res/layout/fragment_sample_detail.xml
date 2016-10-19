@@ -4,7 +4,7 @@
               android:layout_height="match_parent"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
-              tools:context="com.feifan.locate.sampling.SpotDetailFragment">
+              tools:context="com.feifan.locate.sampling.workspot.SpotDetailFragment">
 
     <TextView
         android:id="@+id/sample_detail_info"

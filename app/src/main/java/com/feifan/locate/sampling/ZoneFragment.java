@@ -20,6 +20,8 @@ import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.common.BuildingFragment;
 import com.feifan.locate.locating.BuildingModel;
 import com.feifan.locate.provider.LocateData.Zone;
+import com.feifan.locate.sampling.workline.LinePlanFragment;
+import com.feifan.locate.sampling.workspot.SpotPlanFragment;
 import com.feifan.locate.utils.SizeUtils;
 import com.feifan.locate.widget.cursorwork.AbsLoaderFragment;
 import com.feifan.locate.widget.cursorwork.ICursorAdapter;
@@ -34,9 +36,6 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class ZoneFragment extends AbsLoaderFragment implements View.OnClickListener {
-
-    // 使用异步加载组件时分配的ID，不能与其他数据使用的ID相同
-    private static final int LOADER_ID = 1;
 
     @IdRes
     private static final int ID_PRE_GROUP = 1;
@@ -106,7 +105,7 @@ public class ZoneFragment extends AbsLoaderFragment implements View.OnClickListe
 
     @Override
     protected int getLoaderId() {
-        return LOADER_ID;
+        return Constants.LOADER_ID_ZONE;
     }
 
     @Override
@@ -125,11 +124,15 @@ public class ZoneFragment extends AbsLoaderFragment implements View.OnClickListe
         Constants.setExportParentPathName(model.name);
 
         Intent intent = new Intent(getContext().getApplicationContext(), ToolbarActivity.class);
-        intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotPlanFragment.class.getName());
+
+        // TODO 重构根据选取的采集方式选择界面
+//        intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotPlanFragment.class.getName());
+        intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, LinePlanFragment.class.getName());
+        String whereZone = "workline.zone=?";// "zone=?"-SpotPlanFragment
 
         Bundle args = new Bundle();
         // query
-        args.putString(LOADER_KEY_SELECTION, "zone=?");
+        args.putString(LOADER_KEY_SELECTION, whereZone);
         args.putStringArray(LOADER_KEY_SELECTION_ARGS, new String[]{ String.valueOf(model.id) });
         // others
         args.putParcelable(SpotPlanFragment.EXTRA_KEY_ZONE, model);

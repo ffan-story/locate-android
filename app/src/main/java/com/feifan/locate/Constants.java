@@ -18,11 +18,15 @@ public class Constants {
      * 默认采样次数
      */
     public static final int SCAN_DEFAULT_TIMES = 100;
+    /**
+     * 默认采样周期,单位:毫秒
+     */
+    public static final int SCAN_DEFAULT_INTERVAL = 1000;
 
     public static final String EXTRA_KEY_BUILDING = "building";
 
     /**
-     * 导出文件列-普通采集
+     * 导出文件列-点采集
      */
     public static final String[] EXPORT_FILE_TITLES = new String[]{
             "UUID",
@@ -38,7 +42,27 @@ public class Constants {
             "floor"
     };
 
-//    public static final String[] EXPORT_FILE_TITLES_LI
+    /**
+     * 导出文件列-路线采集
+     */
+    public static final String[] EXPORT_FILE_TITLES_LINE = new String[] {
+            "UUID",
+            "major",
+            "minor",
+            "rssi",
+            "accuracy",
+            "direction",
+            "datetime",
+            "order"
+    };
+
+    // loader id, 不同数据ID不能相同
+    public static final int LOADER_ID_BUILDING = 1;
+    public static final int LOADER_ID_ZONE = 2;
+    public static final int LOADER_ID_WORKSPOT = 3;
+    public static final int LOADER_ID_SAMPLESPOT = 4;
+    public static final int LOADER_ID_WORKLINE = 5;
+    public static final int LOADER_ID_SAMPLELINE = 6;
 
     // export
     public static final String EXPORT_ROOT_PATH_NAME;    // 根目录

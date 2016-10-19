@@ -71,10 +71,18 @@ public class SampleBeacon extends RawBeacon implements Parcelable{
         txPowser = beacon.txPowser;
     }
 
-    public String toFormattedString() {
-        return uuid + "," + major + "," + minor + "," + rssi
-                + "," + accuracy + "," + direction + "," + time
-                + "," + loc_x + "," + loc_y + "," + loc_d
-                + "," + floor;
+    public String toFormattedString(String[] titles) {
+        String ret = "";
+        if(titles.length == 11) {     // for workspot
+            ret = uuid + "," + major + "," + minor + "," + rssi
+                    + "," + accuracy + "," + direction + "," + time
+                    + "," + loc_x + "," + loc_y + "," + loc_d
+                    + "," + floor;
+        } else if(titles.length == 8) { // for workline
+            ret = uuid + "," + major + "," + minor + "," + rssi
+                    + "," + accuracy + "," + direction
+                    + "," + time + "," + group;
+        }
+        return ret;
     }
 }

@@ -3,7 +3,6 @@ package com.feifan.locate.sampling.model;
 import android.database.Cursor;
 
 import com.feifan.baselib.utils.LogUtils;
-import com.feifan.locate.provider.LocateData;
 import com.feifan.locate.provider.LocateData.SampleLine;
 
 /**

@@ -3,14 +3,21 @@ package com.feifan.locate.widget.popup;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.IdRes;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.feifan.locate.R;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,13 +29,36 @@ public class BubbleMenu {
     private Context mContext;
     private PopupWindow mWindow;
     private View.OnClickListener mListener;
+    private boolean mClosable = true;
 
-    private String[] mItems;
+    private Collection<Item> mItems = new ArrayList<>();
 
+    private static class Item {
+        @IdRes
+        int id = -1;
+        String title;
+
+        public Item(String title) {
+            this(0, title);
+        }
+
+        public Item(@IdRes int id, String title) {
+            this.id = id;
+            this.title = title;
+        }
+    }
+
+    public BubbleMenu(Context context) {
+        this(context, null, null);
+    }
 
     public BubbleMenu(Context context, String[] items, View.OnClickListener listener) {
         mContext = context;
-        mItems = items;
+        if(items != null) {
+            for(String title : items) {
+                mItems.add(new Item(title));
+            }
+        }
         mListener = listener;
     }
 
@@ -45,7 +75,23 @@ public class BubbleMenu {
         }
     }
 
-    private PopupWindow createWindow(Context context, String[] items) {
+    public void addItem(@IdRes int id, String title) {
+        mItems.add(new Item(id, title));
+    }
+
+    public void setOnItemListener(OnClickListener listener) {
+        mListener = listener;
+    }
+
+    public void setClosableOutside(boolean closeable) {
+        mClosable = closeable;
+    }
+
+    public boolean isShown() {
+        return mWindow != null ? mWindow.isShowing() : false;
+    }
+
+    private PopupWindow createWindow(Context context, Collection<Item> items) {
 
         // 创建内容视图
         LinearLayout contentView = new LinearLayout(context);
@@ -54,10 +100,14 @@ public class BubbleMenu {
         params.setMargins(space, space, space, space);
         contentView.setLayoutParams(params);
         int id = 0;
-        for(String item : items) {
+        for(Item item : items) {
             TextView itemView = new TextView(context);
-            itemView.setText(item);
-            itemView.setId(++id);
+            itemView.setText(item.title);
+            if(item.id == -1) {
+                itemView.setId(++id);
+            }else {
+                itemView.setId(item.id);
+            }
             itemView.setTextColor(Color.WHITE);
             itemView.setPadding(space, space, space, space);
             contentView.addView(itemView);
@@ -71,8 +121,8 @@ public class BubbleMenu {
         PopupWindow window = new PopupWindow(contentView, contentView.getMeasuredWidth(), contentView.getMeasuredHeight(), false);
         // 点击外部区域，关闭window
         window.setBackgroundDrawable(new ColorDrawable(Color.argb(0x99,0x10,0x10,0x10)));
-        window.setOutsideTouchable(true);
-        return  window;
+        window.setOutsideTouchable(mClosable);
+        return window;
     }
 
     private int dp2px(Context context, float dpValue) {

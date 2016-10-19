@@ -30,6 +30,8 @@ public class PlanView extends ImageView implements OnLayerListener {
 
     private static final String TAG = "PlanView";
 
+    private static final int DRAW_AREA_SIZE = 100;
+
     // 缩放
     private ScaleGestureDetector mScaleDetector;
     private float minScale = 1;       // 最小缩小倍数
@@ -63,6 +65,14 @@ public class PlanView extends ImageView implements OnLayerListener {
     @Override
     public void notifyLayerDataChanged() {
         invalidate();
+    }
+
+    @Override
+    public void notifyLayerDataChanged(ILayerPoint point) {
+        invalidate((int)(point.getLocX() - DRAW_AREA_SIZE),
+                (int)(point.getLocX() + DRAW_AREA_SIZE),
+                (int)(point.getLocY() - DRAW_AREA_SIZE),
+                (int)(point.getLocY() + DRAW_AREA_SIZE));
     }
 
     // 操作状态
