@@ -4,6 +4,7 @@ import android.graphics.PointF;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.feifan.baselib.utils.LogUtils;
 import com.feifan.planlib.ILayerPoint;
 
 /**

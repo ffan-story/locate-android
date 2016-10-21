@@ -249,7 +249,6 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
 
                 // 添加到映射集合
                 mLinesMap.put(new LineKey(pointOne.getId(), pointTwo.getId()), id);
-
             }
             mLayer.setPendingData(points);
             data.close();
@@ -321,6 +320,7 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
 
         final ILayerPoint point = getCurrentPoint();
         if(point != null) {
+            LineSpot.update(getContext(), point.getRawX(), point.getRawY(), point.getId());
             if(point.isMovable()) {
                 showMenu(point.getLocX(), point.getLocY());
             }
@@ -328,7 +328,7 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
     }
 
     private LinePoint createPoint(float x, float y) {
-        LinePoint point = null;
+        LinePoint point;
         float roundX = NumberUtils.round(x, 4);
         float roundY = NumberUtils.round(y, 4);
         int id = LineSpot.add(getContext(), roundX, roundY, getZone().id);
@@ -339,7 +339,6 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
     // 获取当前正在操作的点
     private LinePoint getCurrentPoint() {
         return pointTwo == null ? pointOne : pointTwo;
-//        return mCurrentLine.getPointTwo() == null ? mCurrentLine.getPointOne() : mCurrentLine.getPointTwo();
     }
 
     private void clearPoint(ILayerPoint point) {

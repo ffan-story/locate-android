@@ -49,20 +49,4 @@ public class LineLayer extends OperablePointLayer<LinePoint> {
         }
 
     }
-
-    //
-//    @Override
-//    public void onMoveEvent(LayerEvent event) {
-//
-//    }
-//
-//    @Override
-//    public void onScaleEvent(LayerEvent event, PlanOrigin origin) {
-//
-//    }
-//
-//    @Override
-//    public void onDraw(Canvas canvas) {
-//
-//    }
 }

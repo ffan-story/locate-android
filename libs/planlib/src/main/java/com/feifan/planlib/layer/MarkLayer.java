@@ -190,7 +190,6 @@ public class MarkLayer implements IOperableLayer {
 
     @Override
     public ILayerPoint add(float x, float y, float rx, float ry) {
-
         ILayerPoint point = null;
         if(mCallback != null) { // 在外部创建坐标点
             PointInfo info = new PointInfo(rx, ry);
@@ -198,6 +197,9 @@ public class MarkLayer implements IOperableLayer {
             if(point != null) {
                 point.setDraw(x, y);
                 point.setScale(planScale);
+                LogUtils.d("add new mark point real(" + point.getRealX() + "," + point.getRealY() + ")#"
+                        + "raw(" + point.getRawX() + "," + point.getRawY() + ")#"
+                        + "draw(" + point.getLocX() + "," + point.getLocY() + ") plan scale=" + planScale);
             }
         } else { //在内部创建坐标点
             point = new IPlanPointImpl(x, y, rx, ry, planScale);

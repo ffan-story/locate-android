@@ -126,9 +126,15 @@ public class ZoneFragment extends AbsLoaderFragment implements View.OnClickListe
         Intent intent = new Intent(getContext().getApplicationContext(), ToolbarActivity.class);
 
         // TODO 重构根据选取的采集方式选择界面
-//        intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotPlanFragment.class.getName());
-        intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, LinePlanFragment.class.getName());
-        String whereZone = "workline.zone=?";// "zone=?"-SpotPlanFragment
+        String whereZone = "";
+//        if(Constants.isLineMode()) {
+            intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, LinePlanFragment.class.getName());
+            whereZone = "workline.zone=?";
+
+//        }else {
+//            intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotPlanFragment.class.getName());
+//            whereZone = "zone=?";
+//        }
 
         Bundle args = new Bundle();
         // query

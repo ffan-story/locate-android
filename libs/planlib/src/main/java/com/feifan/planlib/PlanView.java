@@ -418,6 +418,7 @@ public class PlanView extends ImageView implements OnLayerListener {
         if(mLayers != null) {
             for(ILayer layer : mLayers) {
                 if(!inited) {
+                    LogUtils.e("origin = " + mPlanOrigin.getX() + "," + mPlanOrigin.getY());
                     layer.onInitialize(mPlanOrigin, planScale);
                     inited = true;
                 }

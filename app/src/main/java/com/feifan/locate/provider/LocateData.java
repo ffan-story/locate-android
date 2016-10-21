@@ -406,6 +406,23 @@ public class LocateData {
         }
 
         /**
+         * 更新采集点
+         * @param context
+         * @param x
+         * @param y
+         * @param spotId
+         */
+        public static void update(Context context, float x, float y, int spotId) {
+            final ContentResolver resolver = context.getContentResolver();
+            final int COLUMN_COUNT = 2;
+            ContentValues values = new ContentValues(COLUMN_COUNT);
+            values.put(X, String.valueOf(x));
+            values.put(Y, String.valueOf(y));
+            int ret = resolver.update(CONTENT_URI, values, _ID + "=?", new String[]{ String.valueOf(spotId) });
+            LogUtils.i("linespot:update " + ret + " line spot");
+        }
+
+        /**
          * 删除采集路线点
          * @param context
          * @param id

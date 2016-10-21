@@ -3,6 +3,7 @@ package com.feifan.planlib.layer;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.planlib.ILayerPoint;
@@ -76,6 +77,7 @@ public abstract class OperablePointLayer<P extends ILayerPoint> implements IOper
 
     @Override
     public ILayerPoint add(float x, float y, float rx, float ry) {
+        LogUtils.e("x,y=" + x + "," + y + "#rx,ry=" + rx + "," + ry);
         P point;
         if(mCallback != null) { // 在外部创建坐标点
             OnOperationCallback.PointInfo info = new OnOperationCallback.PointInfo(rx, ry);
@@ -83,6 +85,9 @@ public abstract class OperablePointLayer<P extends ILayerPoint> implements IOper
             if(point != null) {
                 point.setDraw(x, y);
                 point.setScale(mPlanScale);
+                LogUtils.d("add new operable point real(" + point.getRealX() + "," + point.getRealY() + ")#"
+                        + "raw(" + point.getRawX() + "," + point.getRawY() + ")#"
+                        + "draw(" + point.getLocX() + "," + point.getLocY() + ") plan scale=" + mPlanScale);
             }
         } else { //在内部创建坐标点
             point = (P)new IPlanPointImpl(x, y, rx, ry, mPlanScale);

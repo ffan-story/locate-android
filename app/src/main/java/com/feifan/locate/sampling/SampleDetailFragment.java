@@ -118,7 +118,6 @@ public abstract class SampleDetailFragment<M extends SampleModel> extends AbsLoa
     protected void save(String[] titles, String fileName) {
         DataFixer.FixBeacons(mBuilding, mCache);
         DataUtils.exportToCSV(titles, mCache, fileName);
-        mCache.clear();
     }
 
     /**

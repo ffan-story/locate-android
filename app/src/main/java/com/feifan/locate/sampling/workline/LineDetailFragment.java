@@ -107,6 +107,7 @@ public class LineDetailFragment extends SampleDetailFragment<SampleLineModel> {
         return new BeaconNotifier() {
             @Override
             public void onBeaconsReceived(Collection<SampleBeacon> beacons) {
+                LogUtils.e("receive becon data at " + Thread.currentThread().getId());
                 mCache.addAll(beacons);
                 mTotal += beacons.size();
                 final long consumed = SystemClock.elapsedRealtime() - mStartTime;
@@ -151,6 +152,7 @@ public class LineDetailFragment extends SampleDetailFragment<SampleLineModel> {
                 mCurrentModel.direction = mAzimuth;
                 mGroup = 0;
                 mTotal = 0;
+                mCache.clear();
                 // 更新数据库
                 SampleLine.updateStatus(getContext(), SampleColumns.STATUS_RUNNING,
                         mCurrentModel.direction, mCurrentModel.id);
@@ -170,7 +172,7 @@ public class LineDetailFragment extends SampleDetailFragment<SampleLineModel> {
                 // 保存
                 String fileName = getFileNameBySample(mCurrentModel);
                 save(Constants.EXPORT_FILE_TITLES_LINE, fileName);
-                LogUtils.e("after save : mCache.size-->" + mCache.size());
+                LogUtils.e("save becon data at " + Thread.currentThread().getId());
                 break;
             case SampleColumns.STATUS_FINISH:
                 Toast.makeText(getContext(), "view the result in " + Constants.getExportFilePath() + getFileNameBySample(mCurrentModel),

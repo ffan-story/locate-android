@@ -2,7 +2,10 @@ package com.feifan.locate;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.os.Build;
+import android.util.Log;
 
+import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.provider.LocateData;
 
 import java.util.concurrent.Executors;
@@ -55,7 +58,7 @@ public class MockServer {
         values.put(LocateData.Zone._ID, 2);
         values.put(LocateData.Zone.NAME, "石景山万达广场F1");
         values.put(LocateData.Zone.PLAN, "zone_shijingshan_f1.jpg");
-        values.put(LocateData.Zone.SCALE, 0.136);
+        values.put(LocateData.Zone.SCALE, getScale(2));
         values.put(LocateData.Zone.FLOOR_NO, 1);
         values.put(LocateData.Zone.TITLE, "F1");
         values.put(LocateData.Zone.BUILDING, 3);
@@ -65,7 +68,7 @@ public class MockServer {
         values.put(LocateData.Zone._ID, 3);
         values.put(LocateData.Zone.NAME, "石景山万达广场F2");
         values.put(LocateData.Zone.PLAN, "zone_shijingshan_f2.jpg");
-        values.put(LocateData.Zone.SCALE, 0.136);
+        values.put(LocateData.Zone.SCALE, getScale(3));
         values.put(LocateData.Zone.FLOOR_NO, 2);
         values.put(LocateData.Zone.TITLE, "F2");
         values.put(LocateData.Zone.BUILDING, 3);
@@ -75,7 +78,7 @@ public class MockServer {
         values.put(LocateData.Zone._ID, 4);
         values.put(LocateData.Zone.NAME, "石景山万达广场F3");
         values.put(LocateData.Zone.PLAN, "zone_shijingshan_f3.jpg");
-        values.put(LocateData.Zone.SCALE, 0.136);
+        values.put(LocateData.Zone.SCALE, getScale(4));
         values.put(LocateData.Zone.FLOOR_NO, 3);
         values.put(LocateData.Zone.TITLE, "F3");
         values.put(LocateData.Zone.BUILDING, 3);
@@ -85,7 +88,7 @@ public class MockServer {
         values.put(LocateData.Zone._ID, 5);
         values.put(LocateData.Zone.NAME, "石景山万达广场B1");
         values.put(LocateData.Zone.PLAN, "zone_shijingshan_b1.jpg");
-        values.put(LocateData.Zone.SCALE, 0.226);
+        values.put(LocateData.Zone.SCALE, getScale(5));
         values.put(LocateData.Zone.FLOOR_NO, -1);
         values.put(LocateData.Zone.TITLE, "B1");
         values.put(LocateData.Zone.BUILDING, 3);
@@ -95,10 +98,31 @@ public class MockServer {
         values.put(LocateData.Zone._ID, 6);
         values.put(LocateData.Zone.NAME, "石景山万达广场B2");
         values.put(LocateData.Zone.PLAN, "zone_shijingshan_b2.jpg");
-        values.put(LocateData.Zone.SCALE, 0.226);
+        values.put(LocateData.Zone.SCALE, getScale(6));
         values.put(LocateData.Zone.FLOOR_NO, -2);
         values.put(LocateData.Zone.TITLE, "B2");
         values.put(LocateData.Zone.BUILDING, 3);
         resolver.insert(LocateData.Zone.CONTENT_URI, values);
+    }
+
+    private static float getScale(int id) {
+        switch (id) {
+            case 2:
+            case 3:
+            case 4:
+                if(Build.MANUFACTURER.contains("Meizu")) {
+                    return 0.136f * 1.333f;
+                }
+                return 0.136f;
+            case 5:
+            case 6:
+                if(Build.MANUFACTURER.contains("Meizu")) {
+                    return 0.226f * 1.333f;
+                }
+                return 0.226f;
+            default:
+                return 1f;
+        }
+
     }
 }

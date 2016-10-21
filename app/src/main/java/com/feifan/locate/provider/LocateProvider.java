@@ -488,6 +488,9 @@ public class LocateProvider extends ContentProvider {
             case SAMPLESPOT:
                 count = db.update(TableFactory.SAMPLESPOT_TABLE_NAME, values, selection, selectionArgs);
                 break;
+            case LINESPOT:
+                count = db.update(TableFactory.LINESPOT_TABLE_NAME, values, selection, selectionArgs);
+                break;
             case SAMPLELINE:
                 count = db.update(TableFactory.SAMPLELINE_TABLE_NAME, values, selection, selectionArgs);
                 break;

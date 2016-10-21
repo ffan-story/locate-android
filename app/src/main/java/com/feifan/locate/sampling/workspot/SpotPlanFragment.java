@@ -256,6 +256,7 @@ public class SpotPlanFragment extends AbsSensorFragment implements OnPlanListene
                 point.setMovable(movable);
                 point.setId(id);
                 marks.add(point);
+                LogUtils.e(point.getRawX() + "," + point.getRawY() + " X " + zone.scale + " = " + point.toString());
             }
             markLayer.setPendingData(marks);
             data.close();

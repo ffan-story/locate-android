@@ -14,6 +14,11 @@ import java.io.File;
  */
 public class Constants {
 
+    private static int SAMPLE_MODE = 1;
+    public static boolean isLineMode() {
+        return (++SAMPLE_MODE) % 2 == 1;
+    }
+
     /**
      * 默认采样次数
      */

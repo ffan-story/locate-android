@@ -37,12 +37,6 @@ public class MainActivity extends AppCompatActivity {
                     MockServer.requestZoneData(resolver);
                 }
             });
-//            Executors.newSingleThreadExecutor().execute(new Runnable() {
-//                @Override
-//                public void run() {
-//
-//                }
-//            });
 
             mSharedPrefs.edit().putBoolean(INITIALIZE_DATA_FLAG, true).apply();
 
