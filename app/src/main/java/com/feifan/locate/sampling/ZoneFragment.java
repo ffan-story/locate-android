@@ -17,8 +17,7 @@ import android.view.ViewGroup;
 import com.feifan.locate.Constants;
 import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
-import com.feifan.locate.common.BuildingFragment;
-import com.feifan.locate.locating.BuildingModel;
+import com.feifan.locate.common.BuildingModel;
 import com.feifan.locate.provider.LocateData.Zone;
 import com.feifan.locate.sampling.workline.LinePlanFragment;
 import com.feifan.locate.sampling.workspot.SpotPlanFragment;
@@ -56,7 +55,7 @@ public class ZoneFragment extends AbsLoaderFragment implements View.OnClickListe
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBuilding = getArguments().getParcelable(BuildingFragment.EXTRA_KEY_BUILDING);
+        mBuilding = getArguments().getParcelable(Constants.EXTRA_KEY_BUILDING);
     }
 
     @Override
@@ -127,21 +126,21 @@ public class ZoneFragment extends AbsLoaderFragment implements View.OnClickListe
 
         // TODO 重构根据选取的采集方式选择界面
         String whereZone = "";
-//        if(Constants.isLineMode()) {
+        if(Constants.isLineMode()) {
             intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, LinePlanFragment.class.getName());
             whereZone = "workline.zone=?";
 
-//        }else {
-//            intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotPlanFragment.class.getName());
-//            whereZone = "zone=?";
-//        }
+        }else {
+            intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SpotPlanFragment.class.getName());
+            whereZone = "zone=?";
+        }
 
         Bundle args = new Bundle();
         // query
         args.putString(LOADER_KEY_SELECTION, whereZone);
         args.putStringArray(LOADER_KEY_SELECTION_ARGS, new String[]{ String.valueOf(model.id) });
         // others
-        args.putParcelable(SpotPlanFragment.EXTRA_KEY_ZONE, model);
+        args.putParcelable(Constants.EXTRA_KEY_ZONE, model);
         args.putString(Constants.EXTRA_KEY_BUILDING, mBuilding.code);
 
         intent.putExtra(ToolbarActivity.EXTRA_KEY_ARGUMENTS, args);

@@ -8,7 +8,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.widget.cursorwork.AbsLoaderFragment;
 
 /**

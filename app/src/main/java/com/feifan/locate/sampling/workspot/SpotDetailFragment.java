@@ -31,7 +31,6 @@ import com.feifan.locate.utils.SizeUtils;
 import com.feifan.locate.widget.cursorwork.ICursorAdapter;
 import com.feifan.locate.widget.recycler.SpaceItemDecoration;
 import com.feifan.locate.widget.ui.AbsSensorFragment;
-import com.feifan.planlib.entity.IPlanPointImpl;
 import com.feifan.scanlib.BeaconNotifier;
 import com.feifan.scanlib.ScanManager;
 import com.feifan.scanlib.beacon.SampleBeacon;
@@ -62,7 +61,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements SampleSpotA
     private SampleSpotModel mCurrentModel;
     private int mCount = 0;
     private float mDegree;    //实时角度
-    private IPlanPointImpl mPoint;
+    private SpotInfo mPoint;
     private int mFloor;
     private transient boolean mConfirmed = false; // 是否确定方位，启动扫描
 
@@ -128,7 +127,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements SampleSpotA
                     msg.obj = mCache;
                     msg.getData().putString(ExportHandler.MSG_DATA_KEY_FILENAME,
                             String.format("Loc(%.2f,%.2f,%.2f).csv",
-                                    mPoint.getRealX(), mPoint.getRealY(), mCurrentModel.direction));
+                                    mPoint.locX, mPoint.locY, mCurrentModel.direction));
                     mHandler.sendMessage(msg);
 
                     SampleSpot.updateScan(getContext(), mCount, mCurrentCount.get(), mCurrentModel.id, SampleSpot.STATUS_FINISH);
@@ -140,8 +139,8 @@ public class SpotDetailFragment extends AbsSensorFragment implements SampleSpotA
 
                     // 保存附加信息
                     for(SampleBeacon beacon : beacons) {
-                        beacon.loc_x = mPoint.getRealX();
-                        beacon.loc_y = mPoint.getRealY();
+                        beacon.loc_x = mPoint.locX;
+                        beacon.loc_y = mPoint.locY;
                         beacon.loc_d = mCurrentModel.direction;
                         beacon.direction = mDegree;
                         beacon.floor = mFloor;
@@ -197,10 +196,11 @@ public class SpotDetailFragment extends AbsSensorFragment implements SampleSpotA
                     Toast.makeText(getContext(), "don't do anything while scanning", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Cursor cursor = SampleSpot.findByStatus(getContext(), SampleSpot.STATUS_READY, mPoint.getId());
+                Cursor cursor = SampleSpot.findByStatus(getContext(), SampleSpot.STATUS_READY, mPoint.id);
                 if(cursor.getCount() == 0) { // 不存在就绪状态的样本点
                     // 添加样本点到数据库
-                    mSampleSpotId = SampleSpot.add(getContext(), mPoint.getRawX(), mPoint.getRawY(), mDegree, mPoint.getId());
+//                    mSampleSpotId = SampleSpot.add(getContext(), mPoint.getRawX(), mPoint.getRawY(), mDegree, mPoint.id);
+                    mSampleSpotId = SampleSpot.add(getContext(), mPoint.locX, mPoint.locY, mDegree, mPoint.id);
                     mConfirmed = false;
                 }else {
                     Toast.makeText(getContext(), "there is already a ready sample point, handle it first", Toast.LENGTH_SHORT).show();
@@ -256,7 +256,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements SampleSpotA
         mDegree = NumberUtils.degree(radian);
 
         if(!mConfirmed && mInfoV != null) {
-            mInfoV.setText(String.format("(%f, %f, %f)", mPoint.getRealX(), mPoint.getRealY(), mDegree));
+            mInfoV.setText(String.format("(%f, %f, %f)", mPoint.locX, mPoint.locY, mDegree));
         }
     }
 
@@ -303,7 +303,7 @@ public class SpotDetailFragment extends AbsSensorFragment implements SampleSpotA
                 break;
             case SampleSpot.STATUS_FINISH:
                 String fileName = String.format("Loc(%.2f,%.2f,%.2f).csv",
-                        mPoint.getRealX(), mPoint.getRealY(), mCurrentModel.direction);
+                        mPoint.locX, mPoint.locY, mCurrentModel.direction);
                 Toast.makeText(getContext(), "view the result in " + Constants.getExportFilePath() + fileName,
                         Toast.LENGTH_LONG).show();
                 break;

@@ -68,21 +68,23 @@ public class ServiceFactory {
      * @param <S>
      * @return
      */
-    public <S> S createService(Class<S> clazz) {
+    public <S> S createService(Class<S> clazz, String baseUrl) {
         if(clazz == null) {
             throw new IllegalArgumentException("clazz can not be null");
         }
-
-        String baseUrl = "";
-        try {
-            Field field = clazz.getField("BASE_URL");
-            baseUrl = (String) field.get(clazz);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.getMessage();
-            e.printStackTrace();
+        if(TextUtils.isEmpty(baseUrl)) {
+            throw new IllegalArgumentException("baseUrl can not be empty");
         }
+//        String baseUrl = "";
+//        try {
+//            Field field = clazz.getField("BASE_URL");
+//            baseUrl = (String) field.get(clazz);
+//        } catch (NoSuchFieldException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.getMessage();
+//            e.printStackTrace();
+//        }
 
         Retrofit retrofit = null;
         if(!TextUtils.isEmpty(baseUrl)) {
@@ -101,7 +103,7 @@ public class ServiceFactory {
         if(retrofit == null) {
             throw new NullPointerException("create retrofit instance failed.");
         }
-
+        LogUtils.i("create a retrofit service " + clazz.getSimpleName() + " with " + baseUrl);
         return retrofit.create(clazz);
     }
 

@@ -25,7 +25,9 @@ import com.feifan.locate.provider.LocateData.WorkLine;
 import com.feifan.locate.provider.LocateData.SampleLine;
 import com.feifan.locate.provider.LocateData.LineSpot;
 
+import static com.feifan.locate.provider.TableFactory.BUILDING_TABLE_NAME;
 import static com.feifan.locate.provider.TableFactory.WORKLINE_TABLE_NAME;
+import static com.feifan.locate.provider.TableFactory.ZONE_TABLE_NAME;
 //import com.feifan.locate.provider.LocateData.Mac;
 
 /**
@@ -146,12 +148,21 @@ public class LocateProvider extends ContentProvider {
         sBuildingProjectionMap.put(Building.MIN_FLOOR, Building.MIN_FLOOR);
 
         sZoneProjectionMap = new HashMap<>();
-        sZoneProjectionMap.put(Zone._ID, Zone._ID);
-        sZoneProjectionMap.put(Zone.NAME, Zone.NAME);
-        sZoneProjectionMap.put(Zone.PLAN, Zone.PLAN);
-        sZoneProjectionMap.put(Zone.SCALE, Zone.SCALE);
-        sZoneProjectionMap.put(Zone.FLOOR_NO, Zone.FLOOR_NO);
-        sZoneProjectionMap.put(Zone.TITLE, Zone.TITLE);
+        sZoneProjectionMap.put(
+                ZONE_TABLE_NAME + "." + Zone._ID,
+                ZONE_TABLE_NAME + "." + Zone._ID + " AS " + Zone._ID);
+        sZoneProjectionMap.put(
+                ZONE_TABLE_NAME + "." + Zone.NAME,
+                ZONE_TABLE_NAME + "." + Zone.NAME + " AS " + Zone.NAME);
+        sZoneProjectionMap.put(ZONE_TABLE_NAME + "." +Zone.PLAN, Zone.PLAN);
+        sZoneProjectionMap.put(ZONE_TABLE_NAME + "." +Zone.SCALE, Zone.SCALE);
+        sZoneProjectionMap.put(ZONE_TABLE_NAME + "." +Zone.FLOOR_NO, Zone.FLOOR_NO);
+        sZoneProjectionMap.put(ZONE_TABLE_NAME + "." +Zone.TITLE, Zone.TITLE);
+        sZoneProjectionMap.put(ZONE_TABLE_NAME + "." +Zone.BUILDING, Zone.BUILDING);
+        sZoneProjectionMap.put(
+                BUILDING_TABLE_NAME + "." + Building.CODE,
+                Building.CODE);
+
 
         sWorkSpotProjectionMap = new HashMap<>();
         sWorkSpotProjectionMap.put(WorkSpot._ID, WorkSpot._ID);
@@ -250,8 +261,9 @@ public class LocateProvider extends ContentProvider {
                 qb.setProjectionMap(sBuildingProjectionMap);
                 break;
             case ZONE:          // 查询定位区域整表
-                qb.setTables(TableFactory.ZONE_TABLE_NAME);
+                qb.setTables(TableFactory.getZoneQueryTable());
                 qb.setProjectionMap(sZoneProjectionMap);
+                qb.appendWhere(ZONE_TABLE_NAME + "." + Zone.BUILDING + "=" + BUILDING_TABLE_NAME + "." + Building._ID);
                 break;
             case WORKSPOT:
                 qb.setTables(TableFactory.WORKSPOT_TABLE_NAME);

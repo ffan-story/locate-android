@@ -6,7 +6,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
-import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.widget.ui.BaseActivity;
 
 public class ToolbarActivity extends BaseActivity {

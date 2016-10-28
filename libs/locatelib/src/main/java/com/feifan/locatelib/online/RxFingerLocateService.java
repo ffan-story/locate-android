@@ -1,7 +1,5 @@
 package com.feifan.locatelib.online;
 
-import android.os.Build;
-
 import com.feifan.locatelib.network.HttpResult;
 
 import retrofit2.http.Body;
@@ -17,8 +15,8 @@ public interface RxFingerLocateService {
     /**
      * 请求地址
      */
-    String BASE_URL = "http://123.56.144.204/";
-//    String BASE_URL = "http://10.1.82.242:8081";
+//    String BASE_URL = "http://123.56.144.204/";
+    String BASE_URL = "http://192.168.1.100:8080";
 
     @POST("fix")
     Observable<HttpResult<LocateInfo>> getLocation(@Body LocateQueryData data);

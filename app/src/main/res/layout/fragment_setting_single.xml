@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:lines="1"
+        android:maxLines="1"
         android:padding="10dp"
         android:background="@drawable/border_top_bottom_background"/>
 </LinearLayout>

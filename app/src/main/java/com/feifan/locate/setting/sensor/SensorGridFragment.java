@@ -10,12 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.feifan.baselib.utils.LogUtils;
-import com.feifan.baselib.utils.VersionUtils;
-import com.feifan.locate.BuildConfig;
 import com.feifan.locate.R;
 import com.feifan.locate.utils.SizeUtils;
-import com.feifan.locate.widget.cursorwork.SimpleGridCursorAdapter;
 import com.feifan.locate.widget.recycler.ContentGridAdapter;
 import com.feifan.locate.widget.recycler.IContentModel;
 import com.feifan.locate.widget.recycler.SpaceItemDecoration;

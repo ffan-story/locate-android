@@ -153,4 +153,8 @@ public final class TableFactory {
         return WORKLINE_TABLE_NAME + "," + LINESPOT_TABLE_NAME + " as spotOne" + ","
                 + LINESPOT_TABLE_NAME + " as spotTwo";
     }
+
+    public static String getZoneQueryTable() {
+        return ZONE_TABLE_NAME + "," + BUILDING_TABLE_NAME;
+    }
 }

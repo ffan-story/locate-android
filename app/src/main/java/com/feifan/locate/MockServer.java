@@ -8,6 +8,8 @@ import android.util.Log;
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.provider.LocateData;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 /**
@@ -37,7 +39,7 @@ public class MockServer {
         values.clear();
         values.put(LocateData.Building._ID, 3);
         values.put(LocateData.Building.NAME, "石景山万达广场");
-        values.put(LocateData.Building.CODE, "android_860100010060300001");
+        values.put(LocateData.Building.CODE, "860100010060300001");
         values.put(LocateData.Building.MIN_FLOOR, -2);
         resolver.insert(LocateData.Building.CONTENT_URI, values);
     }
@@ -103,6 +105,35 @@ public class MockServer {
         values.put(LocateData.Zone.TITLE, "B2");
         values.put(LocateData.Zone.BUILDING, 3);
         resolver.insert(LocateData.Zone.CONTENT_URI, values);
+    }
+
+    public static Map<String, Float> TENSOR_DATA = new HashMap<>();
+    static {
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_42513", -91f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_42514", -79f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_42516", -91f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_42559", -89.5f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_42567", -78f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_42614", -90f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_42651", -85.5f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_42793", -86f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_42857", -69.5f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_42999", -90f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43015", -85f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43096", -75f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43124", -84f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43131", -88f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43152", -73f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43157", -76f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43202", -90f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43228", -89f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43255", -89f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43296", -79.5f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43303", -82f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43328", -90f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43443", -91f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43482", -83.5f);
+        TENSOR_DATA.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43515", -86f);
     }
 
     private static float getScale(int id) {

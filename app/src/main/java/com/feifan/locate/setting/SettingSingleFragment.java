@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.feifan.locate.IBackInterceptable;
 import com.feifan.locate.R;
 import com.feifan.locate.utils.NumberUtils;
 import com.feifan.locate.widget.ui.BaseFragment;
@@ -60,7 +59,13 @@ public class SettingSingleFragment extends BaseFragment {
     public Intent getResult() {
         Intent intent = new Intent();
         if(!TextUtils.isEmpty(mEdit.getText())) {
-            intent.putExtra(EXTRA_KEY_RESULT, mEdit.getText().toString());
+            String value = mEdit.getText().toString();
+            if(NumberUtils.isNumeric(value)) {
+                intent.putExtra(EXTRA_KEY_RESULT, Integer.valueOf(value));
+            }else {
+                intent.putExtra(EXTRA_KEY_RESULT, value);
+            }
+
         }else {
             intent.putExtra(EXTRA_KEY_RESULT, mValue);
         }

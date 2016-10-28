@@ -1,5 +1,6 @@
 package com.feifan.locate.sampling;
 
+import com.feifan.baselib.utils.LogUtils;
 import com.feifan.scanlib.beacon.SampleBeacon;
 
 import java.util.HashMap;
@@ -51,6 +52,7 @@ public final class DataFixer {
                     beacon.uuid = fixItem.uuid;
                     beacon.major = fixItem.major;
                     beacon.minor = fixItem.minor;
+                    LogUtils.e("fix one " + beacon.mac);
                 }
             }
         }

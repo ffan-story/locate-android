@@ -1,1 +1,1 @@
-include ':app', 'libs:sensorlib', 'libs:locatelib', 'libs:planlib', 'libs:baselib', 'libs:scanlib'
+include ':app', 'libs:maplib', 'libs:sensorlib', 'libs:locatelib', 'libs:planlib', 'libs:baselib', 'libs:scanlib'

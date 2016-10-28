@@ -30,14 +30,10 @@ import java.util.concurrent.Semaphore;
 
 public class LocatingPanel extends LinearLayout implements OnCheckedChangeListener {
 
-    // public
-    public static final String KEY_ALGORITHM = "algorithm";
-    public static final String KEY_SCAN_PERIOD = "scan_period";
-    public static final String KEY_REQUEST_PERIOD = "request_period";
-
     // save
-    private static final String PREFERENCE_LOCATING_SETTINGS = "settings";
-    private SharedPreferences mPreferences;
+    private LocatingConfig mConfig;
+//    private static final String PREFERENCE_LOCATING_SETTINGS = "settings";
+//    private SharedPreferences mPreferences;
     private OnSharedPreferenceChangeListener mListener;
 
     private FrameLayout.LayoutParams mParams;
@@ -62,7 +58,8 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
         int spacing = dp2px(context, 5);
         setPadding(spacing, spacing, spacing, spacing);
 
-        mPreferences = context.getSharedPreferences(PREFERENCE_LOCATING_SETTINGS, Context.MODE_PRIVATE);
+//        mPreferences = context.getSharedPreferences(PREFERENCE_LOCATING_SETTINGS, Context.MODE_PRIVATE);
+        mConfig = LocatingConfig.getInstance();
 
         //test
         logView = (TextView)findViewById(R.id.text_response);
@@ -76,9 +73,11 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
 
     public void setConfigChangeListener(OnSharedPreferenceChangeListener listener) {
         if(mListener != null) {
-            mPreferences.unregisterOnSharedPreferenceChangeListener(mListener);
+//            mPreferences.unregisterOnSharedPreferenceChangeListener(mListener);
+            mConfig.unRegisterChangeListener(mListener);
         }
-        mPreferences.registerOnSharedPreferenceChangeListener(listener);
+//        mPreferences.registerOnSharedPreferenceChangeListener(listener);
+        mConfig.registerChangeListener(listener);
         mListener = listener;
     }
 
@@ -95,7 +94,8 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         if(mListener != null) {
-            mPreferences.unregisterOnSharedPreferenceChangeListener(mListener);
+//            mPreferences.unregisterOnSharedPreferenceChangeListener(mListener);
+            mConfig.unRegisterChangeListener(mListener);
         }
     }
 
@@ -103,6 +103,8 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
         // algorithm
         RadioGroup rgAlgorithm = findView(R.id.radiogroup_algorithm);
         rgAlgorithm.setOnCheckedChangeListener(this);
+        String[] algorithmValue = mConfig.getAlgorithm().split(",");
+        rgAlgorithm.check(Integer.valueOf(algorithmValue[1]));
 
         SimpleSeekBarChangeListener listener = new SimpleSeekBarChangeListener() {
             @Override
@@ -112,16 +114,16 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
                 String key = "";
                 switch (parent.getId()) {
                     case R.id.seek_scan_period:
-                        key = KEY_SCAN_PERIOD;
+                        mConfig.setScanPeriod(String.valueOf(progress + 1));
                         break;
                     case R.id.seek_request_period:
-                        key = KEY_REQUEST_PERIOD;
+                        mConfig.setRequestPeriod(String.valueOf(progress + 1));
                         break;
                     default:
                         throw new IllegalStateException("you click an unknown SeekBar with id(" + seekBar.getId() + ")");
                 }
 
-                LocatingPanel.this.saveStringPreference(key, String.valueOf(progress + 1));
+
             }
         };
 
@@ -129,14 +131,14 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
         ViewGroup scanContainer = findView(R.id.seek_scan_period);
         SeekBar scanPeriod = (SeekBar) scanContainer.findViewById(R.id.seek);
         scanPeriod.setOnSeekBarChangeListener(listener);
-        String scanPeriodValue = retrieveStringValue(KEY_SCAN_PERIOD, "3");
+        String scanPeriodValue = mConfig.getScanPeriod();
         scanPeriod.setProgress(Integer.valueOf(scanPeriodValue) - 1);
 
         // request period 数据请求时间
         ViewGroup reqContainer = findView(R.id.seek_request_period);
         SeekBar reqPeriod = (SeekBar) reqContainer.findViewById(R.id.seek);
         reqPeriod.setOnSeekBarChangeListener(listener);
-        String reqPeriodValue = retrieveStringValue(KEY_REQUEST_PERIOD, "3");
+        String reqPeriodValue = mConfig.getRequestPeriod();
         reqPeriod.setProgress(Integer.valueOf(reqPeriodValue) - 1);
     }
 
@@ -167,18 +169,12 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
         RadioButton radioButton = findView(rbId);
         switch (group.getId()) {
             case R.id.radiogroup_algorithm:
-                saveStringPreference(KEY_ALGORITHM, radioButton.getText().toString());
+                mConfig.setAlgorithm(radioButton.getText().toString() + "," + rbId);
                 break;
         }
     }
 
-    private void saveStringPreference(String key, String value) {
-        mPreferences.edit().putString(key, value).apply();
-    }
 
-    private String retrieveStringValue(String key, String defValue) {
-        return mPreferences.getString(key, defValue);
-    }
 
     /**
      * 查找到指定ID的视图

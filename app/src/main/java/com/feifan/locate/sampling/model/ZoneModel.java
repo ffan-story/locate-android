@@ -16,6 +16,9 @@ public class ZoneModel extends CursorModel implements Parcelable {
     public String plan;
     public float scale;
     public int floorNo;
+    public String title;
+    public int buildingId;
+    public String buildingIdCode;
 
     public ZoneModel(Cursor cursor) {
         super(cursor);
@@ -27,6 +30,12 @@ public class ZoneModel extends CursorModel implements Parcelable {
         scale = cursor.getFloat(scaleIndex);
         int floorNoIndex = cursor.getColumnIndexOrThrow(LocateData.Zone.FLOOR_NO);
         floorNo = cursor.getInt(floorNoIndex);
+        int titleIndex = cursor.getColumnIndexOrThrow(LocateData.Zone.TITLE);
+        title = cursor.getString(titleIndex);
+        int buildingIdIndex = cursor.getColumnIndexOrThrow(LocateData.Zone.BUILDING);
+        buildingId = cursor.getInt(buildingIdIndex);
+        int buildingIdCodeIndex = cursor.getColumnIndexOrThrow(LocateData.Building.CODE);
+        buildingIdCode = cursor.getString(buildingIdCodeIndex);
     }
 
     protected ZoneModel(Parcel in) {
@@ -35,6 +44,9 @@ public class ZoneModel extends CursorModel implements Parcelable {
         plan = in.readString();
         scale = in.readFloat();
         floorNo = in.readInt();
+        title = in.readString();
+        buildingId = in.readInt();
+        buildingIdCode = in.readString();
     }
 
     @Override
@@ -44,6 +56,9 @@ public class ZoneModel extends CursorModel implements Parcelable {
         dest.writeString(plan);
         dest.writeFloat(scale);
         dest.writeInt(floorNo);
+        dest.writeString(title);
+        dest.writeInt(buildingId);
+        dest.writeString(buildingIdCode);
     }
 
     @Override

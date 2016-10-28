@@ -1,6 +1,7 @@
 package com.feifan.locate.setting;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,10 +11,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import com.feifan.locate.LocatePreferences;
 import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.setting.sensor.SensorGridFragment;
 import com.feifan.locate.setting.sensor.SensorScanFragment;
+import com.feifan.locate.widget.settingwork.TextItemView;
 import com.feifan.locate.widget.ui.BaseFragment;
 
 
@@ -22,6 +25,12 @@ import com.feifan.locate.widget.ui.BaseFragment;
  */
 public class SettingFragment extends BaseFragment implements OnClickListener {
 
+    // RequestCode
+    private static final int REQUEST_CODE_LOCATE_ADDR = 1;
+    private static final int REQUEST_CODE_LOCATE_PORT = 2;
+
+    private TextItemView mServerAddrV;
+    private TextItemView mServerPortV;
 
     public SettingFragment() {
         // Required empty public constructor
@@ -38,9 +47,39 @@ public class SettingFragment extends BaseFragment implements OnClickListener {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mServerAddrV = findView(R.id.setting_server_address);
+        mServerAddrV.setSubtitle(LocatePreferences.getInstance().getLocateAddr());
+        mServerPortV = findView(R.id.setting_server_port);
+        mServerPortV.setSubtitle(String.valueOf(LocatePreferences.getInstance().getLocatePort()));
 
         view.findViewById(R.id.setting_sensor_detection).setOnClickListener(this);
         view.findViewById(R.id.setting_sensor_sampling).setOnClickListener(this);
+        mServerAddrV.setOnClickListener(this);
+        mServerPortV.setOnClickListener(this);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQUEST_CODE_LOCATE_ADDR:
+                if(resultCode == Activity.RESULT_OK) {
+                    String value = data.getExtras().getString(SettingSingleFragment.EXTRA_KEY_RESULT);
+                    LocatePreferences.getInstance().
+                            setLocateAddr(value);
+                    mServerAddrV.setSubtitle(value);
+                }
+                break;
+            case REQUEST_CODE_LOCATE_PORT:
+                if(resultCode == Activity.RESULT_OK) {
+                    int value = data.getExtras().getInt(SettingSingleFragment.EXTRA_KEY_RESULT);
+                    LocatePreferences.getInstance().
+                            setLocatePort(value);
+                    mServerPortV.setSubtitle(String.valueOf(value));
+                }
+                break;
+        }
     }
 
     /**
@@ -61,7 +100,31 @@ public class SettingFragment extends BaseFragment implements OnClickListener {
                 intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SensorScanFragment.class.getName());
                 startActivity(intent);
                 break;
+            case R.id.setting_server_address:
+                String curAddr = LocatePreferences.getInstance().getLocateAddr();
+                startConfig(getString(R.string.setting_server_address_title), curAddr, REQUEST_CODE_LOCATE_ADDR);
+                break;
+            case R.id.setting_server_port:
+                int curPort = LocatePreferences.getInstance().getLocatePort();
+                startConfig(getString(R.string.setting_server_port_title), String.valueOf(curPort), REQUEST_CODE_LOCATE_PORT);
+                break;
         }
 
+    }
+
+    /**
+     * 启动配置界面
+     * @param title
+     * @param curValue
+     * @param ReqCode
+     */
+    private void startConfig(String title, String curValue, int ReqCode) {
+        Intent intent = new Intent(getContext(), ToolbarActivity.class);
+        intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, SettingSingleFragment.class.getName());
+        Bundle args = new Bundle();
+        args.putString(SettingSingleFragment.EXTRA_KEY_TITLE, title);
+        args.putString(SettingSingleFragment.EXTRA_KEY_VALUE, curValue);
+        intent.putExtra(ToolbarActivity.EXTRA_KEY_ARGUMENTS, args);
+        startActivityForResult(intent, ReqCode);
     }
 }

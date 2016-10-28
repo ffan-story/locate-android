@@ -24,6 +24,8 @@ public class TextItemView extends RelativeLayout {
     @IdRes
     private static final int ID_SUBTITLE = 2;
 
+    private TextView mSubTitleV;
+
     public TextItemView(Context context) {
         this(context, null, 0);
     }
@@ -35,6 +37,10 @@ public class TextItemView extends RelativeLayout {
     public TextItemView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initViews(context, attrs);
+    }
+
+    public void setSubtitle(String title) {
+        mSubTitleV.setText(title);
     }
 
     private void initViews(Context context, AttributeSet attrs) {
@@ -57,20 +63,20 @@ public class TextItemView extends RelativeLayout {
         addView(titleV, paramsTitle);
 
         // 箭头和副标题
-        TextView subTitleV = new TextView(context);
-        subTitleV.setId(ID_SUBTITLE);
-        subTitleV.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.setting_item_subtitle_size));
-        subTitleV.setTextColor(ContextCompat.getColor(context, R.color.setting_item_subtitle_text));
-        subTitleV.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.setting_item_arrow, 0);
+        mSubTitleV = new TextView(context);
+        mSubTitleV.setId(ID_SUBTITLE);
+        mSubTitleV.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.setting_item_subtitle_size));
+        mSubTitleV.setTextColor(ContextCompat.getColor(context, R.color.setting_item_subtitle_text));
+        mSubTitleV.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.setting_item_arrow, 0);
         if(a.hasValue(R.styleable.SettingItem_showSubTitle)) {
-            subTitleV.setText(a.getResourceId(R.styleable.SettingItem_showSubTitle, -1));
-            subTitleV.setCompoundDrawablePadding(getResources().getDimensionPixelSize(R.dimen.setting_item_drawable_padding));
+            mSubTitleV.setText(a.getResourceId(R.styleable.SettingItem_showSubTitle, -1));
+            mSubTitleV.setCompoundDrawablePadding(getResources().getDimensionPixelSize(R.dimen.setting_item_drawable_padding));
         }
-        subTitleV.setPadding(0, 0, 0, 0);
+        mSubTitleV.setPadding(0, 0, 0, 0);
         LayoutParams paramsSubTitle = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         paramsSubTitle.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         paramsSubTitle.addRule(RelativeLayout.CENTER_VERTICAL);
-        addView(subTitleV, paramsSubTitle);
+        addView(mSubTitleV, paramsSubTitle);
 
         a.recycle();
     }

@@ -21,8 +21,6 @@ import com.feifan.locate.sampling.SampleAdapter;
 import com.feifan.locate.sampling.SampleDetailFragment;
 import com.feifan.locate.sampling.model.SampleLineModel;
 import com.feifan.locate.widget.cursorwork.ICursorAdapter;
-import com.feifan.planlib.ILayerLine;
-import com.feifan.planlib.ILayerPoint;
 import com.feifan.scanlib.BeaconNotifier;
 import com.feifan.scanlib.beacon.SampleBeacon;
 
@@ -38,7 +36,7 @@ public class LineDetailFragment extends SampleDetailFragment<SampleLineModel> {
 
     // data
     private SampleLineModel mCurrentModel;
-    private ILayerLine mLine;
+    private LineInfo mLine;
 
     // scan
     private int mTotal = 0; // 当前扫描样本数目
@@ -60,7 +58,7 @@ public class LineDetailFragment extends SampleDetailFragment<SampleLineModel> {
         ProviderHelper.runOnWorkerThread(new Runnable() {
             @Override
             public void run() {
-                doAddSample(mLine.getPointOne().getId() + "-" + mLine.getPointTwo().getId());
+                doAddSample(mLine.pointOneId + "-" + mLine.pointTwoId);
             }
         });
     }
@@ -75,8 +73,8 @@ public class LineDetailFragment extends SampleDetailFragment<SampleLineModel> {
                 mCfgIntent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, LinePickerFragment.class.getName());
                 Bundle args = mCfgIntent.getBundleExtra(ToolbarActivity.EXTRA_KEY_ARGUMENTS);
                 args.putStringArray(LinePickerFragment.EXTRA_KEY_LINES, new String[]{
-                        mLine.getPointOne().getId() + "-" + mLine.getPointTwo().getId(),
-                        mLine.getPointTwo().getId() + "-" + mLine.getPointOne().getId()
+                        mLine.pointOneId + "-" + mLine.pointTwoId,
+                        mLine.pointTwoId + "-" + mLine.pointOneId
                 });
                 startActivityForResult(mCfgIntent, REQUEST_CODE_NAME);
             }
@@ -189,19 +187,17 @@ public class LineDetailFragment extends SampleDetailFragment<SampleLineModel> {
         int beginId = Integer.valueOf(model.name.substring(0, splitIndex));
         int endId = Integer.valueOf(model.name.substring(splitIndex + 1));
 
-        final ILayerPoint point1 = mLine.getPointOne();
-        final ILayerPoint point2 = mLine.getPointTwo();
-        if(mLine.getPointOne().getId() == beginId) {
-            result.append(point1.getRealX() + "," + point1.getRealY() + ")"); // 起始点信息
+        if(mLine.pointOneId == beginId) {
+            result.append(mLine.pointOneX + "," + mLine.pointOneY + ")"); // 起始点信息
             result.append("_" + mStartTime); // 起始时间戳
-            result.append("_(" + point2.getRealX() + "," + point2.getRealY() + ")"); // 结束点信息
+            result.append("_(" + mLine.pointTwoX + "," + mLine.pointTwoY + ")"); // 结束点信息
             result.append("_" + mEndTime); // 结束时间戳
             result.append("_" + mFloor);
             result.append("_" + mCurrentModel.direction);
         } else {
-            result.append(point2.getRealX() + "," + point2.getRealY()+ ")"); // 起始点信息
+            result.append(mLine.pointTwoX + "," + mLine.pointTwoY + ")"); // 起始点信息
             result.append("_" + mStartTime); // 起始时间戳
-            result.append("_(" + point1.getRealX() + "," + point1.getRealY() + ")"); // 结束点信息
+            result.append("_(" + mLine.pointOneX + "," + mLine.pointOneY + ")"); // 结束点信息
             result.append("_" + mEndTime); // 结束时间戳
             result.append("_" + mFloor);
             result.append("_" + mCurrentModel.direction);
@@ -211,10 +207,10 @@ public class LineDetailFragment extends SampleDetailFragment<SampleLineModel> {
     }
 
     private void doAddSample(String name) {
-        Cursor cursor = SampleLine.findByStatus(getContext(), SampleColumns.STATUS_READY, mLine.getId());
+        Cursor cursor = SampleLine.findByStatus(getContext(), SampleColumns.STATUS_READY, mLine.id);
         if(cursor.getCount() == 0) { // 不存在就绪状态的样本路线
             // 添加样本点到数据库
-            SampleLine.add(getContext(), name, mLine.getId());
+            SampleLine.add(getContext(), name, mLine.id);
         }else {
             if(cursor.getCount() > 1) {
                 throw new IllegalStateException("error!there is more than 1 ready sample spot!");

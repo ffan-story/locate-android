@@ -16,7 +16,8 @@ public class Constants {
 
     private static int SAMPLE_MODE = 1;
     public static boolean isLineMode() {
-        return (++SAMPLE_MODE) % 2 == 1;
+//        return (++SAMPLE_MODE) % 2 == 1;
+        return true;
     }
 
     /**
@@ -29,6 +30,7 @@ public class Constants {
     public static final int SCAN_DEFAULT_INTERVAL = 1000;
 
     public static final String EXTRA_KEY_BUILDING = "building";
+    public static final String EXTRA_KEY_ZONE = "zone";
 
     /**
      * 导出文件列-点采集

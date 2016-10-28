@@ -15,8 +15,6 @@ import android.view.ViewGroup;
 import com.feifan.locate.Constants;
 import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
-import com.feifan.locate.locating.BuildingModel;
-import com.feifan.locate.locating.RealtimePlanFragment;
 import com.feifan.locate.provider.LocateData;
 import com.feifan.locate.provider.LocateData.Building;
 import com.feifan.locate.utils.SizeUtils;
@@ -29,8 +27,6 @@ import com.feifan.locate.widget.recycler.SpaceItemDecoration;
  * A simple {@link Fragment} subclass.
  */
 public class BuildingFragment extends AbsLoaderFragment implements View.OnClickListener {
-
-    public static final String EXTRA_KEY_BUILDING = "building";
 
     // data
     private SimpleGridCursorAdapter<BuildingModel> mAdapter;
@@ -88,7 +84,7 @@ public class BuildingFragment extends AbsLoaderFragment implements View.OnClickL
         args.putString(LOADER_KEY_SELECTION, "building=?");
         args.putStringArray(LOADER_KEY_SELECTION_ARGS, new String[]{ String.valueOf(model.id) });
         args.putString(LOADER_KEY_ORDER_BY, LocateData.Zone.FLOOR_NO + " DESC");
-        args.putParcelable(EXTRA_KEY_BUILDING, model);
+        args.putParcelable(Constants.EXTRA_KEY_BUILDING, model);
         intent.putExtra(ToolbarActivity.EXTRA_KEY_ARGUMENTS, args);
 
         startActivity(intent);

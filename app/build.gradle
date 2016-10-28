@@ -14,8 +14,8 @@ android {
         applicationId "com.feifan.locate"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 5
+        versionName "1.1.1"
     }
     buildTypes {
         release {
@@ -24,9 +24,29 @@ android {
         }
     }
 
+    // 使用不同的地图系统
+    productFlavors {
+        plan {
+
+        }
+        rtmap {
+
+        }
+    }
+
     sourceSets {
-        main{
-            jniLibs.srcDirs = ['libs']
+        main {
+
+        }
+        plan {
+
+            java.srcDirs = ['src/plan/java', 'src/plan/java/']
+            resources.srcDirs = ['src/plan/resources', 'src/plan/resources/']
+        }
+        rtmap {
+
+            java.srcDirs = ['src/rtmap/java', 'src/rtmap/java/']
+            resources.srcDirs = ['src/rtmap/resources', 'src/rtmap/resources/']
         }
     }
 }
@@ -43,8 +63,10 @@ dependencies {
     compile project(':libs:scanlib')
     compile project(':libs:locatelib')
     compile project(':libs:baselib')
-    compile project(':libs:planlib')
     compile project(':libs:sensorlib')
+
+    planCompile project(':libs:planlib')
+    rtmapCompile project(':libs:maplib')
 
     // 听云
     compile "com.networkbench.newlens.agent.android:nbs.newlens.agent:2.4.4"

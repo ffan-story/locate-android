@@ -20,5 +20,16 @@
             style="@style/SettingItemContainer"
             setting:showTitle="@string/setting_sensor_sampling_title"
             setting:showSubTitle="@string/setting_sensor_sampling_subtitle"/>
+        <com.feifan.locate.widget.settingwork.SettingGroupView
+            style="@style/SettingGroupContainer"
+            android:text="@string/setting_server_title"/>
+        <com.feifan.locate.widget.settingwork.TextItemView
+            android:id="@+id/setting_server_address"
+            style="@style/SettingItemContainer"
+            setting:showTitle="@string/setting_server_address_title"/>
+        <com.feifan.locate.widget.settingwork.TextItemView
+            android:id="@+id/setting_server_port"
+            style="@style/SettingItemContainer"
+            setting:showTitle="@string/setting_server_port_title"/>
     </com.feifan.locate.widget.settingwork.SettingLayout>
 </FrameLayout>
