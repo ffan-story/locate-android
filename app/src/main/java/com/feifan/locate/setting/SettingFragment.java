@@ -2,6 +2,9 @@ package com.feifan.locate.setting;
 
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,13 +14,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import com.feifan.locate.Constants;
 import com.feifan.locate.LocatePreferences;
+import com.feifan.locate.MainActivity;
 import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
+import com.feifan.locate.locating.config.LocatingConfig;
 import com.feifan.locate.setting.sensor.SensorGridFragment;
 import com.feifan.locate.setting.sensor.SensorScanFragment;
+import com.feifan.locate.utils.DataUtils;
 import com.feifan.locate.widget.settingwork.TextItemView;
 import com.feifan.locate.widget.ui.BaseFragment;
+import com.feifan.locatelib.Main;
+
+import java.io.File;
 
 
 /**
@@ -56,6 +66,8 @@ public class SettingFragment extends BaseFragment implements OnClickListener {
         view.findViewById(R.id.setting_sensor_sampling).setOnClickListener(this);
         mServerAddrV.setOnClickListener(this);
         mServerPortV.setOnClickListener(this);
+
+        view.findViewById(R.id.setting_reset).setOnClickListener(this);
     }
 
     @Override
@@ -108,6 +120,15 @@ public class SettingFragment extends BaseFragment implements OnClickListener {
                 int curPort = LocatePreferences.getInstance().getLocatePort();
                 startConfig(getString(R.string.setting_server_port_title), String.valueOf(curPort), REQUEST_CODE_LOCATE_PORT);
                 break;
+            case R.id.setting_reset:
+                LocatePreferences.getInstance().clear();
+                LocatingConfig.getInstance().clear();
+                DataUtils.deleteFile(getContext().getExternalCacheDir());
+                DataUtils.deleteFile(new File(Constants.EXPORT_ROOT_PATH_NAME));
+                restartApp();
+                break;
+            default:
+                throw new IllegalStateException("the setting is not implemented");
         }
 
     }
@@ -126,5 +147,16 @@ public class SettingFragment extends BaseFragment implements OnClickListener {
         args.putString(SettingSingleFragment.EXTRA_KEY_VALUE, curValue);
         intent.putExtra(ToolbarActivity.EXTRA_KEY_ARGUMENTS, args);
         startActivityForResult(intent, ReqCode);
+    }
+
+    private void restartApp() {
+
+        Intent mStartActivity = new Intent(getContext(), MainActivity.class);
+        int mPendingIntentId = 707;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(getContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
+        Runtime.getRuntime().exit(0);
+
     }
 }

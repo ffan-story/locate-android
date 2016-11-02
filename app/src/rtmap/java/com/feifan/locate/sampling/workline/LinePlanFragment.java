@@ -1,5 +1,7 @@
 package com.feifan.locate.sampling.workline;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +20,7 @@ import com.feifan.locate.provider.LocateData.LineSpot;
 import com.feifan.locate.provider.LocateData.WorkLine;
 import com.feifan.locate.sampling.SampleDetailFragment;
 import com.feifan.locate.sampling.SamplePlanFragment;
+import com.feifan.locate.utils.DataUtils;
 import com.feifan.locate.utils.NumberUtils;
 import com.feifan.locate.widget.cursorwork.ICursorAdapter;
 import com.feifan.locate.widget.popup.BubbleMenu;
@@ -31,6 +34,7 @@ import com.feifan.maplib.entity.LinePoint;
 import com.rtm.frm.data.Location;
 import com.rtm.frm.map.MapView;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -80,8 +84,7 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
         @Override
         public int hashCode() {
             int result = 17;
-            result = 31 * result + pointOneId;
-            result = 31 * result + pointTwoId;
+            result = 31 * result + pointOneId + pointTwoId;
             return result;
         }
     }
@@ -167,7 +170,6 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
                             clearPoint(point);
                             if(point.getEdge() != null && point.getEdge().isEmpty()) {
                                 // 移除没有创建过边的点
-                                LineSpot.remove(getContext(), point.getId());
                                 mLayer.remove(point);
                             }
                         }
@@ -200,6 +202,29 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_DETAIL:
+                if(resultCode == Activity.RESULT_OK) {
+                    // 删除标记点
+                    final LineInfo info = data.getParcelableExtra(SampleDetailFragment.EXTRA_KEY_WORK);
+                    updateLayerLine(info);
+                    if(mLayer.remove(mCurrentLine)) {
+                        WorkLine.remove(getContext(), mCurrentLine.getId());
+                        mLinesMap.remove(new LineKey(info.pointOneId, info.pointTwoId));
+
+                        // 重置
+                        mCurrentLine.setPointOne(null);
+                        mCurrentLine.setPointTwo(null);
+                        mCurrentLine.setId(0);
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
     public ILayerPoint onCreatePoint(PointInfo info) {
         LinePoint retPoint = null;
         if(getMenu().isShown()) {
@@ -228,8 +253,9 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
 
     @Override
     public boolean onDeletePoint(LinePoint point) {
-        // TODO delete point from db
-        return true;
+        // 删除关联文件 TODO 在数据库中保存和获取文件地址
+
+        return LineSpot.remove(getContext(), point.getId());
     }
 
     @Override
@@ -248,6 +274,7 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
             mCurrentLine.setId(lineId);
             mCurrentLine.setPointOne(point);
             mCurrentLine.setPointTwo(point2);
+            updateLineInfo(mCurrentLine);
             mParams.put(LOADER_KEY_SELECTION_ARGS, new String[]{ String.valueOf(mCurrentLine.getId())});
             showDetail(mParams);
         }
@@ -288,10 +315,10 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
                 float twoY = data.getFloat(twoYIndex);
 
                 // 添加点集
-                LinePoint pointOne = new LinePoint(oneId, -1, -1);
-                Location l1 = new Location(oneX, oneY);
-                pointOne.setLocation(l1);
+                LinePoint pointOne = new LinePoint(oneId);
                 if(!pointsSet.contains(pointOne)) {
+                    Location l1 = new Location(oneX, oneY);
+                    pointOne.setLocation(l1);
                     points.add(pointOne);
                     pointsSet.add(pointOne);
                 }else {
@@ -299,11 +326,10 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
                     pointOne = points.get(indexOne);
                 }
 
-                LinePoint pointTwo = new LinePoint(twoId, -1, -1);
-                Location l2 = new Location(twoX, twoY);
-                pointTwo.setLocation(l2);
-                pointTwo.setId(twoId);
+                LinePoint pointTwo = new LinePoint(twoId);
                 if(!pointsSet.contains(pointTwo)) {
+                    Location l2 = new Location(twoX, twoY);
+                    pointTwo.setLocation(l2);
                     points.add(pointTwo);
                     pointsSet.add(pointTwo);
                 } else {
@@ -327,6 +353,7 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
         LinePoint point;
         float roundX = NumberUtils.round(x, 4);
         float roundY = NumberUtils.round(y, 4);
+        // 创建时把绘制坐标当作实际坐标
         int id = LineSpot.add(getContext(), roundX, roundY, getZone().id);
         point = new LinePoint(id, roundX, roundY);
         point.setMovable(true);
@@ -352,10 +379,18 @@ public class LinePlanFragment extends SamplePlanFragment implements OnOperationC
         mLineInfo.id = line.getId();
         mLineInfo.pointOneId = line.getPointOne().getId();
         mLineInfo.pointOneX = line.getPointOne().getLocation().getX();
-        mLineInfo.pointOneY = line.getPointOne().getLocation().getY();
+        mLineInfo.pointOneY = -line.getPointOne().getLocation().getY();
         mLineInfo.pointTwoId = line.getPointTwo().getId();
         mLineInfo.pointTwoX = line.getPointTwo().getLocation().getX();
-        mLineInfo.pointTwoY = line.getPointTwo().getLocation().getY();
+        mLineInfo.pointTwoY = -line.getPointTwo().getLocation().getY();
+    }
+
+    private void updateLayerLine(LineInfo info) {
+        mCurrentLine.setId(info.id);
+        LinePoint pointOne = new LinePoint(info.pointOneId);
+        LinePoint pointTwo = new LinePoint(info.pointTwoId);
+        pointOne.add(pointTwo);
+        pointTwo.add(pointOne);
     }
 
     private void resetCurrent() {

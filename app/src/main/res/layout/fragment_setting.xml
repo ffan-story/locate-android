@@ -31,5 +31,11 @@
             android:id="@+id/setting_server_port"
             style="@style/SettingItemContainer"
             setting:showTitle="@string/setting_server_port_title"/>
+        <com.feifan.locate.widget.settingwork.SettingGroupView
+            style="@style/SettingGroupContainer" />
+        <com.feifan.locate.widget.settingwork.TextItemView
+            android:id="@+id/setting_reset"
+            style="@style/SettingItemContainer"
+            setting:showTitle="@string/setting_general_reset"/>
     </com.feifan.locate.widget.settingwork.SettingLayout>
 </FrameLayout>

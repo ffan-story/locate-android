@@ -61,10 +61,15 @@ public abstract class AbsLoaderFragment extends BaseFragment implements LoaderMa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.d(TAG, "onLoadFinished:we got " + data.getCount() + " data item from via loader " + loader.getId());
-        if(getAdapter() != null) {
-            getAdapter().swapCursor(data);
+        if(loader != null && data != null) {
+            Log.d(TAG, "onLoadFinished:we got " + data.getCount() + " data item from via loader " + loader.getId());
+            if(getAdapter() != null) {
+                getAdapter().swapCursor(data);
+            }
+        } else {
+            LogUtils.w("loader or data is NULL for not found data");
         }
+
     }
 
     @Override

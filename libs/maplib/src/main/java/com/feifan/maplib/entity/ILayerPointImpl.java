@@ -14,11 +14,14 @@ public class ILayerPointImpl implements ILayerPoint {
 
     private int mId;
     private Location mLocation;
-    private Point mPoint;
+    private Point mPoint = new Point();
     private boolean mMovable;
 
+    public ILayerPointImpl(int id) {
+        mId = id;
+    }
+
     public ILayerPointImpl(float drawX, float drawY) {
-        mPoint = new Point();
         setDraw(drawX, drawY);
     }
 
@@ -68,8 +71,19 @@ public class ILayerPointImpl implements ILayerPoint {
     }
 
     @Override
+    public boolean isIsolated() {
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + mId;
+        return result;
+    }
+
+    @Override
     public String toString() {
-//        return "draw(" + mLocation.getX() + "," + mLocation.getY() + ") at "  + mPoint.getX() + "," + mPoint.getY();
-        return "(" + mLocation.getX() + "," + mLocation.getY() + ")";
+        return "(" + mLocation.getX() + "," + (-mLocation.getY()) + ")";
     }
 }

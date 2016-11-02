@@ -30,7 +30,7 @@ import java.util.Map;
 public abstract class SamplePlanFragment extends AbsLoaderFragment {
 
     public static final String EXTRA_KEY_ZONE = "zone";
-    private static final int REQUEST_CODE_DETAIL = 0;
+    protected static final int REQUEST_CODE_DETAIL = 0;
 
     private ZoneModel zone;
 
@@ -75,6 +75,14 @@ public abstract class SamplePlanFragment extends AbsLoaderFragment {
 
         menu = new BubbleMenu(getContext());
         onCreatePlanMenu(menu);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(menu.isShown()) {
+            menu.dismiss();
+        }
     }
 
     protected void onCreatePlanMenu(final BubbleMenu planMenu) {

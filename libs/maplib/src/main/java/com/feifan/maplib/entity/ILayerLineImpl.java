@@ -51,4 +51,28 @@ public class ILayerLineImpl implements ILayerLine {
             }
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof ILayerLineImpl)) {
+            return false;
+        }
+
+        final ILayerLineImpl line = (ILayerLineImpl)obj;
+
+        return mId == line.getId();
+    }
+
+    @Override
+    public int hashCode() {
+
+        int result = 17;
+        result = 31 * result + mId;
+        return 17;
+    }
+
+    @Override
+    public String toString() {
+        return mId + "(" + mPointOne.toString() + "-" + mPointTwo.toString() + ")";
+    }
 }

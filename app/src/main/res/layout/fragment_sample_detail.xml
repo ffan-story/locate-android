@@ -4,7 +4,7 @@
               android:layout_height="match_parent"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
-              tools:context="com.feifan.locate.sampling.workspot.SpotDetailFragment">
+              tools:context="com.feifan.locate.sampling.SampleDetailFragment">
 
     <TextView
         android:id="@+id/sample_detail_info"
@@ -22,7 +22,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             style="@style/CommonMiddleTitle"
-            android:text="@string/spot_detail_sample_text"
+            android:text="@string/sample_detail_sample_text"
             android:layout_margin="10dp"
             android:padding="5dp" />
         <ImageView
@@ -52,7 +52,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             style="@style/CommonSmallTitle"
-            android:text="@string/spot_detail_peroid_text"/>
+            android:text="@string/sample_detail_peroid_text"/>
         <TextView
             android:id="@+id/sample_detail_period_value"
             android:layout_width="wrap_content"
@@ -70,13 +70,12 @@
         android:background="@drawable/border_top_bottom_background"
         style="@style/CommonSmallTitle"
         android:layout_marginTop="10dp"
-        android:padding="15dp"
-        android:text="@string/spot_detail_remove_text" />
+        android:padding="15dp" />
     <CheckBox
         android:id="@+id/sample_detail_remove_flag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/spot_detail_remove_flag_text"
+        android:text="@string/sample_detail_remove_flag_text"
         android:checked="true"/>
 
 </LinearLayout>

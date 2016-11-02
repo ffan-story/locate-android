@@ -20,25 +20,29 @@
             android:checkedButton="@+id/rb_centroid"
             android:orientation="vertical">
             <RadioButton
-                android:id="@+id/rb_centroid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:tag="centroid"
                 android:text="centroid"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:tag="knn"
                 android:text="knn"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:tag="svm-linear"
                 android:text="svm-linear"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:tag="MultiCentroid"
                 android:text="MultiCentroid"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:tag="3D"
                 android:text="3D"/>
         </RadioGroup>
         <TextView

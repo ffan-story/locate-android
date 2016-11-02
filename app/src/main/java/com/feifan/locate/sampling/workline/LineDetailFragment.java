@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.feifan.baselib.utils.LogUtils;
@@ -101,21 +102,31 @@ public class LineDetailFragment extends SampleDetailFragment<SampleLineModel> {
     }
 
     @Override
+    protected void onCustomizeView() {
+        super.onCustomizeView();
+        TextView removeV = findView(R.id.sample_detail_remove);
+        removeV.setText(R.string.line_detail_remove_text);
+    }
+
+    @Override
     protected BeaconNotifier onCreateNotifier() {
         return new BeaconNotifier() {
             @Override
             public void onBeaconsReceived(Collection<SampleBeacon> beacons) {
-                LogUtils.e("receive becon data at " + Thread.currentThread().getId());
-                mCache.addAll(beacons);
-                mTotal += beacons.size();
-                final long consumed = SystemClock.elapsedRealtime() - mStartTime;
-                SampleLine.updateScan(getContext(), mTotal, String.valueOf(consumed / 1000f) + "s" , mCurrentModel.id);
-                final int group = ++mGroup;
-                // 保存附加信息
-                for(SampleBeacon beacon : beacons) {
-                    beacon.direction = mAzimuth;
-                    beacon.group = group;
+                if(isAdded()) {
+                    LogUtils.e("receive becon data at " + Thread.currentThread().getId());
+                    mCache.addAll(beacons);
+                    mTotal += beacons.size();
+                    final long consumed = SystemClock.elapsedRealtime() - mStartTime;
+                    SampleLine.updateScan(getContext(), mTotal, String.valueOf(consumed / 1000f) + "s" , mCurrentModel.id);
+                    final int group = ++mGroup;
+                    // 保存附加信息
+                    for(SampleBeacon beacon : beacons) {
+                        beacon.direction = mAzimuth;
+                        beacon.group = group;
+                    }
                 }
+
             }
         };
     }

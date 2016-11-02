@@ -63,4 +63,26 @@ public class DataUtils {
         }
         return null;
     }
+
+    /**
+     * 删除文件或目录
+     * @param file
+     */
+    public static void deleteFile(File file){
+        if(file.isFile()){
+            file.delete();
+            return;
+        }
+        if(file.isDirectory()){
+            File[] childFile = file.listFiles();
+            if(childFile == null || childFile.length == 0){
+                file.delete();
+                return;
+            }
+            for(File f : childFile){
+                deleteFile(f);
+            }
+            file.delete();
+        }
+    }
 }

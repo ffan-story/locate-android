@@ -47,7 +47,7 @@ public class LocatingConfig {
     }
 
     public String getAlgorithm() {
-        return retrieveStringValue(KEY_ALGORITHM, "centroid,0");
+        return retrieveStringValue(KEY_ALGORITHM, "centroid");
     }
 
     public void setScanPeriod(String value) {
@@ -60,6 +60,10 @@ public class LocatingConfig {
 
     public void setAlgorithm(String value) {
         saveStringPreference(KEY_ALGORITHM, value);
+    }
+
+    public void clear() {
+        mPreferences.edit().clear().apply();
     }
 
     private void saveStringPreference(String key, String value) {

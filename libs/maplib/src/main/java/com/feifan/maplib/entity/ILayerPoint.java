@@ -56,4 +56,10 @@ public interface ILayerPoint {
      * @param movable
      */
     void setMovable(boolean movable);
+
+    /**
+     * 是否为孤立点
+     * @return
+     */
+    boolean isIsolated();
 }

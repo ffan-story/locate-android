@@ -12,6 +12,7 @@ public final class LocatePreferences {
     private static final LocatePreferences INSTANCE = new LocatePreferences();
 
     private static final String LOCATE_PREFERENCES = "locate";
+    private static final String INITIALIZE_DATA_FLAG = "initial_flag";
     private static final String KEY_LOCATE_SERVER_ADDR = "locate_server_addr";
     private static final String KEY_LOCATE_SERVER_PORT = "locate_server_port";
     private SharedPreferences mPrefs;
@@ -38,5 +39,17 @@ public final class LocatePreferences {
 
     public int getLocatePort() {
         return mPrefs.getInt(KEY_LOCATE_SERVER_PORT, 80);
+    }
+
+    public void setInitialFlag(boolean flag) {
+        mPrefs.edit().putBoolean(INITIALIZE_DATA_FLAG, flag).apply();
+    }
+
+    public boolean getInitialFlag() {
+        return mPrefs.getBoolean(INITIALIZE_DATA_FLAG, false);
+    }
+
+    public void clear() {
+        mPrefs.edit().clear().apply();
     }
 }

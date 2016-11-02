@@ -28,7 +28,7 @@ import java.util.List;
 public abstract class OperablePointLayer<P extends ILayerPoint> extends BaseMapLayer {
 
     // map
-    private MapView mMapView;
+    protected MapView mMapView;
     private List<P> mPoints = new ArrayList<>();
 
     // action
@@ -134,6 +134,11 @@ public abstract class OperablePointLayer<P extends ILayerPoint> extends BaseMapL
         this.mCallback = callback;
     }
 
+    /**
+     * 在图层中删除坐标点
+     * @param point 要删除的点
+     * @return 返回成功删除的点，否则返回null
+     */
     public boolean remove(P point) {
         boolean ret;
         if(mCallback != null) {  // 在外部移除点
@@ -143,19 +148,30 @@ public abstract class OperablePointLayer<P extends ILayerPoint> extends BaseMapL
                 return false;
             }
         }
-
         ret = mPoints.remove(point);
 
-        // 刷新平面图
-        getDirtyRect(point.getDraw(), mComputeRect);
-        mMapView.refreshMapbydirty(mComputeRect);
+        if(ret) {
+            // 刷新平面图
+            getDirtyRect(point.getDraw(), mComputeRect);
+            mMapView.refreshMapbydirty(mComputeRect);
+            LogUtils.i((ret ? "succeed" : "fail") + " to remove " + point.toString());
+        }
 
-        LogUtils.i((ret ? "succeed" : "fail") + " to remove " + point.toString());
         return ret;
     }
 
     protected void drawOthers(Canvas canvas, P point) {
 
+    }
+
+    protected P findPoint(P point) {
+        if(point != null) {
+            int index = mPoints.indexOf(point);
+            if(index != -1) {
+                return mPoints.get(index);
+            }
+        }
+        return null;
     }
 
     private class LayerGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -189,7 +205,7 @@ public abstract class OperablePointLayer<P extends ILayerPoint> extends BaseMapL
         public void onLongPress(MotionEvent e) {
             super.onLongPress(e);
             if(mCurrentPoint != null) {
-                LogUtils.d("Mark" + mCurrentPoint.toString() + " is long-pressed");
+                LogUtils.d("point" + mCurrentPoint.toString() + " is long-pressed");
                 if(mCallback != null) {
                     mCallback.onLongPressPoint(mCurrentPoint);
                 }
@@ -207,11 +223,14 @@ public abstract class OperablePointLayer<P extends ILayerPoint> extends BaseMapL
         float my = ((y - mMapView.getHeight() / 2) * (MapConstants.MAP_IC_M * mMapView.getScale() / MapConstants.MAP_DPI));
         float dx = (float) (mx * Math.cos(-mMapView.mapangle) - my * Math.sin(-mMapView.mapangle));
         float dy = (float) (mx * Math.sin(-mMapView.mapangle) + my * Math.cos(-mMapView.mapangle));
+
+        float lx = mMapView.getCenter().getX() + dx;
+        float ly = mMapView.getCenter().getY() + dy;
         if( l == null) {
-            l = new Location(mMapView.getCenter().getX() + dx, mMapView.getCenter().getY() + dy);
+            l = new Location(lx, ly);
         } else {
-            l.a(mMapView.getCenter().getX() + dx);
-            l.b(mMapView.getCenter().getY() + dy);
+            l.a(lx);
+            l.b(ly);
         }
         return l;
     }

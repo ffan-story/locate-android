@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.Constants;
 import com.feifan.locate.LocatePreferences;
+import com.feifan.locate.MockServer;
 import com.feifan.locate.R;
 import com.feifan.locate.common.BuildingModel;
 import com.feifan.locate.locating.config.LocatingConfig;
@@ -67,7 +68,7 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
 
     // scan
     private ScanManager mScanManager = ScanManager.getInstance();
-    private int mScanPeriod = Integer.valueOf(LocatingConfig.getInstance().getScanPeriod()) * 1000;
+//    private int mScanPeriod = Integer.valueOf(LocatingConfig.getInstance().getScanPeriod()) * 1000;
 
     // network
     private transient LocateQueryData queryData = new LocateQueryData();
@@ -89,14 +90,17 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
         super.onAttach(context);
 
         // scan
-        mScanManager.setAutoStart(true, context.getPackageName(), mScanPeriod);
+        int period = Integer.valueOf(LocatingConfig.getInstance().getScanPeriod()) * 1000;
+        mScanManager.setAutoStart(true, context.getPackageName(), period);
         mScanManager.bind(context);
         mScanManager.setNotifier(new BeaconNotifier() {
             @Override
             public void onBeaconsReceived(Collection<SampleBeacon> beacons) {
                 LogUtils.i("we got " + (beacons == null ? 0 : beacons.size()) + " beacon samples");
                 Map<String, Float> sData = DataProcessor.processBeaconData(queryData.position, beacons);
+                LogUtils.i("we got " + sData.size() + " valid beacon samples");
                 queryData.upDateTensor(sData);
+//                queryData.upDateTensor(MockServer.TENSOR_DATA_860100010060300001);
             }
         });
     }
@@ -129,6 +133,7 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
         // query
         queryData.algorithm = LocatingConfig.getInstance().getAlgorithm();
         queryData.position = "android_" + building.code;
+//        queryData.position = building.code;
         String baseUrl = String.format("http://%s:%d", LocatePreferences.getInstance().getLocateAddr(),
                 LocatePreferences.getInstance().getLocatePort());
         locateService = ServiceFactory.getInstance().createService(RxFingerLocateService.class, baseUrl);
@@ -225,9 +230,11 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
             }
             startQueryAtInterval(period);
         } else if(key.equals(LocatingConfig.KEY_ALGORITHM)) {
-            String[] algorithmValue = sharedPreferences.getString(key, queryData.algorithm).split(",");
-            queryData.algorithm = algorithmValue[0];
+            queryData.algorithm = sharedPreferences.getString(key, queryData.algorithm);
         }
+        LogUtils.i("we do locate with " + queryData.algorithm + " every "
+                + LocatingConfig.getInstance().getRequestPeriod() + "s and scan beacon every "
+                + LocatingConfig.getInstance().getScanPeriod() + "s");
     }
 
     private void simulate() {

@@ -482,6 +482,19 @@ public class LocateData {
             return Integer.valueOf(result.getLastPathSegment());
         }
 
+        /**
+         * 删除采集路线
+         * @param context
+         * @param id
+         * @return
+         */
+        public static boolean remove(Context context, int id) {
+            final ContentResolver resolver = context.getContentResolver();
+            int count = resolver.delete(Uri.withAppendedPath(CONTENT_URI, String.valueOf(id)), null, null);
+            LogUtils.i("workline:delete " + count + " spot{ id=" + id + " }");
+            return count == 1;
+        }
+
     }
 
     /**

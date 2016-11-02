@@ -10,18 +10,22 @@
     <string name="sampling_mac_text">采集Mac地址</string>
     <string name="sampling_uuid_text">采集UUID</string>
 
+    <!-- 采集通用 -->
+    <string name="sample_detail_sample_text">采样</string>
+    <string name="sample_detail_peroid_text">采样周期(单位:毫秒)</string>
+    <string name="sample_detail_remove_flag_text">同时删除文件</string>
+
     <!-- 采集点 -->
     <string name="spot_plan_title_text">采集点平面图</string>
     <string name="spot_detail_title_text">采集点详情</string>
-    <string name="spot_detail_sample_text">采样</string>
     <string name="spot_detail_remove_text">移除该采集点</string>
-    <string name="spot_detail_peroid_text">采样周期(单位:毫秒)</string>
-    <string name="spot_detail_remove_flag_text">同时删除文件</string>
+
 
     <!-- 采集路线 -->
     <string name="line_plan_menu_title_confirm">确认</string>
     <string name="line_plan_menu_title_cancel">取消</string>
     <string name="line_picker_title_text">选择样本路线</string>
+    <string name="line_detail_remove_text">移除该采集路线</string>
 
     <!-- 实时定位界面 -->
     <string name="realtime_plan_title_text">实时定位平面图</string>
@@ -42,6 +46,7 @@
     <string name="setting_server_title">服务器</string>
     <string name="setting_server_address_title">地址</string>
     <string name="setting_server_port_title">端口</string>
+    <string name="setting_general_reset">重置</string>
 
     <!-- 设置#传感器扫描 -->
     <string name="setting_sensor_scan_title">扫描数据</string>

@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.support.annotation.IdRes;
 import android.view.View;
 
+import com.feifan.baselib.utils.LogUtils;
+import com.feifan.maplib.entity.ILayerLine;
 import com.feifan.maplib.entity.ILayerPoint;
 import com.feifan.maplib.entity.LinePoint;
 import com.rtm.frm.data.Location;
@@ -59,6 +61,33 @@ public class LineLayer extends OperablePointLayer<LinePoint> implements View.OnC
             case ID_CANCEL:
                 break;
         }
+    }
+
+    public boolean remove(ILayerLine<LinePoint> line) {
+        LogUtils.i("layer:delete line " + line.toString() + " successfully");
+
+        // 删除第一个点
+        LinePoint pointOne = findPoint(line.getPointOne());
+        if(pointOne != null) {
+            pointOne.getEdge().remove(line.getPointTwo());
+            if(pointOne != null) {
+                if(pointOne.isIsolated()) {
+                    remove(pointOne);
+                }
+            }
+        }
+
+        // 删除第二个点
+        LinePoint pointTwo = findPoint(line.getPointTwo());
+        if(pointTwo != null) {
+            pointTwo.getEdge().remove(line.getPointOne());
+            if(pointTwo.isIsolated()) {
+                remove(pointTwo);
+            }
+        }
+
+
+        return true;
     }
 
     @Override

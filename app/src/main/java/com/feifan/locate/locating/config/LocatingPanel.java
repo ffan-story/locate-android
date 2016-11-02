@@ -103,8 +103,10 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
         // algorithm
         RadioGroup rgAlgorithm = findView(R.id.radiogroup_algorithm);
         rgAlgorithm.setOnCheckedChangeListener(this);
-        String[] algorithmValue = mConfig.getAlgorithm().split(",");
-        rgAlgorithm.check(Integer.valueOf(algorithmValue[1]));
+        RadioButton checkedButton = (RadioButton) rgAlgorithm.findViewWithTag(mConfig.getAlgorithm());
+        if(checkedButton != null) {
+            checkedButton.setChecked(true);
+        }
 
         SimpleSeekBarChangeListener listener = new SimpleSeekBarChangeListener() {
             @Override
@@ -169,7 +171,7 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
         RadioButton radioButton = findView(rbId);
         switch (group.getId()) {
             case R.id.radiogroup_algorithm:
-                mConfig.setAlgorithm(radioButton.getText().toString() + "," + rbId);
+                mConfig.setAlgorithm(radioButton.getText().toString());
                 break;
         }
     }

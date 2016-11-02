@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import java.io.File;
 import java.util.HashMap;
 
 import com.feifan.baselib.utils.LogUtils;
@@ -482,6 +483,11 @@ public class LocateProvider extends ContentProvider {
                 count = db.delete(TableFactory.LINESPOT_TABLE_NAME, LineSpot._ID + "=" + linespotId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
+            case WORKLINE_ID:
+                String worklineId = uri.getPathSegments().get(1);
+                count = db.delete(TableFactory.WORKLINE_TABLE_NAME, WorkLine._ID + "=" + worklineId
+                        + (!TextUtils.isEmpty(selection) ? "AND (" + selection + ')' : ""), selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -519,7 +525,8 @@ public class LocateProvider extends ContentProvider {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         public DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            super(context, context.getExternalCacheDir().getAbsolutePath() + File.separator + DATABASE_NAME,
+                    null, DATABASE_VERSION);
         }
 
         @Override

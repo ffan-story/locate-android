@@ -68,9 +68,9 @@ public class TextItemView extends RelativeLayout {
         mSubTitleV.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.setting_item_subtitle_size));
         mSubTitleV.setTextColor(ContextCompat.getColor(context, R.color.setting_item_subtitle_text));
         mSubTitleV.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.setting_item_arrow, 0);
+        mSubTitleV.setCompoundDrawablePadding(getResources().getDimensionPixelSize(R.dimen.setting_item_drawable_padding));
         if(a.hasValue(R.styleable.SettingItem_showSubTitle)) {
             mSubTitleV.setText(a.getResourceId(R.styleable.SettingItem_showSubTitle, -1));
-            mSubTitleV.setCompoundDrawablePadding(getResources().getDimensionPixelSize(R.dimen.setting_item_drawable_padding));
         }
         mSubTitleV.setPadding(0, 0, 0, 0);
         LayoutParams paramsSubTitle = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);

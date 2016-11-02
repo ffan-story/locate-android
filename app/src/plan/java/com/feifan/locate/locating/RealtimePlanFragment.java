@@ -111,11 +111,7 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
 
         // query
         queryData.algorithm = "centroid";
-<<<<<<< HEAD:app/src/main/java/com/feifan/locate/locating/RealtimePlanFragment.java
-        queryData.position = buildingModel.code;
-=======
         queryData.position = "android_" + buildingModel.code;
->>>>>>> develop_rtmap:app/src/plan/java/com/feifan/locate/locating/RealtimePlanFragment.java
         String baseUrl = String.format("http://%s:%d", LocatePreferences.getInstance().getLocateAddr(),
                 LocatePreferences.getInstance().getLocatePort());
         locateService = ServiceFactory.getInstance().createService(RxFingerLocateService.class, baseUrl);

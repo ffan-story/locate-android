@@ -1,14 +1,18 @@
 package com.feifan.locate.sampling;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.Constants;
@@ -44,6 +48,7 @@ public abstract class SampleDetailFragment<M extends SampleModel> extends AbsLoa
     private TextView mInfoV;
 
     // data
+    protected Parcelable mWork; // 采样工作对象, 目前为采集点或采集路线
     protected SampleAdapter<M> mAdapter;
     protected int mFloor;
     private String mBuilding;
@@ -84,9 +89,29 @@ public abstract class SampleDetailFragment<M extends SampleModel> extends AbsLoa
         recyclerView.addItemDecoration(new SpaceItemDecoration(SizeUtils.dp2px(getContext(), 1)));
         mAdapter = getAdapter();
         recyclerView.setAdapter(mAdapter);
-
         mInfoV = findView(R.id.sample_detail_info);
         mOrientationManager.register(this);
+
+        // 初始化可通用的视图
+        Bundle args = getArguments();
+        mWork = args.getParcelable(EXTRA_KEY_WORK);
+        final Intent data = new Intent();
+        data.putExtra(EXTRA_KEY_WORK, mWork);
+
+        view.findViewById(R.id.sample_detail_remove).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                if(isRunning) {
+//                    Toast.makeText(getContext(), "remove is forbidden while scanning", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+                getActivity().setResult(Activity.RESULT_OK, data);
+                getActivity().finish();
+            }
+        });
+
+        // 初始化需要定制的视图
+        onCustomizeView();
     }
 
     @Override
@@ -118,6 +143,13 @@ public abstract class SampleDetailFragment<M extends SampleModel> extends AbsLoa
     protected void save(String[] titles, String fileName) {
 //        DataFixer.FixBeacons(mBuilding, mCache);
         DataUtils.exportToCSV(titles, mCache, mBuilding + fileName);
+    }
+
+    /**
+     * 初始化视图
+     */
+    protected void onCustomizeView() {
+
     }
 
     /**

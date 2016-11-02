@@ -1,5 +1,7 @@
 package com.feifan.maplib.entity;
 
+import com.feifan.baselib.utils.LogUtils;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +13,10 @@ public class LinePoint extends ILayerPointImpl {
 
     // 邻接边集合
     private List<LinePoint> mEdge = new LinkedList<>();
+
+    public LinePoint(int id) {
+        super(id);
+    }
 
     public LinePoint(int id, float drawX, float drawY) {
         super(drawX, drawY);
@@ -30,7 +36,24 @@ public class LinePoint extends ILayerPointImpl {
     }
 
     @Override
+    public boolean isIsolated() {
+        return mEdge.isEmpty();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (!(obj instanceof LinePoint)) {
+            return false;
+        }
+
+        final LinePoint p = (LinePoint)obj;
+
+        return getId() == p.getId();
+    }
+
+    @Override
     public String toString() {
-        return getId() + "(" + getLocation().getX() + "," + getLocation().getY() + ")";
+        return getId() + super.toString();
     }
 }
