@@ -2,12 +2,20 @@ package com.feifan.locate;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.provider.LocateData;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -32,8 +40,8 @@ public class MockServer {
         values.clear();
         values.put(LocateData.Building._ID, 2);
         values.put(LocateData.Building.NAME, "金地中心B座");
-        values.put(LocateData.Building.CODE, "B31");
-        values.put(LocateData.Building.MIN_FLOOR, 31);
+        values.put(LocateData.Building.CODE, "860100010030500015");
+        values.put(LocateData.Building.MIN_FLOOR, 25);
         resolver.insert(LocateData.Building.CONTENT_URI, values);
 
         values.clear();
@@ -47,7 +55,18 @@ public class MockServer {
     public static void requestZoneData(ContentResolver resolver) {
 
         ContentValues values = new ContentValues();
+
         values.put(LocateData.Zone._ID, 1);
+        values.put(LocateData.Zone.NAME, "金地中心B座25层");
+        values.put(LocateData.Zone.PLAN, "zone_jindi_b31.png");
+        values.put(LocateData.Zone.SCALE, 0.033);
+        values.put(LocateData.Zone.FLOOR_NO, 25);
+        values.put(LocateData.Zone.TITLE, "F25");
+        values.put(LocateData.Zone.BUILDING, 2);
+        resolver.insert(LocateData.Zone.CONTENT_URI, values);
+
+        values.clear();
+        values.put(LocateData.Zone._ID, 2);
         values.put(LocateData.Zone.NAME, "金地中心B座31层");
         values.put(LocateData.Zone.PLAN, "zone_jindi_b31.png");
         values.put(LocateData.Zone.SCALE, 0.033);
@@ -57,7 +76,7 @@ public class MockServer {
         resolver.insert(LocateData.Zone.CONTENT_URI, values);
 
         values.clear();
-        values.put(LocateData.Zone._ID, 2);
+        values.put(LocateData.Zone._ID, 3);
         values.put(LocateData.Zone.NAME, "石景山万达广场F1");
         values.put(LocateData.Zone.PLAN, "zone_shijingshan_f1.jpg");
         values.put(LocateData.Zone.SCALE, getScale(2));
@@ -67,7 +86,7 @@ public class MockServer {
         resolver.insert(LocateData.Zone.CONTENT_URI, values);
 
         values.clear();
-        values.put(LocateData.Zone._ID, 3);
+        values.put(LocateData.Zone._ID, 4);
         values.put(LocateData.Zone.NAME, "石景山万达广场F2");
         values.put(LocateData.Zone.PLAN, "zone_shijingshan_f2.jpg");
         values.put(LocateData.Zone.SCALE, getScale(3));
@@ -77,7 +96,7 @@ public class MockServer {
         resolver.insert(LocateData.Zone.CONTENT_URI, values);
 
         values.clear();
-        values.put(LocateData.Zone._ID, 4);
+        values.put(LocateData.Zone._ID, 5);
         values.put(LocateData.Zone.NAME, "石景山万达广场F3");
         values.put(LocateData.Zone.PLAN, "zone_shijingshan_f3.jpg");
         values.put(LocateData.Zone.SCALE, getScale(4));
@@ -87,7 +106,7 @@ public class MockServer {
         resolver.insert(LocateData.Zone.CONTENT_URI, values);
 
         values.clear();
-        values.put(LocateData.Zone._ID, 5);
+        values.put(LocateData.Zone._ID, 6);
         values.put(LocateData.Zone.NAME, "石景山万达广场B1");
         values.put(LocateData.Zone.PLAN, "zone_shijingshan_b1.jpg");
         values.put(LocateData.Zone.SCALE, getScale(5));
@@ -97,7 +116,7 @@ public class MockServer {
         resolver.insert(LocateData.Zone.CONTENT_URI, values);
 
         values.clear();
-        values.put(LocateData.Zone._ID, 6);
+        values.put(LocateData.Zone._ID, 7);
         values.put(LocateData.Zone.NAME, "石景山万达广场B2");
         values.put(LocateData.Zone.PLAN, "zone_shijingshan_b2.jpg");
         values.put(LocateData.Zone.SCALE, getScale(6));
@@ -176,6 +195,61 @@ public class MockServer {
         TENSOR_DATA_860100010060300001.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43447", -89f);
         TENSOR_DATA_860100010060300001.put("A3FCE438-627C-42B7-AB72-DC6E55E137AC_11000_43517", -80f);
 
+    }
+
+    public static void createImapForRtMap(Context context) {
+
+        File rtmapDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath().
+                concat(File.separator).concat("rtmapwh").concat(File.separator).concat("mdata"));
+        if(!rtmapDir.exists()) {
+            rtmapDir.mkdirs();
+        }
+
+        AssetManager assetManager = context.getAssets();
+        String[] files = null;
+        try {
+            files = assetManager.list("");
+        } catch (IOException e) {
+            Log.e("tag", "Failed to get asset file list.", e);
+        }
+        if (files != null) {
+            for (String filename : files) {
+                if(filename.length() == 32) {
+                    InputStream in = null;
+                    OutputStream out = null;
+                    try {
+                        in = assetManager.open(filename);
+                        File outFile = new File(rtmapDir, filename);
+                        out = new FileOutputStream(outFile);
+                        copyFile(in, out);
+                    } catch(IOException e) {
+                        Log.e("tag", "Failed to copy asset file: " + filename, e);
+                    } finally {
+                        if (in != null) {
+                            try {
+                                in.close();
+                            } catch (IOException e) {
+                                // NOOP
+                            }
+                        }
+                        if (out != null) {
+                            try {
+                                out.close();
+                            } catch (IOException e) {
+                                // NOOP
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private static void copyFile(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while((read = in.read(buffer)) != -1){
+            out.write(buffer, 0, read);
+        }
     }
 
     private static float getScale(int id) {

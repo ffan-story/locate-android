@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
                     ContentResolver resolver = getContentResolver();
                     MockServer.requestBuildingData(resolver);
                     MockServer.requestZoneData(resolver);
+
+                    MockServer.createImapForRtMap(MainActivity.this);
                 }
             });
 

@@ -12,6 +12,7 @@ import rx.Observable;
  * Created by xuchunlei on 16/9/14.
  */
 public interface RxFingerLocateService {
+
     /**
      * 请求地址
      */

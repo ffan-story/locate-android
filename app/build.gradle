@@ -14,8 +14,8 @@ android {
         applicationId "com.feifan.locate"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 5
-        versionName "1.1.1"
+        versionCode 9
+        versionName "1.1.5"
     }
     buildTypes {
         release {

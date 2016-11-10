@@ -18,7 +18,6 @@ public abstract class HttpResultSubscriber<T> extends Subscriber<HttpResult<T>> 
     @Override
     public void onError(Throwable e) {
         try{
-            LogUtils.e(e.getMessage());
             e.printStackTrace();
             //在这里做全局的错误处理
             if (e instanceof HttpException) {
@@ -26,17 +25,21 @@ public abstract class HttpResultSubscriber<T> extends Subscriber<HttpResult<T>> 
             }
             _onError(e);
         } catch (Throwable t) {
-            LogUtils.e("An unhandle error was catched:" + t.getMessage());
+            LogUtils.e("An unhandle error was catched:" + t != null ? t.getMessage() : "none");
         }
 
     }
 
     @Override
     public void onNext(HttpResult<T> tHttpResult) {
-        if (tHttpResult.errorCode == 0)
-            _onSuccess(tHttpResult.info);
+//        if (tHttpResult.errorCode == 0)
+//            _onSuccess(tHttpResult.info);
+//        else
+//            _onError(new Throwable("error=" + tHttpResult.errorCode));
+        if (tHttpResult.status == 0)
+            _onSuccess(tHttpResult.data);
         else
-            _onError(new Throwable("error=" + tHttpResult.errorCode));
+            _onError(new Throwable("error=" + tHttpResult.message));
     }
 
     protected abstract void _onError(Throwable e);

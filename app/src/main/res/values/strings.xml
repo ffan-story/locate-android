@@ -31,6 +31,11 @@
     <string name="realtime_plan_title_text">实时定位平面图</string>
     <string name="realtime_plan_menu_setting_text">设置</string>
 
+    <!-- 定位 -->
+    <string name="locating_online_title_text">在线定位</string>
+    <string name="locating_offline_title_text">离线定位</string>
+    <string name="locating_title_format">%1$s:%2$s</string>
+
     <!-- 定位控制面板 -->
     <string name="locating_panel_online_text">在线定位</string>
     <string name="locating_panel_scan_period_text">数据累计时间:</string>

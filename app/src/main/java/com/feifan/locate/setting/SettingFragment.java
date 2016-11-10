@@ -25,7 +25,6 @@ import com.feifan.locate.setting.sensor.SensorScanFragment;
 import com.feifan.locate.utils.DataUtils;
 import com.feifan.locate.widget.settingwork.TextItemView;
 import com.feifan.locate.widget.ui.BaseFragment;
-import com.feifan.locatelib.Main;
 
 import java.io.File;
 
