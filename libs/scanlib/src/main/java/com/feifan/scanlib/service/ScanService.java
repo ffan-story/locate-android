@@ -68,7 +68,6 @@ public class ScanService extends Service {
     }
 
     /*---------数据---------*/
-
     private final CycledLeScanCallback mScanCallback = new CycledLeScanCallback() {
         @Override
         public void onCycleBegin() {

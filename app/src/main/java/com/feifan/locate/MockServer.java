@@ -50,6 +50,13 @@ public class MockServer {
         values.put(LocateData.Building.CODE, "860100010060300001");
         values.put(LocateData.Building.MIN_FLOOR, -2);
         resolver.insert(LocateData.Building.CONTENT_URI, values);
+
+        values.clear();
+        values.put(LocateData.Building._ID, 4);
+        values.put(LocateData.Building.NAME, "丰联广场");
+        values.put(LocateData.Building.CODE, "860100010030300016");
+        values.put(LocateData.Building.MIN_FLOOR, -3);
+        resolver.insert(LocateData.Building.CONTENT_URI, values);
     }
 
     public static void requestZoneData(ContentResolver resolver) {
@@ -124,6 +131,78 @@ public class MockServer {
         values.put(LocateData.Zone.TITLE, "B2");
         values.put(LocateData.Zone.BUILDING, 3);
         resolver.insert(LocateData.Zone.CONTENT_URI, values);
+
+        // 丰联广场
+        values.clear();
+        values.put(LocateData.Zone._ID, 8);
+        values.put(LocateData.Zone.NAME, "丰联广场B3");
+        values.put(LocateData.Zone.PLAN, "");
+        values.put(LocateData.Zone.SCALE, getScale(6));
+        values.put(LocateData.Zone.FLOOR_NO, -3);
+        values.put(LocateData.Zone.TITLE, "B3");
+        values.put(LocateData.Zone.BUILDING, 4);
+        resolver.insert(LocateData.Zone.CONTENT_URI, values);
+
+        values.clear();
+        values.put(LocateData.Zone._ID, 9);
+        values.put(LocateData.Zone.NAME, "丰联广场B2");
+        values.put(LocateData.Zone.PLAN, "");
+        values.put(LocateData.Zone.SCALE, getScale(6));
+        values.put(LocateData.Zone.FLOOR_NO, -2);
+        values.put(LocateData.Zone.TITLE, "B2");
+        values.put(LocateData.Zone.BUILDING, 4);
+        resolver.insert(LocateData.Zone.CONTENT_URI, values);
+
+        values.clear();
+        values.put(LocateData.Zone._ID, 10);
+        values.put(LocateData.Zone.NAME, "丰联广场B1");
+        values.put(LocateData.Zone.PLAN, "");
+        values.put(LocateData.Zone.SCALE, getScale(6));
+        values.put(LocateData.Zone.FLOOR_NO, -1);
+        values.put(LocateData.Zone.TITLE, "B1");
+        values.put(LocateData.Zone.BUILDING, 4);
+        resolver.insert(LocateData.Zone.CONTENT_URI, values);
+
+        values.clear();
+        values.put(LocateData.Zone._ID, 11);
+        values.put(LocateData.Zone.NAME, "丰联广场F1");
+        values.put(LocateData.Zone.PLAN, "");
+        values.put(LocateData.Zone.SCALE, getScale(6));
+        values.put(LocateData.Zone.FLOOR_NO, 1);
+        values.put(LocateData.Zone.TITLE, "F1");
+        values.put(LocateData.Zone.BUILDING, 4);
+        resolver.insert(LocateData.Zone.CONTENT_URI, values);
+
+        values.clear();
+        values.put(LocateData.Zone._ID, 12);
+        values.put(LocateData.Zone.NAME, "丰联广场F2");
+        values.put(LocateData.Zone.PLAN, "");
+        values.put(LocateData.Zone.SCALE, getScale(6));
+        values.put(LocateData.Zone.FLOOR_NO, 2);
+        values.put(LocateData.Zone.TITLE, "F2");
+        values.put(LocateData.Zone.BUILDING, 4);
+        resolver.insert(LocateData.Zone.CONTENT_URI, values);
+
+        values.clear();
+        values.put(LocateData.Zone._ID, 13);
+        values.put(LocateData.Zone.NAME, "丰联广场F3");
+        values.put(LocateData.Zone.PLAN, "");
+        values.put(LocateData.Zone.SCALE, getScale(6));
+        values.put(LocateData.Zone.FLOOR_NO, 3);
+        values.put(LocateData.Zone.TITLE, "F3");
+        values.put(LocateData.Zone.BUILDING, 4);
+        resolver.insert(LocateData.Zone.CONTENT_URI, values);
+
+        values.clear();
+        values.put(LocateData.Zone._ID, 14);
+        values.put(LocateData.Zone.NAME, "丰联广场F4");
+        values.put(LocateData.Zone.PLAN, "");
+        values.put(LocateData.Zone.SCALE, getScale(6));
+        values.put(LocateData.Zone.FLOOR_NO, 4);
+        values.put(LocateData.Zone.TITLE, "F4");
+        values.put(LocateData.Zone.BUILDING, 4);
+        resolver.insert(LocateData.Zone.CONTENT_URI, values);
+
     }
 
     public static Map<String, Float> TENSOR_DATA_A22 = new HashMap<>();

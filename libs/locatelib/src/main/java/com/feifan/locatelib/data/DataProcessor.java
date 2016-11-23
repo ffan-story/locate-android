@@ -16,6 +16,7 @@ import java.util.Set;
  *     （1）beacon
  * </p>
  * Created by xuchunlei on 16/9/19.
+ * @deprecated
  */
 public class DataProcessor {
 

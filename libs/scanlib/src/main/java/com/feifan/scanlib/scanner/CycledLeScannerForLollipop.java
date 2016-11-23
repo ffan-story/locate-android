@@ -90,7 +90,7 @@ public class CycledLeScannerForLollipop extends CycledLeScanner {
                 @Override
                 public void onScanResult(int callbackType, ScanResult scanResult) {
                     callback.onLeScan(scanResult.getDevice(),
-                            scanResult.getRssi(), scanResult.getScanRecord().getBytes());
+                            (byte) scanResult.getRssi(), scanResult.getScanRecord().getBytes());
                 }
 
                 @Override
@@ -98,7 +98,7 @@ public class CycledLeScannerForLollipop extends CycledLeScanner {
                     LogUtils.d("got batch records");
                     for (ScanResult scanResult : results) {
                         callback.onLeScan(scanResult.getDevice(),
-                                scanResult.getRssi(), scanResult.getScanRecord().getBytes());
+                                (byte) scanResult.getRssi(), scanResult.getScanRecord().getBytes());
                     }
                 }
 

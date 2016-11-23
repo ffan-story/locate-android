@@ -43,7 +43,7 @@ public class CycledLeScannerForJellyBeanMr2 extends CycledLeScanner{
                         @Override
                         public void onLeScan(final BluetoothDevice device, final int rssi,
                                              final byte[] scanRecord) {
-                            callback.onLeScan(device, rssi, scanRecord);
+                            callback.onLeScan(device, (byte) rssi, scanRecord);
                         }
                     };
         }

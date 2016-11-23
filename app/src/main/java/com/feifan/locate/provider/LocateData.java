@@ -58,6 +58,12 @@ public class LocateData {
          * TYPE:INTEGER
          */
         public static final String MIN_FLOOR = "minFloor";
+
+        public static Cursor findBuilding(Context context, String code) {
+            Map<String, Object> parmas = new HashMap<>();
+            parmas.put(CODE, code);
+            return find(CONTENT_URI, context, parmas);
+        }
     }
 
     /**
@@ -587,49 +593,73 @@ public class LocateData {
 
     }
 
-//    /**
-//     * Mac地址表定义
-//     * <pre>
-//     *     保存Mac地址与UUID、major和minor的映射关系
-//     * </pre>
-//     */
-//    public static class Mac implements BaseColumns {
-//        /** 访问Mac表的URL */
-//        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/mac");
-//
-//        /** {@link Mac#CONTENT_URI}的MIME类型 */
-//        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.mac";
-//
-//        /** {@link Mac#CONTENT_URI}子项的MIME类型 */
-//        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.mac";
-//
-//        /**
-//         * 字段名－mac地址
-//         *  TYPE:STRING
-//         */
-//        public static final String ADDRESS = "address";
-//        /**
-//         * 字段名－uuid
-//         * TYPE:STRING
-//         */
-//        public static final String UUID = "uuid";
-//        /**
-//         * 字段名-major
-//         * TYPE:INTEGER
-//         */
-//        public static final String MAJOR = "major";
-//        /**
-//         * 字段名-minor
-//         * TYPE:INTEGER
-//         */
-//        public static final String MINOR = "minor";
-//        /**
-//         * 字段名-building
-//         * TYPE:STRING
-//         * FROM {@link Building#CODE}
-//         */
-//        public static final String BUILDING = "building";
-//    }
+    /**
+     * Mac地址表定义
+     * <pre>
+     *     保存Mac地址与UUID、major和minor的映射关系
+     * </pre>
+     */
+    public static class Mac implements BaseColumns {
+        /** 访问Mac表的URL */
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/mac");
+
+        /** {@link Mac#CONTENT_URI}的MIME类型 */
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.feifan.mac";
+
+        /** {@link Mac#CONTENT_URI}子项的MIME类型 */
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.feifan.mac";
+
+        /**
+         * 字段名－mac地址
+         *  TYPE:STRING
+         */
+        public static final String ADDRESS = "address";
+        /**
+         * 字段名－uuid
+         * TYPE:STRING
+         */
+        public static final String UUID = "uuid";
+        /**
+         * 字段名-major
+         * TYPE:INTEGER
+         */
+        public static final String MAJOR = "major";
+        /**
+         * 字段名-minor
+         * TYPE:INTEGER
+         */
+        public static final String MINOR = "minor";
+        /**
+         * 字段名-building
+         * TYPE:STRING
+         * FROM {@link Building#CODE}
+         */
+        public static final String BUILDING = "building";
+
+        public static int add(Context context, String uuid, int major, int minor, String address, int building) {
+            if(context != null) {
+                final ContentResolver resolver = context.getContentResolver();
+                final int COLUMN_COUNT = 2;
+                ContentValues values = new ContentValues(COLUMN_COUNT);
+
+                values.put(UUID, uuid);
+                values.put(MAJOR, major);
+                values.put(MINOR, minor);
+                values.put(ADDRESS, address);
+                values.put(BUILDING, building);
+                try {
+                    Uri result = resolver.insert(CONTENT_URI, values);
+                    LogUtils.i("mac:add a new mac(" + address + ") for "
+                            + uuid + "#" + major + "#" + minor + " with " + result);
+                    return Integer.valueOf(result.getLastPathSegment());
+                } catch (Exception e) {
+                    LogUtils.w(e.getMessage());
+                }
+            }
+
+            return -1;
+        }
+    }
 
     private static ContentValues createValues(Map<String, Object> params) {
         final Set<Entry<String, Object>> entrySet = params.entrySet();

@@ -70,6 +70,7 @@ public class Constants {
     public static final int LOADER_ID_SAMPLESPOT = 4;
     public static final int LOADER_ID_WORKLINE = 5;
     public static final int LOADER_ID_SAMPLELINE = 6;
+    public static final int LOADER_ID_MAC = 7;
 
     // export
     public static final String EXPORT_ROOT_PATH_NAME;    // 根目录

@@ -12,69 +12,71 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.feifan.baselib.utils.IOUtils;
 import com.feifan.baselib.utils.LogUtils;
+import com.feifan.indoorlocation.IIndoorLocator;
+import com.feifan.indoorlocation.IndoorLocationError;
+import com.feifan.indoorlocation.IndoorLocationListener;
+import com.feifan.indoorlocation.model.Beacon;
+import com.feifan.indoorlocation.model.IndoorLocationModel;
 import com.feifan.locate.Constants;
-import com.feifan.locate.LocatePreferences;
-import com.feifan.locate.MockServer;
 import com.feifan.locate.R;
 import com.feifan.locate.common.BuildingModel;
 import com.feifan.locate.locating.config.LocatingConfig;
 import com.feifan.locate.locating.config.LocatingPanel;
+import com.feifan.locate.provider.LocateData;
+import com.feifan.locate.provider.LocateData.Building;
 import com.feifan.locate.provider.LocateData.Zone;
 import com.feifan.locate.widget.cursorwork.AbsLoaderFragment;
 import com.feifan.locate.widget.cursorwork.ICursorAdapter;
 import com.feifan.locate.widget.ui.BaseFragment;
-import com.feifan.locate.widget.ui.TextIndicator;
 import com.feifan.locate.widget.ui.TextIndicator.TextIndicatorModel;
-import com.feifan.locatelib.network.HttpResult;
-import com.feifan.locatelib.network.HttpResultSubscriber;
-import com.feifan.locatelib.network.ServiceFactory;
-import com.feifan.locatelib.network.TransformUtils;
-import com.feifan.locatelib.online.LocateInfo;
+import com.feifan.locatelib.LocatorFactory;
 import com.feifan.locatelib.online.LocateQueryData;
 import com.feifan.locatelib.online.RxFingerLocateService;
-import com.feifan.scanlib.BeaconNotifier;
 import com.feifan.scanlib.ScanManager;
-import com.feifan.scanlib.beacon.SampleBeacon;
 import com.rtm.frm.data.Location;
 import com.rtm.frm.map.LocationLayer;
 import com.rtm.frm.map.MapView;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscription;
-import rx.functions.Action1;
 
 /**
  * Created by xuchunlei on 2016/10/27.
  */
 
-public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedPreferenceChangeListener {
+public class RealtimePlanFragment extends AbsLoaderFragment implements IndoorLocationListener, OnSharedPreferenceChangeListener {
+
+    /**
+     * 定位模式：区分在线定位和离线定位
+     */
+    public static final String EXTRA_KEY_MODE = "mode";
 
     @IdRes
     private static final int ID_MENU_SETTING = 1;
 
-    // scan
-    private ScanManager mScanManager = ScanManager.getInstance();
-//    private int mScanPeriod = Integer.valueOf(LocatingConfig.getInstance().getScanPeriod()) * 1000;
+    private static final Map<String, String> PLAZA_MAP = new HashMap<>();
+    static {
+        PLAZA_MAP.put("1000265", "860100010060300001");
+        PLAZA_MAP.put("1100428", "860100010030300016");
+    }
 
-    // network
-    private transient LocateQueryData queryData = new LocateQueryData();
-    private Observable<Long> queryEngine;
-    private Subscription querySubscription;
-    private RxFingerLocateService locateService;
+    private IIndoorLocator mLocator;
 
     // view
     private LocatingPanel mPanel;
@@ -82,27 +84,17 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
     private FloorIndicator mIndicator;
 
     // locate
-    private int mCurrentFloor = -100;
     private Location mLocation = new Location(0, 0);
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        // scan
         int period = Integer.valueOf(LocatingConfig.getInstance().getScanPeriod()) * 1000;
-        mScanManager.setAutoStart(true, context.getPackageName(), period);
-        mScanManager.bind(context);
-        mScanManager.setNotifier(new BeaconNotifier() {
-            @Override
-            public void onBeaconsReceived(Collection<SampleBeacon> beacons) {
-                LogUtils.i("we got " + (beacons == null ? 0 : beacons.size()) + " beacon samples");
-                Map<String, Float> sData = DataProcessor.processBeaconData(queryData.position, beacons);
-                LogUtils.i("we got " + sData.size() + " valid beacon samples");
-                queryData.upDateTensor(sData);
-//                queryData.upDateTensor(MockServer.TENSOR_DATA_860100010060300001);
-            }
-        });
+        int mode = getArguments().getInt(EXTRA_KEY_MODE);
+        mLocator = LocatorFactory.getLocator(mode);
+        mLocator.initialize(context.getApplicationContext());
+        mLocator.setBleScanInterval(period);
     }
 
     @Nullable
@@ -115,38 +107,27 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        BuildingModel building = getArguments().getParcelable(Constants.EXTRA_KEY_BUILDING);
         mMapView = findView(R.id.realtime_map);
         Bitmap normal = BitmapFactory.decodeResource(getResources(), R.mipmap.plan_location);
         LocationLayer layer = new LocationLayer(mMapView, normal, normal);
         mMapView.addMapLayer(layer);
-        mMapView.setCurrentBuildId(building.code);
-        mMapView.initScale();
 
         mPanel = (LocatingPanel) getLayoutInflater(savedInstanceState).inflate(R.layout.layout_locating_panel,
                 null, false);
         mPanel.setConfigChangeListener(this);
 
         mIndicator = findView(R.id.realtime_indicator);
-        mIndicator.setMapView(mMapView, building.code);
+        mIndicator.setMapView(mMapView);
 
-        // query
-        queryData.algorithm = LocatingConfig.getInstance().getAlgorithm();
-        queryData.position = "android_" + building.code;
-//        queryData.position = building.code;
-        String baseUrl = String.format("http://%s:%d", LocatePreferences.getInstance().getLocateAddr(),
-                LocatePreferences.getInstance().getLocatePort());
-        locateService = ServiceFactory.getInstance().createService(RxFingerLocateService.class, baseUrl);
+        // 加载地图结束开启定位
+        mLocator.startUpdatingLocation(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
 
-        mScanManager.unBind(getContext());
-        if(!querySubscription.isUnsubscribed()){
-            querySubscription.unsubscribe();
-        }
+        mLocator.destroy();
     }
 
     @Override
@@ -171,93 +152,18 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
         return super.onMenuItemClick(item);
     }
 
-    private void startQueryAtInterval(int interval) {
-        queryEngine = Observable.interval(0, interval, TimeUnit.SECONDS);
-        querySubscription = queryEngine.subscribe(new Action1<Long>() {
-            @Override
-            public void call(Long aLong) {
-                LogUtils.e("called at " + System.currentTimeMillis());
-                if(!queryData.tensor.isEmpty()) {
-                    locateService.getLocation(queryData)
-                            .compose(TransformUtils.<HttpResult<LocateInfo>>defaultSchedulers())
-                            .subscribe(new HttpResultSubscriber<LocateInfo>() {
-
-                                @Override
-                                protected void _onError(Throwable e) {
-                                    LogUtils.e(e.getMessage());
-                                    //test
-                                    mPanel.updateLog(e.getMessage());
-                                }
-
-                                @Override
-                                protected void _onSuccess(LocateInfo data) {
-                                    if (data != null) {
-                                        LogUtils.d("we are in (" + data.x + "," + data.y + "," + data.floor + ") at "
-                                                + System.currentTimeMillis());
-                                        //test debug
-                                        mPanel.updateLog(data.x + "," + data.y + "," + data.floor);
-
-                                        if(mCurrentFloor != data.floor) {
-                                            mCurrentFloor = data.floor;
-                                            // 切换楼层
-                                            mIndicator.setCurrent(mCurrentFloor);
-                                            LogUtils.i("switch to floor " + mCurrentFloor);
-                                        }
-
-                                        mLocation.a(data.x);
-                                        mLocation.b(data.y);
-                                        mLocation.setFloor(data.floor);
-                                        mMapView.setMyCurrentLocation(mLocation, false);
-
-                                    }
-                                }
-                            });
-                }
-            }
-        });
-    }
-
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if(key.equals(LocatingConfig.KEY_SCAN_PERIOD)) {
             int period = Integer.valueOf(sharedPreferences.getString(key, "3"));
-            mScanManager.stop();
-            mScanManager.start(getContext().getPackageName(), period * 1000);
+            mLocator.setBleScanInterval(period);
         } else if(key.equals(LocatingConfig.KEY_REQUEST_PERIOD)) {
             int period = Integer.valueOf(sharedPreferences.getString(key, "3"));
-            if(!querySubscription.isUnsubscribed()) {
-                querySubscription.unsubscribe();
-            }
-            startQueryAtInterval(period);
-        } else if(key.equals(LocatingConfig.KEY_ALGORITHM)) {
-            queryData.algorithm = sharedPreferences.getString(key, queryData.algorithm);
+            mLocator.setUpdateInterval(period);
         }
-        LogUtils.i("we do locate with " + queryData.algorithm + " every "
+        LogUtils.i("we do locate with every "
                 + LocatingConfig.getInstance().getRequestPeriod() + "s and scan beacon every "
                 + LocatingConfig.getInstance().getScanPeriod() + "s");
-    }
-
-    private void simulate() {
-                final Random rW = new Random(System.currentTimeMillis());
-        final Random rH = new Random(System.currentTimeMillis());
-        final Random rF = new Random(System.currentTimeMillis());
-        Handler h = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                mLocation.a(rW.nextFloat() * 1000);
-                mLocation.b(rH.nextFloat() * 1000);
-//                mLocation.setFloor(rF.nextInt(5) - 2);
-                mLocation.setFloor("F1");
-                mIndicator.setCurrent(-1);
-                LogUtils.e("locate to " + mLocation.getX() + "," + mLocation.getY() + " at " + mLocation.getFloor());
-                mMapView.setMyCurrentLocation(mLocation, false);
-//                sendEmptyMessageAtTime(9, 2000);
-//                sendEmptyMessage(9);
-            }
-        };
-//        h.sendEmptyMessage(9);
-        h.sendEmptyMessageDelayed(9, 5000);
     }
 
     @Override
@@ -282,18 +188,72 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements OnSharedP
                 listData.add(new TextIndicatorModel(data.getInt(floorNoIndex), data.getString(titleIndex)));
             }
             mIndicator.setData(listData);
-            mIndicator.setCurrent(1);
+//            mIndicator.setCurrent(mBuilding.minFloor);
         }
-        loader.stopLoading();
-
-        startQueryAtInterval(Integer.valueOf(LocatingConfig.getInstance().getRequestPeriod()));
-        LogUtils.i("we are locating in " + queryData.position + " now");
-
-//        simulate();
+//        loader.stopLoading();
     }
 
     @Override
     protected <A extends ICursorAdapter> A getAdapter() {
         return null;
     }
+
+    @Override
+    public void onLocationSucceeded(IIndoorLocator locator, IndoorLocationModel location, List<Beacon> beacons) {
+        LogUtils.d(location.locationInfo.plazaId + "," + location.floor + ",(" + location.x + "," + location.y + ")");
+
+        // fixme 地图sdk接口
+//        boolean changed = mIndicator.setBuildingId(location.locationInfo.plazaId);
+        String bId = PLAZA_MAP.get(location.locationInfo.plazaId);
+        boolean changed = mIndicator.setBuildingId(bId);
+        if (changed) { // 加载楼层
+            Cursor cursor = null;
+            try {
+//                cursor = LocateData.Building.findBuilding(getContext(), location.locationInfo.plazaId);
+                cursor = LocateData.Building.findBuilding(getContext(), bId);
+                if (cursor == null || cursor.getCount() == 0) {
+                    LogUtils.w(location.toString() + " is invalid, please wait");
+//                throw new IllegalStateException(location.locationInfo.plazaName + "(" + location.locationInfo.plazaId + ") is not supported now");
+                    return;
+                }
+                if (cursor.moveToFirst()) {
+                    BuildingModel building = new BuildingModel(cursor);
+                    loadZones(building);
+                }
+            }finally {
+                IOUtils.closeQuietly(cursor);
+            }
+
+        }
+
+        // 切换楼层
+        mIndicator.setCurrent(location.floor);
+
+        mLocation.a((float) location.x);
+        mLocation.b((float) location.y);
+        mLocation.setFloor(location.floor);
+        mMapView.setMyCurrentLocation(mLocation, false);
+    }
+
+    @Override
+    public void onLocationFailed(IIndoorLocator locator, IndoorLocationError error, List<Beacon> beacons) {
+
+    }
+
+    @Override
+    public void onFirstLoadFinished() {
+
+    }
+
+    private Bundle mArgs = new Bundle();
+    private void loadZones(BuildingModel building) {
+        mArgs.clear();
+        mArgs.putString(RealtimePlanFragment.LOADER_KEY_SELECTION, "building=?");
+        mArgs.putStringArray(RealtimePlanFragment.LOADER_KEY_SELECTION_ARGS,
+                new String[]{ String.valueOf(building.id) });
+        mArgs.putString(RealtimePlanFragment.LOADER_KEY_ORDER_BY, Zone.FLOOR_NO + " DESC");
+        getLoaderManager().restartLoader(getLoaderId(), mArgs, RealtimePlanFragment.this);
+    }
+
+
 }

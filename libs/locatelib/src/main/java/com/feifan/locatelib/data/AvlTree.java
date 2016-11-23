@@ -35,6 +35,12 @@ public class AvlTree<T extends Comparable<? super T>> {
         return str.toString();
     }
 
+    public String sort() {
+        StringBuilder str = new StringBuilder();
+        serializeInfix(root, str, ",", "#");
+        return str.toString();
+    }
+
 //    public void deSerialize(String content, Class<T> clazz) {
 //
 //        String[] contentArray = content.split(" ");
@@ -139,6 +145,16 @@ public class AvlTree<T extends Comparable<? super T>> {
         }else {
 //            str.append(empty);
 //            str.append(sep);
+        }
+    }
+
+    // 中序遍历
+    private void serializeInfix(TreeNode<T> t, StringBuilder str, String sep, String empty) {
+        if(t != null) {
+            serializeInfix (t.getLeft(), str, sep, empty);
+            str.append(t.getValue().toString());
+            str.append(sep);
+            serializeInfix (t.getRight(), str, sep, empty);
         }
     }
 

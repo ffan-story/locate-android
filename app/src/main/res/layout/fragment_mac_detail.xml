@@ -8,4 +8,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layoutManager="LinearLayoutManager"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_grey"
+        android:layout_gravity="bottom|left">
+        <TextView
+            style="@style/DashboardLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mac_detail_total_label"/>
+        <TextView
+            android:id="@+id/mac_detail_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_blue_dark"
+            android:text="0"/>
+        <TextView
+            style="@style/DashboardLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/spacing_5"
+            android:text="@string/mac_detail_update_label"/>
+        <TextView
+            android:id="@+id/mac_detail_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_red_dark"
+            android:text="0"/>
+    </LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/mac_detail_scan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:src="@mipmap/ic_action_update"
+        app:backgroundTint="@color/colorAccent"/>
 </FrameLayout>

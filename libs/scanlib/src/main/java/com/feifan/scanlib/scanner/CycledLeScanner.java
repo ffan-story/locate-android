@@ -59,6 +59,10 @@ public abstract class CycledLeScanner {
         }
     }
 
+    /**
+     * 开启周期性扫描
+     * @param period 千分秒周期
+     */
     public void startAtInterval(int period) {
         LogUtils.d("startAtInterval is called");
         this.period = period;

@@ -17,6 +17,15 @@ public class SampleBeacon extends RawBeacon implements Parcelable{
     public int floor;
     public int group;
 
+    // // FIXME: 2016/11/13 temp constructor
+    public SampleBeacon(String uuid, int major, int minor, int rssi) {
+        this.uuid = uuid;
+        this.major = major;
+        this.minor = minor;
+        this.rssi = rssi;
+        this.mac = "1";
+    }
+
     public SampleBeacon(RawBeacon beacon) {
         update(beacon);
     }
@@ -25,7 +34,7 @@ public class SampleBeacon extends RawBeacon implements Parcelable{
         uuid = in.readString();
         major = in.readInt();
         minor = in.readInt();
-        rssi = in.readInt();
+        rssi = in.readByte();
         mac = in.readString();
         txPowser = in.readInt();
         time = in.readDouble();
@@ -84,5 +93,9 @@ public class SampleBeacon extends RawBeacon implements Parcelable{
                     + "," + time + "," + group;
         }
         return ret;
+    }
+
+    public String toIdentityString() {
+        return major + "_" + minor;
     }
 }

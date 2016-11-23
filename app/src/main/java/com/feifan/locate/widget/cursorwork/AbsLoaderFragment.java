@@ -24,11 +24,11 @@ public abstract class AbsLoaderFragment extends BaseFragment implements LoaderMa
     public static final String EXTRA_KEY_LOADER_ARGS = "args";
 
     /** 创建Loader时的参数－selection */
-    protected static final String LOADER_KEY_SELECTION = "selection";
+    public static final String LOADER_KEY_SELECTION = "selection";
     /** 创建Loader时的参数－selectionArgs */
-    protected static final String LOADER_KEY_SELECTION_ARGS = "selectionArgs";
+    public static final String LOADER_KEY_SELECTION_ARGS = "selectionArgs";
     /** 创建Loader时的参数-orderBy */
-    protected static final String LOADER_KEY_ORDER_BY = "orderBy";
+    public static final String LOADER_KEY_ORDER_BY = "orderBy";
 
     /** 生成Loader的ID */
     protected abstract int getLoaderId();

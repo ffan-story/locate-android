@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.Constants;
 import com.feifan.locate.LocatePreferences;
 import com.feifan.locate.MainActivity;
@@ -122,6 +123,8 @@ public class SettingFragment extends BaseFragment implements OnClickListener {
             case R.id.setting_reset:
                 LocatePreferences.getInstance().clear();
                 LocatingConfig.getInstance().clear();
+                getContext().deleteDatabase("sample.db");
+                DataUtils.deleteFile(getContext().getCacheDir());
                 DataUtils.deleteFile(getContext().getExternalCacheDir());
                 DataUtils.deleteFile(new File(Constants.EXPORT_ROOT_PATH_NAME));
                 restartApp();

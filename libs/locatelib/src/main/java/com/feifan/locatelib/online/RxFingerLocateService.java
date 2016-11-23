@@ -1,5 +1,6 @@
 package com.feifan.locatelib.online;
 
+import com.feifan.locatelib.cache.LocateInfo;
 import com.feifan.locatelib.network.HttpResult;
 
 import retrofit2.http.Body;

@@ -10,6 +10,11 @@
     <string name="sampling_mac_text">采集Mac地址</string>
     <string name="sampling_uuid_text">采集UUID</string>
 
+    <!-- 采集区域-采集Mac地址 -->
+    <string name="mac_detail_title_format">%1$s-mac地址</string>
+    <string name="mac_detail_total_label">总数:</string>
+    <string name="mac_detail_update_label">本次更新:</string>
+
     <!-- 采集通用 -->
     <string name="sample_detail_sample_text">采样</string>
     <string name="sample_detail_peroid_text">采样周期(单位:毫秒)</string>
@@ -34,7 +39,7 @@
     <!-- 定位 -->
     <string name="locating_online_title_text">在线定位</string>
     <string name="locating_offline_title_text">离线定位</string>
-    <string name="locating_title_format">%1$s:%2$s</string>
+    <!--<string name="locating_title_format">%1$s:%2$s at %3$d floor</string>-->
 
     <!-- 定位控制面板 -->
     <string name="locating_panel_online_text">在线定位</string>

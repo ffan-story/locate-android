@@ -53,4 +53,10 @@
         <item name="android:background">@drawable/bg_border_bottom_white</item>
     </style>
 
+    <style name="DashboardLabel">
+        <item name="android:textColor">@color/color_darkslategray</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
 </resources>

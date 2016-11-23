@@ -9,4 +9,6 @@
     <color name="bg_gray">#F0F0F0</color>
     <color name="colorPanelBackground">#66A0A0A0</color>
     <color name="color_bisque3">#cdb79e</color>
+    <color name="color_darkslategray">#2f4f4f</color>
+    <color name="color_grey">#33696969</color>
 </resources>

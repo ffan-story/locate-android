@@ -95,6 +95,12 @@ public class ZoneFragment extends AbsLoaderFragment implements View.OnClickListe
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case ID_PRE_MAC:
+                Intent intent = new Intent(getContext(), ToolbarActivity.class);
+                intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, MacDetailFragment.class.getName());
+                Bundle args = new Bundle();
+                args.putParcelable(Constants.EXTRA_KEY_BUILDING, mBuilding);
+                intent.putExtra(ToolbarActivity.EXTRA_KEY_ARGUMENTS, args);
+                startActivity(intent);
                 break;
             case ID_PRE_UUID:
                 break;

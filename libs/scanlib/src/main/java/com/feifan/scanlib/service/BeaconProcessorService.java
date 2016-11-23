@@ -5,11 +5,14 @@ import android.content.Intent;
 
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.scanlib.BeaconNotifier;
+import com.feifan.scanlib.Region;
 import com.feifan.scanlib.ScanManager;
 import com.feifan.scanlib.beacon.BeaconData;
 import com.feifan.scanlib.beacon.SampleBeacon;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 处理Beacon数据服务线程
@@ -17,6 +20,8 @@ import java.util.Collection;
  * Created by bianying on 16/9/4.
  */
 public class BeaconProcessorService extends IntentService {
+
+    private List<SampleBeacon> mRagneBeacons = new ArrayList<>();
 
     public BeaconProcessorService() {
         super("BeaconProcessorService");
@@ -38,9 +43,20 @@ public class BeaconProcessorService extends IntentService {
             }
 
             BeaconNotifier notifier = ScanManager.getInstance().getNotifier();
+            Region region = ScanManager.getInstance().getRegion();
             Collection<SampleBeacon> beacons = data.getBeacons();
             if (notifier != null) {
-                notifier.onBeaconsReceived(beacons);
+                if(region != null) { // 扫描特定区域的beacon
+                    mRagneBeacons.clear();
+                    for(SampleBeacon beacon : beacons) {
+                        if(region.contains(beacon)) {
+                            mRagneBeacons.add(beacon);
+                        }
+                    }
+                    notifier.onBeaconsReceived(mRagneBeacons);
+                }else {
+                    notifier.onBeaconsReceived(beacons);
+                }
             }
             else {
                 LogUtils.d("but notifier is null, so we're dropping it.");

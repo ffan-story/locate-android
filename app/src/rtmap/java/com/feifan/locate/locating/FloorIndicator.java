@@ -35,9 +35,20 @@ public final class FloorIndicator extends TextIndicator {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setMapView(MapView mapView, String buildingId) {
+    public void setMapView(MapView mapView) {
         mMapView = mapView;
-        mBuildingId = buildingId;
+
+    }
+
+    public boolean setBuildingId(String buildingId) {
+        if(buildingId != null) {
+            if(mBuildingId == null || !mBuildingId.equalsIgnoreCase(buildingId)) {
+                mBuildingId = buildingId;
+                mMapView.setCurrentBuildId(buildingId);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

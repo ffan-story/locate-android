@@ -36,10 +36,11 @@ public abstract class HttpResultSubscriber<T> extends Subscriber<HttpResult<T>> 
 //            _onSuccess(tHttpResult.info);
 //        else
 //            _onError(new Throwable("error=" + tHttpResult.errorCode));
+        LogUtils.e("status ---> " + tHttpResult.status);
         if (tHttpResult.status == 0)
             _onSuccess(tHttpResult.data);
         else
-            _onError(new Throwable("error=" + tHttpResult.message));
+            _onError(new Throwable("error=" + tHttpResult.msg));
     }
 
     protected abstract void _onError(Throwable e);

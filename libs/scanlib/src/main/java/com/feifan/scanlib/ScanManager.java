@@ -22,9 +22,12 @@ public class ScanManager {
 
     private static ScanManager client = null;
     private BeaconNotifier mNotifier;
+    private Region mRegion;
 
     // auto
     private boolean autoStart = false;
+
+    // 操作相关
     private String pendingPkgName;
     private int pendingPeriod;
 
@@ -44,33 +47,51 @@ public class ScanManager {
         return client;
     }
 
-    public void start(String packageName, int period) {
+    public boolean start(String packageName, int period) {
         if (android.os.Build.VERSION.SDK_INT < 18) {
             LogUtils.w("Not supported prior to API 18.  Method invocation will be ignored");
-            return;
+            return false;
         }
+
         Message msg = Message.obtain(null, ScanService.MSG_START_SCAN, 0, 0);
         CommandData obj = new CommandData(packageName, period);
         msg.getData().putParcelable("data", obj);
         try {
             serviceMessenger.send(msg);
-        } catch (RemoteException e) {
+            return true;
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return false;
     }
 
-    public void stop() {
+    /**
+     * 开启采集指定区域的beacon数据
+     * @param packageName
+     * @param period
+     * @param region
+     * @return
+     */
+    public boolean start(String packageName, int period, Region region) {
+        this.mRegion = region;
+        return start(packageName, period);
+    }
+
+    public boolean stop() {
         if (android.os.Build.VERSION.SDK_INT < 18) {
             LogUtils.w("Not supported prior to API 18.  Method invocation will be ignored");
-            return;
+            return false;
         }
 
         Message msg = Message.obtain(null, ScanService.MSG_STOP_SCAN, 0, 0);
         try {
             serviceMessenger.send(msg);
+            return true;
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public void setAutoStart(boolean autoStart, String packageName, int period) {
@@ -122,6 +143,7 @@ public class ScanManager {
         if(autoStart) {
             stop();
         }
+        mNotifier = null;
         context.unbindService(mConnection);
     }
 
@@ -133,5 +155,9 @@ public class ScanManager {
 
     public BeaconNotifier getNotifier() {
         return mNotifier;
+    }
+
+    public Region getRegion() {
+        return mRegion;
     }
 }

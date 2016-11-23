@@ -10,6 +10,8 @@ import android.widget.Adapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.feifan.baselib.utils.LogUtils;
+
 import java.util.List;
 
 /**
@@ -64,10 +66,15 @@ public class TextIndicator extends LinearLayout implements View.OnClickListener 
     }
 
     public void setCurrent(int index) {
-        mCompareModel.id = index;
-        View v = findViewWithTag(mCompareModel);
-        if(v != null) {
-            v.performClick();
+        LogUtils.e("id=" + mCompareModel.id + ",index=" + index);
+        if(mCompareModel.id != index) {
+            mCompareModel.id = index;
+            View v = findViewWithTag(mCompareModel);
+            if(v != null) {
+                v.performClick();
+            }else {
+                mCompareModel.id = 0;
+            }
         }
     }
 

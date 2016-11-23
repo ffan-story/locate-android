@@ -79,4 +79,8 @@ public class RawBeacon {
         return "rssi=" + rssi + ",uuid=" + uuid + ",major=" + major + ",minor=" + minor
                 + ",txpower=" + txPowser + ",mac=" + mac;
     }
+
+    public String toLocateString() {
+        return uuid + "_" + major;
+    }
 }

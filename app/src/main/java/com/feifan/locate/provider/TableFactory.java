@@ -2,9 +2,12 @@ package com.feifan.locate.provider;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.Constants;
+import com.feifan.locate.provider.LocateData.Building;
 import com.feifan.locate.provider.LocateData.WorkLine;
 import com.feifan.locate.provider.LocateData.LineSpot;
+import com.feifan.locate.provider.LocateData.Mac;
 
 /**
  * Created by xuchunlei on 16/10/14.
@@ -26,6 +29,8 @@ public final class TableFactory {
     static final String WORKLINE_TABLE_NAME = "workline";
     // 数据库表名-样本路线
     static final String SAMPLELINE_TABLE_NAME = "sampleline";
+    // 数据库表名-Mac地址映射
+    static final String MAC_TABLE_NAME = "mac";
 
     private TableFactory() {
 
@@ -37,11 +42,12 @@ public final class TableFactory {
      */
     public static void createBuildingTable(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + BUILDING_TABLE_NAME + " ("
-                + LocateData.Building._ID + " INTEGER PRIMARY KEY,"
-                + LocateData.Building.NAME + " TEXT,"
-                + LocateData.Building.CODE + " TEXT NOT NULL UNIQUE,"
-                + LocateData.Building.MIN_FLOOR + " INTEGER DEFAULT 0"
+                + Building._ID + " INTEGER PRIMARY KEY,"
+                + Building.NAME + " TEXT,"
+                + Building.CODE + " TEXT NOT NULL UNIQUE,"
+                + Building.MIN_FLOOR + " INTEGER DEFAULT 0"
                 + ");");
+        LogUtils.v(BUILDING_TABLE_NAME + " table created");
     }
 
     /**
@@ -59,6 +65,7 @@ public final class TableFactory {
                 + LocateData.Zone.BUILDING + " INTEGER NOT NULL REFERENCES " + BUILDING_TABLE_NAME
                 + "(" + LocateData.Building._ID + ")"
                 + ");");
+        LogUtils.v(ZONE_TABLE_NAME + " table created");
     }
 
     /**
@@ -74,6 +81,7 @@ public final class TableFactory {
                 + LocateData.WorkSpot.ZONE + " INTEGER NOT NULL REFERENCES " + ZONE_TABLE_NAME
                 + "(" + LocateData.Zone._ID + ") ON UPDATE CASCADE"
                 + ");");
+        LogUtils.v(WORKSPOT_TABLE_NAME + " table created");
     }
 
     /**
@@ -93,6 +101,7 @@ public final class TableFactory {
                 + LocateData.SampleSpot.WORKSPOT + " INTEGER NOT NULL REFERENCES " + WORKSPOT_TABLE_NAME
                 + "(" + LocateData.WorkSpot._ID + ") ON UPDATE CASCADE ON DELETE CASCADE"
                 + ");");
+        LogUtils.v(SAMPLESPOT_TABLE_NAME + " table created");
     }
 
     /**
@@ -108,6 +117,7 @@ public final class TableFactory {
                 + LineSpot.ZONE + " INTEGER NOT NULL REFERENCES " + ZONE_TABLE_NAME
                 + "(" + LocateData.Zone._ID + ") ON UPDATE CASCADE"
                 + ");");
+        LogUtils.v(LINESPOT_TABLE_NAME + " table created");
     }
 
     /**
@@ -124,6 +134,7 @@ public final class TableFactory {
                 + LocateData.WorkLine.ZONE + " INTEGER NOT NULL REFERENCES " + ZONE_TABLE_NAME
                 + "(" + LocateData.Zone._ID + ") ON UPDATE CASCADE"
                 + ");");
+        LogUtils.v(WORKLINE_TABLE_NAME + " table created");
     }
 
     /**
@@ -141,6 +152,24 @@ public final class TableFactory {
                 + LocateData.SampleLine.WORKLINE + " INTEGER NOT NULL REFERENCES " + WORKLINE_TABLE_NAME
                 + "(" + LocateData.WorkLine._ID + ") ON UPDATE CASCADE ON DELETE CASCADE"
                 + ");");
+        LogUtils.v(SAMPLELINE_TABLE_NAME + " table created");
+    }
+
+    /**
+     * 创建Mac地址表
+     * @param db
+     */
+    public static void createMacTable(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE " + MAC_TABLE_NAME + " ("
+                + Mac._ID + " INTEGER PRIMARY KEY,"
+                + Mac.ADDRESS + " TEXT NOT NULL UNIQUE,"
+                + Mac.UUID + " TEXT NOT NULL,"
+                + Mac.MAJOR + " INTEGER NOT NULL DEFAULT 0,"
+                + Mac.MINOR + " INTEGER NOT NULL DEFAULT 0,"
+                + Mac.BUILDING + " TEXT NOT NULL REFERENCES " + BUILDING_TABLE_NAME
+                + "(" + Building.CODE + ")"
+                + ");");
+        LogUtils.v(MAC_TABLE_NAME + " table created");
     }
 
     public static String getWorkLineQueryTable() {

@@ -13,11 +13,9 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import java.io.File;
 import java.util.HashMap;
 
 import com.feifan.baselib.utils.LogUtils;
-import com.feifan.locate.Constants;
 import com.feifan.locate.provider.LocateData.Building;
 import com.feifan.locate.provider.LocateData.Zone;
 import com.feifan.locate.provider.LocateData.WorkSpot;
@@ -25,6 +23,7 @@ import com.feifan.locate.provider.LocateData.SampleSpot;
 import com.feifan.locate.provider.LocateData.WorkLine;
 import com.feifan.locate.provider.LocateData.SampleLine;
 import com.feifan.locate.provider.LocateData.LineSpot;
+import com.feifan.locate.provider.LocateData.Mac;
 
 import static com.feifan.locate.provider.TableFactory.BUILDING_TABLE_NAME;
 import static com.feifan.locate.provider.TableFactory.WORKLINE_TABLE_NAME;
@@ -42,9 +41,6 @@ public class LocateProvider extends ContentProvider {
     private static final String DATABASE_NAME = "sample.db";
     // 数据库版本
     private static final int DATABASE_VERSION = 1;
-
-    // 数据库表名-Mac地址映射
-    private static final String MAC_TABLE_NAME = "mac";
 
     // 数据库表名－样本
     private static final String SAMPLE_TABLE_NAME = "sample";
@@ -73,10 +69,10 @@ public class LocateProvider extends ContentProvider {
     private static final int WORKLINE_ID = WORKLINE + 1;
     private static final int SAMPLELINE = WORKLINE_ID + 1;
     private static final int SAMPLELINE_ID = SAMPLELINE + 1;
+    private static final int MAC = SAMPLELINE_ID + 1;
+    private static final int MAC_ID = MAC + 1;
 
 /*
-    private static final int MAC = SAMPLESPOT_ID + 1;
-    private static final int MAC_ID = MAC + 1;
     private static final int SAMPLE = SPOT_ID + 1;
     private static final int SAMPLE_ID = SAMPLE + 1;
     private static final int BEACON_UUID = SAMPLE_ID + 1;
@@ -101,9 +97,8 @@ public class LocateProvider extends ContentProvider {
     private static HashMap<String, String> sWorkLineProjectionMap;
     // 样本路线表映射集合
     private static HashMap<String, String> sSampleLineProjectionMap;
-
     // Mac地址表映射集合
-//    private static HashMap<String, String> sMacProjectionMap;
+    private static HashMap<String, String> sMacProjectionMap;
 
     // 样本表列映射集合
 //    private static HashMap<String, String> sSampleProjectionMap;
@@ -130,9 +125,9 @@ public class LocateProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "workline/#", WORKLINE_ID);
         sUriMatcher.addURI(AUTHORITY, "sampleline", SAMPLELINE);
         sUriMatcher.addURI(AUTHORITY, "sampleline/#", SAMPLELINE_ID);
-        /*
         sUriMatcher.addURI(AUTHORITY, "mac", MAC);
         sUriMatcher.addURI(AUTHORITY, "mac/#", MAC_ID);
+        /*
         sUriMatcher.addURI(AUTHORITY, "sample", SAMPLE);
         sUriMatcher.addURI(AUTHORITY, "sample/#", SAMPLE_ID);
         sUriMatcher.addURI(AUTHORITY, "beacon_uuid", BEACON_UUID);
@@ -212,12 +207,12 @@ public class LocateProvider extends ContentProvider {
         sSampleLineProjectionMap.put(SampleLine.D, SampleLine.D);
         sSampleLineProjectionMap.put(SampleLine.WORKLINE, SampleLine.WORKLINE);
 
-//        sMacProjectionMap = new HashMap<>();
-//        sMacProjectionMap.put(Mac._ID, Mac._ID);
-//        sMacProjectionMap.put(Mac.ADDRESS, Mac.ADDRESS);
-//        sMacProjectionMap.put(Mac.UUID, Mac.UUID);
-//        sMacProjectionMap.put(Mac.MAJOR, Mac.MAJOR);
-//        sMacProjectionMap.put(Mac.MINOR, Mac.MINOR);
+        sMacProjectionMap = new HashMap<>();
+        sMacProjectionMap.put(Mac._ID, Mac._ID);
+        sMacProjectionMap.put(Mac.ADDRESS, Mac.ADDRESS);
+        sMacProjectionMap.put(Mac.UUID, Mac.UUID);
+        sMacProjectionMap.put(Mac.MAJOR, Mac.MAJOR);
+        sMacProjectionMap.put(Mac.MINOR, Mac.MINOR);
 
         /*sSampleProjectionMap = new HashMap<String, String>();
         sSampleProjectionMap.put(Sample._ID, Sample._ID);
@@ -289,10 +284,10 @@ public class LocateProvider extends ContentProvider {
                 qb.setTables(TableFactory.SAMPLELINE_TABLE_NAME);
                 qb.setProjectionMap(sSampleLineProjectionMap);
                 break;
-//            case MAC:
-//                qb.setTables(MAC_TABLE_NAME);
-//                qb.setProjectionMap(sMacProjectionMap);
-//                break;
+            case MAC:
+                qb.setTables(TableFactory.MAC_TABLE_NAME);
+                qb.setProjectionMap(sMacProjectionMap);
+                break;
             /*case SAMPLE:        // 查询样本整表
                 qb.setTables(SAMPLE_TABLE_NAME);
                 qb.setProjectionMap(sSampleProjectionMap);
@@ -358,10 +353,10 @@ public class LocateProvider extends ContentProvider {
                 return SampleLine.CONTENT_TYPE;
             case SAMPLELINE_ID:
                 return SampleLine.CONTENT_ITEM_TYPE;
-//            case MAC:
-//                return Mac.CONTENT_TYPE;
-//            case MAC_ID:
-//                return Mac.CONTENT_ITEM_TYPE;
+            case MAC:
+                return Mac.CONTENT_TYPE;
+            case MAC_ID:
+                return Mac.CONTENT_ITEM_TYPE;
             /*case SAMPLE:
                 return Sample.CONTENT_TYPE;
             case SAMPLE_ID:
@@ -419,10 +414,10 @@ public class LocateProvider extends ContentProvider {
                 contentUri = SampleLine.CONTENT_URI;
                 tableName = TableFactory.SAMPLELINE_TABLE_NAME;
                 break;
-//            case MAC:
-//                contentUri = Mac.CONTENT_URI;
-//                tableName = MAC_TABLE_NAME;
-//                break;
+            case MAC:
+                contentUri = Mac.CONTENT_URI;
+                tableName = TableFactory.MAC_TABLE_NAME;
+                break;
             /*case SAMPLE:
                 contentUri = Sample.CONTENT_URI;
                 tableName = SAMPLE_TABLE_NAME;
@@ -445,10 +440,6 @@ public class LocateProvider extends ContentProvider {
         } else {
             validValues = new ContentValues();
         }
-
-//        if(validValues.containsKey(Samples.NAME) == false) {
-//            throw new SQLException("Name must be specified");
-//        }
 
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         long rowId = db.insertOrThrow(tableName, null, validValues);
@@ -525,8 +516,9 @@ public class LocateProvider extends ContentProvider {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         public DatabaseHelper(Context context) {
-            super(context, context.getExternalCacheDir().getAbsolutePath() + File.separator + DATABASE_NAME,
-                    null, DATABASE_VERSION);
+//            super(context, context.getExternalCacheDir().getAbsolutePath() + File.separator + DATABASE_NAME,
+//                    null, DATABASE_VERSION);
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
         @Override
@@ -554,15 +546,7 @@ public class LocateProvider extends ContentProvider {
             TableFactory.createSampleLineTable(db);
 
             // 创建Mac地址映射表
-//            db.execSQL("CREATE TABLE " + MAC_TABLE_NAME + " ("
-//                    + Mac._ID + " INTEGER PRIMARY KEY,"
-//                    + Mac.ADDRESS + " TEXT NOT NULL,"
-//                    + Mac.UUID + " TEXT NOT NULL,"
-//                    + Mac.MAJOR + " INTEGER NOT NULL DEFAULT 0,"
-//                    + Mac.MINOR + " INTEGER NOT NULL DEFAULT 0,"
-//                    + Mac.BUILDING + " TEXT NOT NULL REFERENCES " + BUILDING_TABLE_NAME
-//                    + "(" + Building.CODE + ")"
-//                    + ");");
+            TableFactory.createMacTable(db);
 
             // 创建样本表
             /*db.execSQL("CREATE TABLE " + SAMPLE_TABLE_NAME + " ("

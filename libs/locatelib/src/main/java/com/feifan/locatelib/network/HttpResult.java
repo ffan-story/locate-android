@@ -11,7 +11,7 @@ public class HttpResult<T> {
 //    public T info;
 
     public int status;
-    public String message;
+    public String msg;
 
     public T data;
 }

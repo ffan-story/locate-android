@@ -114,7 +114,6 @@ public class LineDetailFragment extends SampleDetailFragment<SampleLineModel> {
             @Override
             public void onBeaconsReceived(Collection<SampleBeacon> beacons) {
                 if(isAdded()) {
-                    LogUtils.e("receive becon data at " + Thread.currentThread().getId());
                     mCache.addAll(beacons);
                     mTotal += beacons.size();
                     final long consumed = SystemClock.elapsedRealtime() - mStartTime;
