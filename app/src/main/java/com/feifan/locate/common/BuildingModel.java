@@ -20,13 +20,14 @@ public class BuildingModel extends CursorModel implements Parcelable {
         super(cursor);
         int nameIndex = cursor.getColumnIndexOrThrow(Building.NAME);
         name = cursor.getString(nameIndex);
-        int codeIndex = cursor.getColumnIndexOrThrow(Building.CODE);
+        int codeIndex = cursor.getColumnIndexOrThrow(Building.BUILDING_ID);
         code = cursor.getString(codeIndex);
         int minFloorIndex = cursor.getColumnIndexOrThrow(Building.MIN_FLOOR);
         minFloor = cursor.getInt(minFloorIndex);
     }
 
     protected BuildingModel(Parcel in) {
+        id = in.readInt();
         name = in.readString();
         code = in.readString();
         minFloor = in.readInt();
@@ -34,6 +35,7 @@ public class BuildingModel extends CursorModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(name);
         dest.writeString(code);
         dest.writeInt(minFloor);

@@ -8,8 +8,11 @@ import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
+import com.feifan.baselib.utils.AssetUtils;
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.provider.LocateData;
+import com.feifan.locate.provider.LocateData.Building;
+import com.feifan.locate.provider.LocateData.Zone;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,179 +32,39 @@ public class MockServer {
 
     }
 
-    public static void requestBuildingData(ContentResolver resolver) {
-        ContentValues values = new ContentValues();
-        values.put(LocateData.Building._ID, 1);
-        values.put(LocateData.Building.NAME, "金地中心A座");
-        values.put(LocateData.Building.CODE, "A22");
-        values.put(LocateData.Building.MIN_FLOOR, 22);
-        resolver.insert(LocateData.Building.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Building._ID, 2);
-        values.put(LocateData.Building.NAME, "金地中心B座");
-        values.put(LocateData.Building.CODE, "860100010030500015");
-        values.put(LocateData.Building.MIN_FLOOR, 25);
-        resolver.insert(LocateData.Building.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Building._ID, 3);
-        values.put(LocateData.Building.NAME, "石景山万达广场");
-        values.put(LocateData.Building.CODE, "860100010060300001");
-        values.put(LocateData.Building.MIN_FLOOR, -2);
-        resolver.insert(LocateData.Building.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Building._ID, 4);
-        values.put(LocateData.Building.NAME, "丰联广场");
-        values.put(LocateData.Building.CODE, "860100010030300016");
-        values.put(LocateData.Building.MIN_FLOOR, -3);
-        resolver.insert(LocateData.Building.CONTENT_URI, values);
+    public static void requestBuildingData(Context context) {
+        final ContentResolver resolver = context.getContentResolver();
+        final ContentValues values = new ContentValues();
+        AssetUtils.readLines(context, "plaza.data", new AssetUtils.Transactor() {
+            @Override
+            public void transact(String line) {
+                values.clear();
+                String[] lineValues = line.split(",");
+                values.put(Building._ID, Integer.valueOf(lineValues[0]));
+                values.put(Building.NAME, lineValues[1]);
+                values.put(Building.BUILDING_ID, lineValues[2]);
+                values.put(Building.MIN_FLOOR, Integer.valueOf(lineValues[3]));
+                resolver.insert(LocateData.Building.CONTENT_URI, values);
+            }
+        });
     }
 
-    public static void requestZoneData(ContentResolver resolver) {
-
-        ContentValues values = new ContentValues();
-
-        values.put(LocateData.Zone._ID, 1);
-        values.put(LocateData.Zone.NAME, "金地中心B座25层");
-        values.put(LocateData.Zone.PLAN, "zone_jindi_b31.png");
-        values.put(LocateData.Zone.SCALE, 0.033);
-        values.put(LocateData.Zone.FLOOR_NO, 25);
-        values.put(LocateData.Zone.TITLE, "F25");
-        values.put(LocateData.Zone.BUILDING, 2);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 2);
-        values.put(LocateData.Zone.NAME, "金地中心B座31层");
-        values.put(LocateData.Zone.PLAN, "zone_jindi_b31.png");
-        values.put(LocateData.Zone.SCALE, 0.033);
-        values.put(LocateData.Zone.FLOOR_NO, 31);
-        values.put(LocateData.Zone.TITLE, "F31");
-        values.put(LocateData.Zone.BUILDING, 2);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 3);
-        values.put(LocateData.Zone.NAME, "石景山万达广场F1");
-        values.put(LocateData.Zone.PLAN, "zone_shijingshan_f1.jpg");
-        values.put(LocateData.Zone.SCALE, getScale(2));
-        values.put(LocateData.Zone.FLOOR_NO, 1);
-        values.put(LocateData.Zone.TITLE, "F1");
-        values.put(LocateData.Zone.BUILDING, 3);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 4);
-        values.put(LocateData.Zone.NAME, "石景山万达广场F2");
-        values.put(LocateData.Zone.PLAN, "zone_shijingshan_f2.jpg");
-        values.put(LocateData.Zone.SCALE, getScale(3));
-        values.put(LocateData.Zone.FLOOR_NO, 2);
-        values.put(LocateData.Zone.TITLE, "F2");
-        values.put(LocateData.Zone.BUILDING, 3);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 5);
-        values.put(LocateData.Zone.NAME, "石景山万达广场F3");
-        values.put(LocateData.Zone.PLAN, "zone_shijingshan_f3.jpg");
-        values.put(LocateData.Zone.SCALE, getScale(4));
-        values.put(LocateData.Zone.FLOOR_NO, 3);
-        values.put(LocateData.Zone.TITLE, "F3");
-        values.put(LocateData.Zone.BUILDING, 3);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 6);
-        values.put(LocateData.Zone.NAME, "石景山万达广场B1");
-        values.put(LocateData.Zone.PLAN, "zone_shijingshan_b1.jpg");
-        values.put(LocateData.Zone.SCALE, getScale(5));
-        values.put(LocateData.Zone.FLOOR_NO, -1);
-        values.put(LocateData.Zone.TITLE, "B1");
-        values.put(LocateData.Zone.BUILDING, 3);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 7);
-        values.put(LocateData.Zone.NAME, "石景山万达广场B2");
-        values.put(LocateData.Zone.PLAN, "zone_shijingshan_b2.jpg");
-        values.put(LocateData.Zone.SCALE, getScale(6));
-        values.put(LocateData.Zone.FLOOR_NO, -2);
-        values.put(LocateData.Zone.TITLE, "B2");
-        values.put(LocateData.Zone.BUILDING, 3);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        // 丰联广场
-        values.clear();
-        values.put(LocateData.Zone._ID, 8);
-        values.put(LocateData.Zone.NAME, "丰联广场B3");
-        values.put(LocateData.Zone.PLAN, "");
-        values.put(LocateData.Zone.SCALE, getScale(6));
-        values.put(LocateData.Zone.FLOOR_NO, -3);
-        values.put(LocateData.Zone.TITLE, "B3");
-        values.put(LocateData.Zone.BUILDING, 4);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 9);
-        values.put(LocateData.Zone.NAME, "丰联广场B2");
-        values.put(LocateData.Zone.PLAN, "");
-        values.put(LocateData.Zone.SCALE, getScale(6));
-        values.put(LocateData.Zone.FLOOR_NO, -2);
-        values.put(LocateData.Zone.TITLE, "B2");
-        values.put(LocateData.Zone.BUILDING, 4);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 10);
-        values.put(LocateData.Zone.NAME, "丰联广场B1");
-        values.put(LocateData.Zone.PLAN, "");
-        values.put(LocateData.Zone.SCALE, getScale(6));
-        values.put(LocateData.Zone.FLOOR_NO, -1);
-        values.put(LocateData.Zone.TITLE, "B1");
-        values.put(LocateData.Zone.BUILDING, 4);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 11);
-        values.put(LocateData.Zone.NAME, "丰联广场F1");
-        values.put(LocateData.Zone.PLAN, "");
-        values.put(LocateData.Zone.SCALE, getScale(6));
-        values.put(LocateData.Zone.FLOOR_NO, 1);
-        values.put(LocateData.Zone.TITLE, "F1");
-        values.put(LocateData.Zone.BUILDING, 4);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 12);
-        values.put(LocateData.Zone.NAME, "丰联广场F2");
-        values.put(LocateData.Zone.PLAN, "");
-        values.put(LocateData.Zone.SCALE, getScale(6));
-        values.put(LocateData.Zone.FLOOR_NO, 2);
-        values.put(LocateData.Zone.TITLE, "F2");
-        values.put(LocateData.Zone.BUILDING, 4);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 13);
-        values.put(LocateData.Zone.NAME, "丰联广场F3");
-        values.put(LocateData.Zone.PLAN, "");
-        values.put(LocateData.Zone.SCALE, getScale(6));
-        values.put(LocateData.Zone.FLOOR_NO, 3);
-        values.put(LocateData.Zone.TITLE, "F3");
-        values.put(LocateData.Zone.BUILDING, 4);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
-
-        values.clear();
-        values.put(LocateData.Zone._ID, 14);
-        values.put(LocateData.Zone.NAME, "丰联广场F4");
-        values.put(LocateData.Zone.PLAN, "");
-        values.put(LocateData.Zone.SCALE, getScale(6));
-        values.put(LocateData.Zone.FLOOR_NO, 4);
-        values.put(LocateData.Zone.TITLE, "F4");
-        values.put(LocateData.Zone.BUILDING, 4);
-        resolver.insert(LocateData.Zone.CONTENT_URI, values);
+    public static void requestZoneData(Context context) {
+        final ContentResolver resolver = context.getContentResolver();
+        final ContentValues values = new ContentValues();
+        AssetUtils.readLines(context, "zone.data", new AssetUtils.Transactor() {
+            @Override
+            public void transact(String line) {
+                values.clear();
+                String[] lineValues = line.split(",");
+                values.put(Zone._ID, Integer.valueOf(lineValues[0]));
+                values.put(Zone.NAME, lineValues[1]);
+                values.put(Zone.FLOOR_NO, Integer.valueOf(lineValues[2]));
+                values.put(Zone.TITLE, lineValues[3]);
+                values.put(Zone.BUILDING, Integer.valueOf(lineValues[4]));
+                resolver.insert(Zone.CONTENT_URI, values);
+            }
+        });
 
     }
 

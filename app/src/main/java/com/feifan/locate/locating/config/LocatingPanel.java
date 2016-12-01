@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.R;
+import com.feifan.locate.widget.popup.Panel;
 
 import java.util.concurrent.Semaphore;
 
@@ -28,7 +29,7 @@ import java.util.concurrent.Semaphore;
  * Created by xuchunlei on 16/9/21.
  */
 
-public class LocatingPanel extends LinearLayout implements OnCheckedChangeListener {
+public class LocatingPanel extends Panel implements OnCheckedChangeListener {
 
     // save
     private LocatingConfig mConfig;
@@ -36,25 +37,24 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
 //    private SharedPreferences mPreferences;
     private OnSharedPreferenceChangeListener mListener;
 
-    private FrameLayout.LayoutParams mParams;
-
     //test
     private TextView logView;
 
     public LocatingPanel(Context context) {
-        this(context, null);
+        super(context, null);
     }
 
     public LocatingPanel(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs, 0);
     }
 
     public LocatingPanel(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setBackgroundColor(Color.argb(0x55, 0x55, 0x55, 0x55));
-        setOrientation(VERTICAL);
-        mParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        mParams.gravity = Gravity.BOTTOM;
+    }
+
+    @Override
+    protected void onInit(Context context, FrameLayout.LayoutParams params) {
+        params.gravity = Gravity.BOTTOM;
         int spacing = dp2px(context, 5);
         setPadding(spacing, spacing, spacing, spacing);
 
@@ -63,12 +63,6 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
 
         //test
         logView = (TextView)findViewById(R.id.text_response);
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        initView();
     }
 
     public void setConfigChangeListener(OnSharedPreferenceChangeListener listener) {
@@ -99,7 +93,8 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
         }
     }
 
-    private void initView() {
+    @Override
+    protected void initView(Context context) {
         // algorithm
         RadioGroup rgAlgorithm = findView(R.id.radiogroup_algorithm);
         rgAlgorithm.setOnCheckedChangeListener(this);
@@ -144,20 +139,6 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
         reqPeriod.setProgress(Integer.valueOf(reqPeriodValue) - 1);
     }
 
-    public void show(Window container) {
-        container.addContentView(this, mParams);
-    }
-
-    public void hide() {
-        if(isAttachedToWindow()) {
-            ((ViewGroup)getParent()).removeView(this);
-        }
-    }
-
-    public boolean isShown() {
-        return isAttachedToWindow();
-    }
-
     /**
      * <p>Called when the checked radio button has changed. When the
      * selection is cleared, checkedId is -1.</p>
@@ -174,18 +155,6 @@ public class LocatingPanel extends LinearLayout implements OnCheckedChangeListen
                 mConfig.setAlgorithm(radioButton.getText().toString());
                 break;
         }
-    }
-
-
-
-    /**
-     * 查找到指定ID的视图
-     * @param id
-     * @param <T>
-     * @return
-     */
-    private  <T> T findView(@IdRes int id) {
-        return (T)findViewById(id);
     }
 
     private int dp2px(Context context, float dpValue) {

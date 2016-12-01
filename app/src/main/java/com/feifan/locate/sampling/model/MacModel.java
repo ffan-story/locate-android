@@ -30,7 +30,7 @@ public final class MacModel extends CursorModel {
 
     @Override
     public String toString() {
-        return "uuid:" + uuid + "\t major:" + major + "\t minor" + minor + "\n"
+        return "uuid:" + uuid + "\t major:" + major + "\t minor:" + minor + "\n"
                 + "mac:" + address;
     }
 }

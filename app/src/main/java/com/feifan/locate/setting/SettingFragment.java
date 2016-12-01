@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -68,6 +69,7 @@ public class SettingFragment extends BaseFragment implements OnClickListener {
         mServerPortV.setOnClickListener(this);
 
         view.findViewById(R.id.setting_reset).setOnClickListener(this);
+        view.findViewById(R.id.setting_test).setOnClickListener(this);
     }
 
     @Override
@@ -129,6 +131,9 @@ public class SettingFragment extends BaseFragment implements OnClickListener {
                 DataUtils.deleteFile(new File(Constants.EXPORT_ROOT_PATH_NAME));
                 restartApp();
                 break;
+            case R.id.setting_test:
+                LogUtils.e("what do you want to test???");
+                break;
             default:
                 throw new IllegalStateException("the setting is not implemented");
         }
@@ -159,6 +164,5 @@ public class SettingFragment extends BaseFragment implements OnClickListener {
         AlarmManager mgr = (AlarmManager)getContext().getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
         Runtime.getRuntime().exit(0);
-
     }
 }

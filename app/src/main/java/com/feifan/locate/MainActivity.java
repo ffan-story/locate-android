@@ -1,17 +1,11 @@
 package com.feifan.locate;
 
 import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.feifan.locate.provider.ProviderHelper;
 import com.feifan.locate.widget.bottom.BottomBarLayout;
-
-import java.util.concurrent.Executors;
-
 import com.networkbench.agent.impl.NBSAppAgent;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,9 +30,8 @@ public class MainActivity extends AppCompatActivity {
             ProviderHelper.runOnWorkerThread(new Runnable() {
                 @Override
                 public void run() {
-                    ContentResolver resolver = getContentResolver();
-                    MockServer.requestBuildingData(resolver);
-                    MockServer.requestZoneData(resolver);
+                    MockServer.requestBuildingData(MainActivity.this);
+                    MockServer.requestZoneData(MainActivity.this);
 
                     MockServer.createImapForRtMap(MainActivity.this);
                 }

@@ -14,11 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.feifan.baselib.utils.LogUtils;
 import com.feifan.locate.Constants;
 import com.feifan.locate.R;
 import com.feifan.locate.ToolbarActivity;
 import com.feifan.locate.common.BuildingModel;
 import com.feifan.locate.provider.LocateData.Zone;
+import com.feifan.locate.sampling.mac.MacDetailFragment;
 import com.feifan.locate.sampling.workline.LinePlanFragment;
 import com.feifan.locate.sampling.workspot.SpotPlanFragment;
 import com.feifan.locate.utils.SizeUtils;
@@ -98,6 +100,10 @@ public class ZoneFragment extends AbsLoaderFragment implements View.OnClickListe
                 Intent intent = new Intent(getContext(), ToolbarActivity.class);
                 intent.putExtra(ToolbarActivity.EXTRA_KEY_FRAGMENT, MacDetailFragment.class.getName());
                 Bundle args = new Bundle();
+                // query
+                args.putString(LOADER_KEY_SELECTION, "building=?");
+                args.putStringArray(LOADER_KEY_SELECTION_ARGS, new String[]{ String.valueOf(mBuilding.id) });
+                // others
                 args.putParcelable(Constants.EXTRA_KEY_BUILDING, mBuilding);
                 intent.putExtra(ToolbarActivity.EXTRA_KEY_ARGUMENTS, args);
                 startActivity(intent);

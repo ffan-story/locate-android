@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">飞凡定位</string>
 
+    <!-- 通用 -->
+    <string name="common_config_text">设置</string>
+
     <!-- 主界面 -->
     <string name="main_bottombar_tab_item_title_sampling">采样</string>
     <string name="main_bottombar_tab_item_title_locating">定位</string>
@@ -70,5 +73,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="setting_title_sampling">采样设置</string>
+
+    <string name="setting_test_entry">测试</string>
 
 </resources>

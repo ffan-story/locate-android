@@ -6,6 +6,8 @@ import android.support.v4.os.EnvironmentCompat;
 import com.feifan.baselib.utils.LogUtils;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 常量
@@ -100,6 +102,20 @@ public class Constants {
             }
         }
     }
+
+    public static final Map<String, String> PLAZA_MAP = new HashMap<>();
+    public static final Map<String, String> BUILDING_MAP = new HashMap<>();
+    static {
+        PLAZA_MAP.put("1000265", "860100010060300001");
+        PLAZA_MAP.put("1100428", "860100010030300016");
+        PLAZA_MAP.put("1100079", "860100010030300066");
+
+        BUILDING_MAP.put("860100010060300001", "1000265");
+        BUILDING_MAP.put("860100010030300016", "1100428");
+        BUILDING_MAP.put("860100010030300066", "1100079");
+    }
+
+
 
     private Constants() {
 

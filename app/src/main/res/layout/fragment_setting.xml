@@ -37,5 +37,9 @@
             android:id="@+id/setting_reset"
             style="@style/SettingItemContainer"
             setting:showTitle="@string/setting_general_reset"/>
+        <com.feifan.locate.widget.settingwork.TextItemView
+            android:id="@+id/setting_test"
+            style="@style/SettingItemContainer"
+            setting:showTitle="@string/setting_test_entry"/>
     </com.feifan.locate.widget.settingwork.SettingLayout>
 </FrameLayout>
