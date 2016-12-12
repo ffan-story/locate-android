@@ -54,8 +54,8 @@ public abstract class BaseFragment extends Fragment implements MenuItem.OnMenuIt
         List<MenuInfo> infoList = getMenuList();
 
         if(infoList != null) {
-            int actionType =
-                    infoList.size() == 1 ? MenuItem.SHOW_AS_ACTION_IF_ROOM : MenuItem.SHOW_AS_ACTION_NEVER;
+            int actionType = MenuItem.SHOW_AS_ACTION_IF_ROOM;
+//                    infoList.size() == 1 ? MenuItem.SHOW_AS_ACTION_IF_ROOM : MenuItem.SHOW_AS_ACTION_NEVER;
             for(MenuInfo info : infoList) {
                 MenuItem item;
                 if(info.titleRes != NO_RES) {

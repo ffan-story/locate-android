@@ -3,6 +3,7 @@
 
     <!-- 通用 -->
     <string name="common_config_text">设置</string>
+    <string name="common_debug_text">调试</string>
 
     <!-- 主界面 -->
     <string name="main_bottombar_tab_item_title_sampling">采样</string>
@@ -68,6 +69,8 @@
     <string name="setting_sensor_scan_linear_accelerometer_title">线性加速传感器</string>
     <string name="setting_sensor_scan_gravimeter_title">重力传感器</string>
     <string name="setting_sensor_scan_magnetometer_title">磁力传感器</string>
+    <string name="setting_sensor_scan_tuning">调优参数</string>
+    <string name="setting_sensor_scan_frequency">扫描频次(单位:次/秒)</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

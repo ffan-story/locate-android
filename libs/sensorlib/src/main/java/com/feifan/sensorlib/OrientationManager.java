@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import com.feifan.baselib.utils.LogUtils;
+import com.feifan.sensorlib.process.OrientationListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,16 +108,5 @@ public class OrientationManager {
             }
         }
         return false;
-    }
-
-    /**
-     * 方向事件监听
-     */
-    public interface OrientationListener {
-        /**
-         * 方向变化
-         * @param radian
-         */
-        void onOrientationChanged(float radian);
     }
 }

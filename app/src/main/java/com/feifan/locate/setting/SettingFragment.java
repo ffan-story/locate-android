@@ -16,6 +16,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.feifan.baselib.utils.LogUtils;
+import com.feifan.debuglib.DebugWindow;
 import com.feifan.locate.Constants;
 import com.feifan.locate.LocatePreferences;
 import com.feifan.locate.MainActivity;
@@ -27,6 +28,7 @@ import com.feifan.locate.setting.sensor.SensorScanFragment;
 import com.feifan.locate.utils.DataUtils;
 import com.feifan.locate.widget.settingwork.TextItemView;
 import com.feifan.locate.widget.ui.BaseFragment;
+import com.hannesdorfmann.debugoverlay.DebugOverlay;
 
 import java.io.File;
 
@@ -133,6 +135,7 @@ public class SettingFragment extends BaseFragment implements OnClickListener {
                 break;
             case R.id.setting_test:
                 LogUtils.e("what do you want to test???");
+                DebugWindow.get().log("test");
                 break;
             default:
                 throw new IllegalStateException("the setting is not implemented");

@@ -24,6 +24,7 @@ public class TextItemView extends RelativeLayout {
     @IdRes
     private static final int ID_SUBTITLE = 2;
 
+    private TextView mTitleV;
     private TextView mSubTitleV;
 
     public TextItemView(Context context) {
@@ -50,17 +51,17 @@ public class TextItemView extends RelativeLayout {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SettingItem);
 
         // 图标和标题
-        TextView titleV = new TextView(context);
-        titleV.setId(ID_TITLE);
-        titleV.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.setting_item_title_size));
-        titleV.setTextColor(ContextCompat.getColor(context, R.color.setting_item_title_text));
+        mTitleV = new TextView(context);
+        mTitleV.setId(ID_TITLE);
+        mTitleV.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.setting_item_title_size));
+        mTitleV.setTextColor(ContextCompat.getColor(context, R.color.setting_item_title_text));
         if(a.hasValue(R.styleable.SettingItem_showTitle)) {
-            titleV.setText(a.getResourceId(R.styleable.SettingItem_showTitle, -1));
+            mTitleV.setText(a.getResourceId(R.styleable.SettingItem_showTitle, -1));
         }
         LayoutParams paramsTitle = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         paramsTitle.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         paramsTitle.addRule(RelativeLayout.CENTER_VERTICAL);
-        addView(titleV, paramsTitle);
+        addView(mTitleV, paramsTitle);
 
         // 箭头和副标题
         mSubTitleV = new TextView(context);
@@ -79,5 +80,13 @@ public class TextItemView extends RelativeLayout {
         addView(mSubTitleV, paramsSubTitle);
 
         a.recycle();
+    }
+
+    public String getTitle() {
+        return mTitleV.getText().toString();
+    }
+
+    public String getSubTitle() {
+        return mSubTitleV.getText().toString();
     }
 }

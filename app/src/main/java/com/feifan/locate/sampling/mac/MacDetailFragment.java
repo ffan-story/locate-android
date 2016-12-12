@@ -33,6 +33,7 @@ import com.feifan.scanlib.BeaconNotifier;
 import com.feifan.scanlib.Region;
 import com.feifan.scanlib.ScanManager;
 import com.feifan.scanlib.beacon.SampleBeacon;
+import com.hannesdorfmann.debugoverlay.DebugOverlay;
 
 import java.util.Collection;
 import java.util.List;

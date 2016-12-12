@@ -6,6 +6,7 @@ import android.support.annotation.IdRes;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -34,6 +35,10 @@ public class ToggleItemView extends RelativeLayout {
     public ToggleItemView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initViews(context, attrs);
+    }
+
+    public void setOnCheckedChangeListener(OnCheckedChangeListener listener) {
+        ((ToggleButton)findViewById(ID_TOGGLE)).setOnCheckedChangeListener(listener);
     }
 
     private void initViews(Context context, AttributeSet attrs) {

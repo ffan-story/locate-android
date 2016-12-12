@@ -28,7 +28,7 @@ import com.feifan.scanlib.BeaconNotifier;
 import com.feifan.scanlib.ScanManager;
 import com.feifan.scanlib.beacon.SampleBeacon;
 import com.feifan.sensorlib.OrientationManager;
-import com.feifan.sensorlib.OrientationManager.OrientationListener;
+import com.feifan.sensorlib.process.OrientationListener;
 
 
 import java.util.ArrayList;
