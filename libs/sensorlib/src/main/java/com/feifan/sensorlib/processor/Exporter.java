@@ -1,4 +1,4 @@
-package com.feifan.sensorlib.process;
+package com.feifan.sensorlib.processor;
 
 import com.feifan.baselib.utils.LogUtils;
 

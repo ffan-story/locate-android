@@ -1,2 +1,3 @@
-include ':app', 'libs:feifanlocate:baselib', 'libs:interfaces', 'libs:maplib', 'libs:sensorlib', 'libs:feifanlocate:locatelib', 'libs:planlib', 'libs:feifanlocate:scanlib'
-include 'libs:debuglib'
+include 'testlibs:testsensorlib'
+include 'libs:baseuilib', 'libs:debuglib'
+include 'apps:toolkit', 'apps:testkit', 'libs:feifanlocate:baselib', 'libs:interfaces', 'libs:maplib', 'libs:sensorlib', 'libs:feifanlocate:locatelib', 'libs:planlib', 'libs:feifanlocate:scanlib'

@@ -1,6 +1,7 @@
 package com.feifan.sensorlib.service;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -14,14 +15,15 @@ import android.os.Messenger;
 import android.support.annotation.Nullable;
 
 import com.feifan.baselib.utils.LogUtils;
+import com.feifan.debuglib.DebugWindow;
 import com.feifan.sensorlib.SensorController;
-import com.feifan.sensorlib.process.Exporter;
-import com.feifan.sensorlib.process.OrientationListener;
-import com.feifan.sensorlib.process.OrientationProcessor;
+import com.feifan.sensorlib.data.SensorData;
+import com.feifan.sensorlib.processor.Exporter;
+import com.feifan.sensorlib.processor.OrientationListener;
+import com.feifan.sensorlib.processor.OrientationProcessor;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,14 +46,16 @@ public class SensorService extends Service implements SensorEventListener {
     public static final int MSG_ENABLE_MAGNETOMETER = 7;
     public static final int MSG_DISABLE_MAGNETOMETER = 8;
     public static final int MSG_CHANGE_FREQUENCY = 9;
+    public static final int MSG_SET_CALL_PACKAGE_NAME = 10;
 
     // sensor
     private SensorManager mSensorManager;
     private Map<Integer, Sensor> mSensorMap = new ConcurrentHashMap<>();
 
     // data
-    private float mRadian = -1;
-    private Exporter mExporter = new Exporter();
+    private SensorData mData = new SensorData();
+    private Intent mIntent = new Intent();
+//    private int flag = 0;
 
     @Override
     public void onCreate() {
@@ -59,13 +63,13 @@ public class SensorService extends Service implements SensorEventListener {
         mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         OrientationProcessor.getInstance().setListener(new OrientationListener() {
             @Override
-            public void onOrientationChanged(float radian) {
-                mRadian = radian;
+            public void onOrientationChanged(float[] radian) {
+                mData.orientation.azimuth = radian[0];
+                mData.orientation.pitch = radian[1];
+                mData.orientation.roll = radian[2];
+//                flag |= 0x4;
             }
         });
-
-        String path = getExternalCacheDir().getAbsolutePath().concat(File.separator);
-        mExporter.open(path + "sensor-" + System.currentTimeMillis());
     }
 
     @Nullable
@@ -77,7 +81,6 @@ public class SensorService extends Service implements SensorEventListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mExporter.close();
         LogUtils.e("SensorService destroyed");
     }
 
@@ -98,6 +101,10 @@ public class SensorService extends Service implements SensorEventListener {
             SensorService service = mService.get();
             if(service != null) {
                 switch (msg.what) {
+                    case MSG_SET_CALL_PACKAGE_NAME:
+                        String pkgName = msg.getData().getString("package_name");
+                        service.mIntent.setComponent(new ComponentName(pkgName, "com.feifan.sensorlib.service.SensorDataService"));
+                        break;
                     case MSG_ENABLE_ACCELEROMETER:
                         service.enableAccelerometer(msg.arg1);
                         break;
@@ -132,10 +139,26 @@ public class SensorService extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         OrientationProcessor.getInstance().onHandleEvent(event);
-        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            LogUtils.e(event.values[0] + "," + event.values[1] + "," + event.values[2] + "," + mRadian);
-//            mExporter.writeLine(System.currentTimeMillis() + "," + event.values[0] + "," + event.values[1] + "," + event.values[2] + "," + mRadian);
+
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) { // 加速传感器作为变更索引
+            mData.acceleration.x = event.values[0];
+            mData.acceleration.y = event.values[1];
+            mData.acceleration.z = event.values[2];
+//            flag |= 0x1;
+            mIntent.putExtra("data", mData);
+            startService(mIntent);
+        }else if(event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+
+            mData.linearAcceleration.x = event.values[0];
+            mData.linearAcceleration.y = event.values[1];
+            mData.linearAcceleration.z = event.values[2];
+//            flag |= 0x2;
         }
+//        if(flag == 0x7) {
+//            mIntent.putExtra("data", mData);
+//            startService(mIntent);
+//            flag = 0;
+//        }
     }
 
     @Override

@@ -7,7 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import com.feifan.baselib.utils.LogUtils;
-import com.feifan.sensorlib.process.OrientationListener;
+import com.feifan.sensorlib.processor.OrientationListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class OrientationManager {
 
                 if(calculateOrientation(mGravity, mGeomagnetic)) {
                     for(OrientationListener listener : mListeners) {
-                        listener.onOrientationChanged(_O[0]);
+                        listener.onOrientationChanged(_O);
                     }
                 }
             }

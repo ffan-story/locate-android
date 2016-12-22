@@ -1,6 +1,9 @@
 package com.feifan.debuglib;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 
 import com.hannesdorfmann.debugoverlay.DebugOverlay;
 
@@ -14,10 +17,19 @@ public class DebugWindow {
     private static final DebugWindow INSTANCE = new DebugWindow();
     private WeakReference<Context> mContext;
 
-    private boolean enabled = false;
+    private boolean enabled = true;
+
+    private Handler mHandler;
+    private volatile String mContent;
 
     private DebugWindow() {
-
+        mHandler = new Handler(Looper.getMainLooper()){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                DebugOverlay.with(mContext.get()).log(mContent);
+            }
+        };
     }
 
     public void initialize(Context context) {
@@ -32,7 +44,8 @@ public class DebugWindow {
 
     public void log(String content) {
         if(enabled) {
-            DebugOverlay.with(mContext.get()).log(content);
+            mContent = content;
+            mHandler.sendEmptyMessage(0);
         }
     }
 

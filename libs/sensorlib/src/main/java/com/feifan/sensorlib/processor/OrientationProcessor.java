@@ -1,4 +1,4 @@
-package com.feifan.sensorlib.process;
+package com.feifan.sensorlib.processor;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -43,7 +43,7 @@ public class OrientationProcessor implements IEventProcessor {
 
         if(calculateOrientation(mGravity, mGeomagnetic)) {
             if(mListener != null) {
-                mListener.onOrientationChanged(_O[0]);
+                mListener.onOrientationChanged(_O);
             }
         }
     }

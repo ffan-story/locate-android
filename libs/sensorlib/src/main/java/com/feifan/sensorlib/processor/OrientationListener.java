@@ -1,4 +1,4 @@
-package com.feifan.sensorlib.process;
+package com.feifan.sensorlib.processor;
 
 /**
  * 方向监听接口
@@ -10,5 +10,5 @@ public interface OrientationListener {
      * 方向变化
      * @param radian
      */
-    void onOrientationChanged(float radian);
+    void onOrientationChanged(float[] radian);
 }

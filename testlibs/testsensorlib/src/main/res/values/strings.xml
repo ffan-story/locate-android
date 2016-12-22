@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TestSensorLib</string>
+
+    <string name="title_sensor_analog">传感器模拟测试</string>
+</resources>
