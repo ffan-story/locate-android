@@ -1,11 +1,9 @@
 package com.feifan.sensorlib.service;
 
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 
 import com.feifan.baselib.utils.LogUtils;
-import com.feifan.debuglib.DebugWindow;
 import com.feifan.sensorlib.SensorController;
 import com.feifan.sensorlib.data.SensorData;
 

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <declare-styleable name="SettingItem">
-        <attr name="showTitle" format="reference" />
-        <attr name="showSubTitle" format="reference" />
-    </declare-styleable>
-</resources>

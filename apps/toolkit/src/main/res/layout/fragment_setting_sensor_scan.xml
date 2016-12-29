@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.feifan.locate.widget.settingwork.SettingLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:setting="http://schemas.android.com/apk/res-auto">
+    <com.feifan.locate.widget.settingwork.ToggleItemView
+        android:id="@+id/sensor_scan_onoff"
+        style="@style/SettingItemContainer"
+        setting:settingTitle="@string/setting_sensor_scan_title"/>
+    <com.feifan.locate.widget.settingwork.SettingGroupView
+        style="@style/SettingGroupContainer"
+        android:text="@string/setting_sensor_scan_selection_title"/>
+    <com.feifan.locate.widget.settingwork.CheckItemView
+        android:id="@+id/sensor_scan_accelerometer"
+        style="@style/SettingItemContainer"
+        setting:settingTitle="@string/setting_sensor_scan_accelerometer_title"/>
+    <com.feifan.locate.widget.settingwork.CheckItemView
+        android:id="@+id/sensor_scan_linear_accelerometer"
+        style="@style/SettingItemContainer"
+        setting:settingTitle="@string/setting_sensor_scan_linear_accelerometer_title"/>
+    <com.feifan.locate.widget.settingwork.CheckItemView
+        android:id="@+id/sensor_scan_gravimeter"
+        style="@style/SettingItemContainer"
+        setting:settingTitle="@string/setting_sensor_scan_gravimeter_title"/>
+    <com.feifan.locate.widget.settingwork.CheckItemView
+        android:id="@+id/sensor_scan_magnetometer"
+        style="@style/SettingItemContainer"
+        setting:settingTitle="@string/setting_sensor_scan_magnetometer_title"/>
+    <com.feifan.locate.widget.settingwork.SettingGroupView
+        style="@style/SettingGroupContainer"
+        android:text="@string/setting_sensor_scan_tuning"/>
+    <com.feifan.locate.widget.settingwork.TextItemView
+        android:id="@+id/sensor_scan_frequency"
+        style="@style/SettingItemContainer"
+        setting:settingTitle="@string/setting_sensor_scan_frequency"
+        setting:showSubTitle="@integer/default_sensor_scan_frequency"/>
+</com.feifan.locate.widget.settingwork.SettingLayout>

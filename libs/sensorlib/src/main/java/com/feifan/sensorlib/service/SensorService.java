@@ -15,14 +15,10 @@ import android.os.Messenger;
 import android.support.annotation.Nullable;
 
 import com.feifan.baselib.utils.LogUtils;
-import com.feifan.debuglib.DebugWindow;
-import com.feifan.sensorlib.SensorController;
 import com.feifan.sensorlib.data.SensorData;
-import com.feifan.sensorlib.processor.Exporter;
 import com.feifan.sensorlib.processor.OrientationListener;
 import com.feifan.sensorlib.processor.OrientationProcessor;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,8 +41,10 @@ public class SensorService extends Service implements SensorEventListener {
     public static final int MSG_DISABLE_GRAVIMETER = 6;
     public static final int MSG_ENABLE_MAGNETOMETER = 7;
     public static final int MSG_DISABLE_MAGNETOMETER = 8;
-    public static final int MSG_CHANGE_FREQUENCY = 9;
-    public static final int MSG_SET_CALL_PACKAGE_NAME = 10;
+    public static final int MSG_ENABLE_ORIENTATION = 9;
+    public static final int MSG_DISABLE_ORIENTATION = 10;
+    public static final int MSG_CHANGE_FREQUENCY = 11;
+    public static final int MSG_SET_CALL_PACKAGE_NAME = 12;
 
     // sensor
     private SensorManager mSensorManager;
@@ -123,6 +121,12 @@ public class SensorService extends Service implements SensorEventListener {
                     case MSG_DISABLE_MAGNETOMETER:
                         service.disableMagnetometer();
                         break;
+                    case MSG_ENABLE_ORIENTATION:
+                        service.enableOrientation(msg.arg1);
+                        break;
+                    case MSG_DISABLE_ORIENTATION:
+                        service.disableOrientation();
+                        break;
                     case MSG_CHANGE_FREQUENCY:
                         service.changeFrequency(msg.arg1);
                         break;
@@ -138,7 +142,7 @@ public class SensorService extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        OrientationProcessor.getInstance().onHandleEvent(event);
+//        OrientationProcessor.getInstance().onHandleEvent(event);
 
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) { // 加速传感器作为变更索引
             mData.acceleration.x = event.values[0];
@@ -153,6 +157,10 @@ public class SensorService extends Service implements SensorEventListener {
             mData.linearAcceleration.y = event.values[1];
             mData.linearAcceleration.z = event.values[2];
 //            flag |= 0x2;
+        }else if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
+            mData.orientation.azimuth = radian(event.values[0]);
+            mData.orientation.pitch = radian(event.values[1]);
+            mData.orientation.roll = radian(event.values[2]);
         }
 //        if(flag == 0x7) {
 //            mIntent.putExtra("data", mData);
@@ -174,6 +182,8 @@ public class SensorService extends Service implements SensorEventListener {
                 return MSG_ENABLE_LINEAR_ACCELEROMETER;
             case Sensor.TYPE_MAGNETIC_FIELD:
                 return MSG_ENABLE_MAGNETOMETER;
+            case Sensor.TYPE_ORIENTATION:
+                return MSG_ENABLE_ORIENTATION;
             default:
                 return 0;
         }
@@ -187,6 +197,8 @@ public class SensorService extends Service implements SensorEventListener {
                 return MSG_DISABLE_LINEAR_ACCELEROMETER;
             case Sensor.TYPE_MAGNETIC_FIELD:
                 return MSG_DISABLE_MAGNETOMETER;
+            case Sensor.TYPE_ORIENTATION:
+                return MSG_DISABLE_ORIENTATION;
             default:
                 return 0;
         }
@@ -222,6 +234,14 @@ public class SensorService extends Service implements SensorEventListener {
         _enableSensor(Sensor.TYPE_MAGNETIC_FIELD, this, period);
     }
 
+    private void enableOrientation(int period) {
+        _enableSensor(Sensor.TYPE_ORIENTATION, this, period);
+    }
+
+    private void disableOrientation() {
+        _disableSensor(Sensor.TYPE_ORIENTATION, this);
+    }
+
     private void disableMagnetometer() {
         _disableSensor(Sensor.TYPE_MAGNETIC_FIELD, this);
     }
@@ -246,5 +266,9 @@ public class SensorService extends Service implements SensorEventListener {
             LogUtils.i("disable sensor " + sensorType + " successfully");
         }
 
+    }
+
+    private float radian(float degree) {
+        return (float) (degree * Math.PI / 180);
     }
 }
