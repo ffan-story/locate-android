@@ -1,164 +1,79 @@
 package com.feifan.locate.locating.config;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.support.annotation.IdRes;
-import android.util.AttributeSet;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
-import com.feifan.baselib.utils.LogUtils;
-import com.feifan.locate.R;
-import com.feifan.locate.widget.popup.Panel;
+import com.feifan.locate.utils.ScreenUtils;
 
-import java.util.concurrent.Semaphore;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 定位控制面板
- * Created by xuchunlei on 16/9/21.
+ * Created by xuchunlei on 2017/1/3.
  */
 
-public class LocatingPanel extends Panel implements OnCheckedChangeListener {
+public class LocatingPanel extends RelativeLayout {
 
-    // save
-    private LocatingConfig mConfig;
-//    private static final String PREFERENCE_LOCATING_SETTINGS = "settings";
-//    private SharedPreferences mPreferences;
-    private OnSharedPreferenceChangeListener mListener;
+    @IdRes
+    private static final int ID_TABS = 1;
 
-    //test
-    private TextView logView;
+    private FrameLayout.LayoutParams mParams;
 
-    public LocatingPanel(Context context) {
-        super(context, null);
+    public LocatingPanel(Context context, OnSharedPreferenceChangeListener listener) {
+        super(context);
+        setBackgroundColor(Color.argb(0x55, 0x55, 0x55, 0x55));
+
+//        mParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+
+        mParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, ScreenUtils.getScreenHeight() * 2 / 5);
+        mParams.gravity = Gravity.BOTTOM;
+
+        // 添加view
+        TabLayout tabs = new TabLayout(context);
+        tabs.setId(ID_TABS);
+        LayoutParams tabsParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        tabsParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        tabsParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        tabs.setLayoutParams(tabsParams);
+        addView(tabs);
+
+        ViewPager pager = new ViewPager(context);
+        LayoutParams pagerParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        pagerParams.addRule(RelativeLayout.BELOW, ID_TABS);
+        pager.setLayoutParams(pagerParams);
+        addView(pager);
+
+        // 初始化
+        PanelAdapter adapter = new PanelAdapter();
+        List<PanelView> data = new ArrayList<>();
+        CommonSettingPanel common = new CommonSettingPanel(context);
+        common.setConfigChangeListener(listener);
+        data.add(common);
+        data.add(new AlgorithmSettingPanel(context));
+        adapter.setData(data);
+        pager.setAdapter(adapter);
+        tabs.setupWithViewPager(pager);
+
     }
 
-    public LocatingPanel(Context context, AttributeSet attrs) {
-        super(context, attrs, 0);
-    }
-
-    public LocatingPanel(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    @Override
-    protected void onInit(Context context, FrameLayout.LayoutParams params) {
-        params.gravity = Gravity.BOTTOM;
-        int spacing = dp2px(context, 5);
-        setPadding(spacing, spacing, spacing, spacing);
-
-//        mPreferences = context.getSharedPreferences(PREFERENCE_LOCATING_SETTINGS, Context.MODE_PRIVATE);
-        mConfig = LocatingConfig.getInstance();
-
-        //test
-        logView = (TextView)findViewById(R.id.text_response);
-    }
-
-    public void setConfigChangeListener(OnSharedPreferenceChangeListener listener) {
-        if(mListener != null) {
-//            mPreferences.unregisterOnSharedPreferenceChangeListener(mListener);
-            mConfig.unRegisterChangeListener(mListener);
-        }
-//        mPreferences.registerOnSharedPreferenceChangeListener(listener);
-        mConfig.registerChangeListener(listener);
-        mListener = listener;
-    }
-
-    // test
-    public void updateLog(String logText) {
-        if(logView != null) {
-            logView.setText(logText);
-        }else {
-            logView = (TextView)findViewById(R.id.text_response);
+    public void hide() {
+        if(isShown()) {
+            ((ViewGroup)getParent()).removeView(this);
         }
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        if(mListener != null) {
-//            mPreferences.unregisterOnSharedPreferenceChangeListener(mListener);
-            mConfig.unRegisterChangeListener(mListener);
+    public void show(Window window) {
+        if(!isShown()) {
+            window.addContentView(this, mParams);
         }
-    }
-
-    @Override
-    protected void initView(Context context) {
-        // algorithm
-        RadioGroup rgAlgorithm = findView(R.id.radiogroup_algorithm);
-        rgAlgorithm.setOnCheckedChangeListener(this);
-        RadioButton checkedButton = (RadioButton) rgAlgorithm.findViewWithTag(mConfig.getAlgorithm());
-        if(checkedButton != null) {
-            checkedButton.setChecked(true);
-        }
-
-        SimpleSeekBarChangeListener listener = new SimpleSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                super.onProgressChanged(seekBar, progress, fromUser);
-                ViewGroup parent = (ViewGroup)seekBar.getParent();
-                String key = "";
-                switch (parent.getId()) {
-                    case R.id.seek_scan_period:
-                        mConfig.setScanPeriod(String.valueOf(progress + 1));
-                        break;
-                    case R.id.seek_request_period:
-                        mConfig.setRequestPeriod(String.valueOf(progress + 1));
-                        break;
-                    default:
-                        throw new IllegalStateException("you click an unknown SeekBar with id(" + seekBar.getId() + ")");
-                }
-
-
-            }
-        };
-
-        // scan period 数据累计时间
-        ViewGroup scanContainer = findView(R.id.seek_scan_period);
-        SeekBar scanPeriod = (SeekBar) scanContainer.findViewById(R.id.seek);
-        scanPeriod.setOnSeekBarChangeListener(listener);
-        String scanPeriodValue = mConfig.getScanPeriod();
-        scanPeriod.setProgress(Integer.valueOf(scanPeriodValue) - 1);
-
-        // request period 数据请求时间
-        ViewGroup reqContainer = findView(R.id.seek_request_period);
-        SeekBar reqPeriod = (SeekBar) reqContainer.findViewById(R.id.seek);
-        reqPeriod.setOnSeekBarChangeListener(listener);
-        String reqPeriodValue = mConfig.getRequestPeriod();
-        reqPeriod.setProgress(Integer.valueOf(reqPeriodValue) - 1);
-    }
-
-    /**
-     * <p>Called when the checked radio button has changed. When the
-     * selection is cleared, checkedId is -1.</p>
-     *
-     * @param group     the group in which the checked radio button has changed
-     * @param checkedId the unique identifier of the newly checked radio button
-     */
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-        int rbId = group.getCheckedRadioButtonId();
-        RadioButton radioButton = findView(rbId);
-        switch (group.getId()) {
-            case R.id.radiogroup_algorithm:
-                mConfig.setAlgorithm(radioButton.getText().toString());
-                break;
-        }
-    }
-
-    private int dp2px(Context context, float dpValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int)(dpValue * scale + 0.5f);
     }
 }

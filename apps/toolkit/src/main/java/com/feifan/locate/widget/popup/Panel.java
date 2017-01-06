@@ -16,7 +16,7 @@ import com.feifan.baselib.utils.LogUtils;
  * Created by xuchunlei on 2016/11/23.
  */
 
-public abstract class Panel extends LinearLayout {
+public abstract class Panel extends FrameLayout {
 
     private FrameLayout.LayoutParams mParams;
 
@@ -41,7 +41,7 @@ public abstract class Panel extends LinearLayout {
     public Panel(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setBackgroundColor(Color.argb(0x55, 0x55, 0x55, 0x55));
-        setOrientation(VERTICAL);
+//        setOrientation(VERTICAL);
         mParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         onInit(context, mParams);
     }

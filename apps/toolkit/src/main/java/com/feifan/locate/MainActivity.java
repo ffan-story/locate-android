@@ -19,7 +19,7 @@ import rx.internal.schedulers.ExecutorScheduler;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ScheduledExecutorService mExecutor;
+//    private ScheduledExecutorService mExecutor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,29 +37,29 @@ public class MainActivity extends AppCompatActivity {
 
         // debug
         DebugWindow.get().initialize(this);
-        mExecutor = Executors.newScheduledThreadPool(5);
-        mExecutor.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    //                Log.e("MainActivity", System.currentTimeMillis() + ":Just a test form debug window");
-                    DebugWindow.get().logI(System.currentTimeMillis() + ":Info test form debug window");
-                    DebugWindow.get().logE(System.currentTimeMillis() + ":Error test form debug window");
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, 0, 1, TimeUnit.SECONDS);
+//        mExecutor = Executors.newScheduledThreadPool(5);
+//        mExecutor.scheduleAtFixedRate(new Runnable() {
+//            @Override
+//            public void run() {
+//                try{
+//                    //                Log.e("MainActivity", System.currentTimeMillis() + ":Just a test form debug window");
+//                    DebugWindow.get().logI(System.currentTimeMillis() + ":Info test form debug window");
+//                    DebugWindow.get().logE(System.currentTimeMillis() + ":Error test form debug window");
+//                }catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        }, 0, 1, TimeUnit.SECONDS);
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mExecutor != null) {
-            mExecutor.shutdownNow();
-        }
+//        if(mExecutor != null) {
+//            mExecutor.shutdownNow();
+//        }
         DebugWindow.get().destory(this);
     }
 

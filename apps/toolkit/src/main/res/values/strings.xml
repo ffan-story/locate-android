@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">飞凡定位</string>
 
     <!-- 通用 -->
@@ -47,8 +47,21 @@
 
     <!-- 定位控制面板 -->
     <string name="locating_panel_online_text">在线定位</string>
-    <string name="locating_panel_scan_period_text">数据累计时间:</string>
-    <string name="locating_panel_request_period_text">数据请求时间:</string>
+    <string name="locating_panel_scan_period_text">
+        数据累计时间:<xliff:g id="scan">%1d</xliff:g>秒
+    </string>
+    <string name="locating_panel_request_period_text">
+        数据请求时间:<xliff:g id="scan">%1d</xliff:g>秒
+    </string>
+    <string name="locating_panel_common_setting_text">通用设置</string>
+    <string name="locating_panel_algorithm_setting_text">算法设置</string>
+    <string name="locating_panel_algorithm_valid_threshold_text">有效阈值:</string>
+    <string name="locating_panel_algorithm_weight_text">
+        阈值权重:历史<xliff:g id="history">%1$.2f</xliff:g>当前<xliff:g id="current">%2$.2f</xliff:g>
+    </string>
+    <string name="locating_panel_algorithm_scale_factor_text">
+        缩放因子:<xliff:g id="factor">%1$.2f</xliff:g>
+    </string>
 
     <!-- 设置 -->
     <string name="setting_sensor_title">传感器</string>
