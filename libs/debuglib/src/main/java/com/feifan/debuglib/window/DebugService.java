@@ -22,21 +22,56 @@ public class DebugService extends Service {
         if(mView == null) {
             mView = new DebugView(getApplicationContext());
         }
-        mView.show();
         return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        mView.hide();
+        if(mView.isShown()) {
+            mView.hide();
+        }
+
         return super.onUnbind(intent);
     }
 
+    public void enableWindow() {
+        mView.show();
+    }
+
+    public void disableWindow() {
+        mView.hide();
+    }
+
     public void logInfo(String log) {
-        mView.addLog(DebugView.LOG_LEVEL_INFO, log);
+        _log(DebugView.LOG_LEVEL_INFO, log);
     }
     public void logError(String log) {
-        mView.addLog(DebugView.LOG_LEVEL_ERROR, log);
+        _log(DebugView.LOG_LEVEL_ERROR, log);
+    }
+
+    private void _log(int level, String log) {
+        if(mView.isShown()) {
+            mView.addLog(level, log);
+        }else {
+            showLogConsole(level, log);
+        }
+    }
+
+    private void showLogConsole(int level, String log) {
+        switch (level) {
+            case DebugView.LOG_LEVEL_VERBOSE:
+                break;
+            case DebugView.LOG_LEVEL_DEBUG:
+                break;
+            case DebugView.LOG_LEVEL_INFO:
+                Log.i(getPackageName(), log);
+                break;
+            case DebugView.LOG_LEVEL_WARN:
+                break;
+            case DebugView.LOG_LEVEL_ERROR:
+                Log.e(getPackageName(), log);
+                break;
+        }
     }
 
     public class DebugBinder extends Binder {

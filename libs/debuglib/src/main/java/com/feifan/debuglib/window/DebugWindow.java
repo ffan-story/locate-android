@@ -35,7 +35,7 @@ public class DebugWindow {
 
 //    private WeakReference<Context> mContext;
 
-//    private boolean enabled = true;
+    private boolean enabled = false;
 
 //    private Handler mHandler;
 //    private volatile String mContent;
@@ -48,6 +48,11 @@ public class DebugWindow {
             DebugBinder binder = (DebugBinder)service;
             mService = binder.getService();
             mDispatcher.setService(mService);
+            if(enabled) {
+                mService.enableWindow();
+            }else {
+                mService.disableWindow();
+            }
             Log.i(TAG, "start debug service successfully");
         }
 
@@ -98,9 +103,16 @@ public class DebugWindow {
         mDispatcher.enqueueMessage("E:" + content);
     }
 
-//    public void setEnabled(boolean enabled) {
-//        this.enabled = enabled;
-//    }
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        if(mService != null) {
+            if(enabled) {
+                mService.enableWindow();
+            }else {
+                mService.disableWindow();
+            }
+        }
+    }
 
     /**
      * 调试日志分发器

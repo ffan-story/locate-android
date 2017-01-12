@@ -107,9 +107,10 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements IndoorLoc
         LocationLayer layer = new LocationLayer(mMapView, normal, normal);
         mMapView.addMapLayer(layer);
 
-        mPanel = (LocatingPanel) getLayoutInflater(savedInstanceState).inflate(R.layout.layout_locating_panel,
-                null, false);
-        mPanel.setConfigChangeListener(this);
+//        mPanel = (LocatingPanel) getLayoutInflater(savedInstanceState).inflate(R.layout.panel_locate_setting,
+//                null, false);
+//        mPanel.setConfigChangeListener(this);
+        mPanel = new LocatingPanel(getContext(), this);
 
         mIndicator = findView(R.id.realtime_indicator);
         mIndicator.setMapView(mMapView);
@@ -147,7 +148,7 @@ public class RealtimePlanFragment extends AbsLoaderFragment implements IndoorLoc
                 }
                 return true;
             case ID_MENU_DEBUG:
-//                DebugWindow.get().setEnabled(enabled = !enabled);
+                DebugWindow.get().setEnabled(enabled = !enabled);
                 return true;
             default:
                 return super.onMenuItemClick(item);

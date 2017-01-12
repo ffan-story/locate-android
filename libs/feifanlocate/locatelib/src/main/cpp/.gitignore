@@ -1,0 +1,13 @@
+build/
+gradle/
+.gradle/
+gradlew*
+.idea/
+*.iml
+local.properties
+# ignore DS_Store files on OSX system
+.DS_Store
+dist/
+
+.classpath
+.project

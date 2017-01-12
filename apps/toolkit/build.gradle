@@ -65,9 +65,9 @@ dependencies {
 
     compile project(':libs:baseuilib')
 
-    compile project(':libs:feifanlocate:scanlib')
+//    compile project(':libs:feifanlocate:scanlib')
     compile project(':libs:feifanlocate:locatelib')
-    compile project(':libs:feifanlocate:baselib')
+//    compile project(':libs:feifanlocate:baselib')
 //    compile project(':libs:sensorlib')
 
     planCompile project(':libs:planlib')
