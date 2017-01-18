@@ -28,9 +28,23 @@ Thumbs.db
 # Android Studio
 *.iml
 .idea
+
 #.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
 .gradle
 build/
 
 #NDK
 obj/
+apps/toolkit/src/main/java/com/feifan/locate/widget/popup/rangebar/
+libs/debuglib/src/main/res/drawable/
+libs/feifanlocate/baselib/src/main/res/drawable/
+libs/feifanlocate/locatelib/libs/
+libs/feifanlocate/locatelib/src/main/res/drawable/
+libs/feifanlocate/scanlib/
+libs/feifanlocate/sensorlib/libs/
+libs/feifanlocate/sensorlib/src/main/res/drawable/
+libs/maplib/src/main/res/drawable/
+libs/planlib/libs/
+libs/planlib/src/main/res/drawable/
+testlibs/testsensorlib/src/main/java/com/onenine/
+testlibs/testsensorlib/src/main/res/drawable/
