@@ -14,7 +14,10 @@ import com.onenine.testsensorlib.R;
  * Created by xuchunlei on 2016/12/20.
  */
 
-public class SensorAnalogFragment extends BaseFragment {
+public class SensorAnalogFragment extends BaseFragment implements View.OnClickListener {
+
+    private MapView mMapView;
+    private boolean isStarted = false;
 
     @Nullable
     @Override
@@ -26,12 +29,24 @@ public class SensorAnalogFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MapView map = findView(R.id.map);
-        Log.e("SensorAnalogFragment", "map=" + map);
+        mMapView = findView(R.id.map);
+        view.findViewById(R.id.action).setOnClickListener(this);
+
     }
 
     @Override
     protected int getTitleResource() {
-        return R.string.title_sensor_analog;
+        return R.string.sensor_analog_title;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(isStarted) {
+            mMapView.stopDraw();
+            isStarted = false;
+        }else {
+            mMapView.startDraw();
+            isStarted = true;
+        }
     }
 }

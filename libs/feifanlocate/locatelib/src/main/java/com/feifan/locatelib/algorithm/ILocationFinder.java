@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 位置发现器接口
+ * <p>
+ *     实现此接口的对象，可通过指纹库获取位置
+ * </p>
  * Created by xuchunlei on 2016/12/1.
  */
 

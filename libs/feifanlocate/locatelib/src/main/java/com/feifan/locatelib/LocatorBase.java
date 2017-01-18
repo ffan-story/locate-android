@@ -90,23 +90,25 @@ public abstract class LocatorBase implements IIndoorLocator {
             @Override
             public void onBeaconsReceived(Collection<SampleBeacon> beacons) {
 
+                // 使用测试数据
+//                handleScanData(getBeacons());
+
+                // 使用原始数据
 //                handleScanData(beacons);
-                // 使用窗口
-//                mSampleCount.offerLast(beacons.size());
-//                mSampleCache.addAll(beacons);
-//                handleScanData(mSampleCache);
+
+                // 使用窗口数据
+                mSampleCount.offerLast(beacons.size());
+                mSampleCache.addAll(beacons);
+                handleScanData(mSampleCache);
 
                 // moving window
-//                if(mSampleCount.size() == WINDOW_SIZE) { // 最近三次的采样集合
-//                    // 移除最早采集一次的所有样本数据
-//                    int count = mSampleCount.pollFirst();
-//                    for(int i = 0;i < count;i++) {
-//                        mSampleCache.pollFirst();
-//                    }
-//                }
-
-                // 测试数据
-                handleScanData(getBeacons());
+                if(mSampleCount.size() == WINDOW_SIZE) { // 最近三次的采样集合
+                    // 移除最早采集一次的所有样本数据
+                    int count = mSampleCount.pollFirst();
+                    for(int i = 0;i < count;i++) {
+                        mSampleCache.pollFirst();
+                    }
+                }
             }
         };
 
@@ -160,6 +162,9 @@ public abstract class LocatorBase implements IIndoorLocator {
                                 break;
                             case PlazaDetectorService.STATUS_ERROR_PLAZA_NOT_FOUND:
                                 Toast.makeText(mContext, "plaza not found", Toast.LENGTH_SHORT).show();
+                                break;
+                            case PlazaDetectorService.STATUS_ERROR_BEACON_FILE_NOT_FOUND:
+                                Toast.makeText(mContext, "beacon file not found", Toast.LENGTH_SHORT).show();
                                 break;
                             default:
                                 Toast.makeText(mContext, "error from server:" + status, Toast.LENGTH_SHORT).show();

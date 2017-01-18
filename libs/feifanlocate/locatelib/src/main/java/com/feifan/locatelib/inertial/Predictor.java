@@ -10,7 +10,7 @@ import com.feifan.locatelib.cache.FingerprintStore.FPLocation;
 
 public class Predictor {
 
-    // pedo:为减少变量创建次数，均使用成员变量
+    // 为减少变量创建次数，均使用成员变量
     private static final float MIN_PEAK_THRESHOLD = 11f;       // 波峰最小阈值(经验值)
     private static final float MAX_PEAK_THRESHOLD = 19.6f;     // 波峰最大阈值(经验值)
     private static final long MIN_STEP_TIME_SPAN = 200;        // 单步最小时间间隔(经验值)
@@ -22,10 +22,10 @@ public class Predictor {
     private float meanValue; // 到原点的几何距离
 
     // 步行检测因素-波峰变化
-    private float lastValue = 0; // 上一次传感器数值
-    private boolean lastUp = false; // 上一次计算区间是否是增函数区间
-    private boolean isUp = false;   // 计算区间是否是增函数区间
-    private boolean stepFlag = false; // 步行标记
+    private float lastValue = 0;       // 上一次传感器数值
+    private boolean lastUp = false;    // 上一次计算区间是否是增函数区间
+    private boolean isUp = false;      // 计算区间是否是增函数区间
+    private boolean stepFlag = false;  // 步行标记
 
     // 步行检测因素-时间
     private long lastStamp = 0;     // 上一次检测到波峰的时间戳
@@ -135,7 +135,6 @@ public class Predictor {
                     amplitude_threshold = updateAmplitude(amplitude);
                 }
 
-//                showLog("detect a new peak");
             }
         }
         lastValue = value;

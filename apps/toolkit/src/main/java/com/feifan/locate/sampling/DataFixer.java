@@ -12,6 +12,7 @@ import java.util.Map;
  * <p>
  *     修复非beacon数据的uuid、major和minor
  * </p>
+ * @deprecated
  * Created by xuchunlei on 16/9/29.
  */
 

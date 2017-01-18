@@ -87,12 +87,4 @@ public abstract class FinderBase implements ILocationFinder, SensorDataCallback 
                 data.orientation.azimuth);
 //        LogUtils.e(data.orientation.toString());
     }
-
-    private float degree(float radian) {
-        float degree =  (float) Math.toDegrees(radian);
-        if(degree < 0) {
-            degree += 360f;
-        }
-        return degree;
-    }
 }

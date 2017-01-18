@@ -5,7 +5,7 @@ import com.feifan.locatelib.cache.FingerprintStore.FPLocation;
 /**
  * 位置检验器
  * <p>
- *     滤波器，将不合理的计算结果过滤掉
+ *     滤波，将不合理的计算结果过滤掉
  * </p>
  * Created by xuchunlei on 2016/12/1.
  */

@@ -45,10 +45,10 @@ public class BeaconStore {
     private final Map<String, Float> resultMapCache = new LinkedHashMap<>();
     private final List<SampleBeacon> resultListCache = new LinkedList<>();
     private final Map<String, Integer> countCache = new HashMap<>();
-    private final List<String> sortCache = new ArrayList<>(10);
+//    private final List<String> sortCache = new ArrayList<>(10);
 
 //    private int beaconCount;
-    private Map<String, Integer> minorMap = new HashMap<>(10); // 用于存储指纹的beacon特征序列号
+//    private Map<String, Integer> minorMap = new HashMap<>(10); // 用于存储指纹的beacon特征序列号
 
     private BeaconStore() {
 
@@ -63,8 +63,8 @@ public class BeaconStore {
             uuidFilter.clear();
             majorFilter.clear();
             minorFilter.clear();
-            minorMap.clear();
-            sortCache.clear();
+//            minorMap.clear();
+//            sortCache.clear();
 
             for(BeaconInfo info : data) {
                 if(!uuidFilter.contains(info.uuid)) {
@@ -74,20 +74,20 @@ public class BeaconStore {
                     majorFilter.add(info.major);
                 }
                 minorFilter.insert(new MinorExtra(info.minor, info.floor));
-                sortCache.add(info.major + "_" + info.minor);
+//                sortCache.add(info.major + "_" + info.minor);
             }
 
             LogUtils.d("there are " + data.size() + " beacons in plaza");
         }
 
         // 初始化minorMap
-        Collections.sort(sortCache);
-        for(int i = 0;i < sortCache.size();i++) {
-            String key = sortCache.get(i);
-//            int minorIndex = key.indexOf("-");
-//            int minor = Integer.valueOf(key.substring(minorIndex + 1, key.length()));
-            minorMap.put(key, i);
-        }
+//        Collections.sort(sortCache);
+//        for(int i = 0;i < sortCache.size();i++) {
+//            String key = sortCache.get(i);
+////            int minorIndex = key.indexOf("-");
+////            int minor = Integer.valueOf(key.substring(minorIndex + 1, key.length()));
+//            minorMap.put(key, i);
+//        }
 
 //        beaconCount = data == null ? 0 : data.size();
 //        LogUtils.d("there are " + beaconCount + " beacons in plaza");
@@ -171,9 +171,59 @@ public class BeaconStore {
     private Map<Integer, Integer> options = new LinkedHashMap<>();
     private Set<RawBeacon> topBeaconSet = new LinkedHashSet<>();
 
+    /**
+     * 定位楼层
+     * @param samples
+     * @return
+     */
+    public<T extends RawBeacon> int selectFloor(Collection<T> samples) {
+        trimTopByRssi(samples, 3);
+        options.clear();
+
+        int rssi = -1000;    // 信号最强的beacon
+        int floor2 = 0;      // 出现两次的floor
+        int floor = 0;       // 最强信号的floor
+        int floorCount = 0;  // 获得不同楼层数量
+
+        for(RawBeacon beacon : topBeaconSet) {
+            LogUtils.d("top rssi beacon:" + beacon.major + "," + beacon.minor);
+            MinorExtra extra = minorFilter.find(new MinorExtra(beacon.minor, 0));
+            if(extra != null) {
+                int count = 1;
+                if(options.containsKey(extra.floor)) {
+                    count = options.get(extra.floor) + 1;
+                    if(count >= 2) {
+                        floor2 = extra.floor;
+                    }
+                }else {
+                    floorCount++;
+                }
+                options.put(extra.floor, count);
+
+                // 信号最强的beacon所在楼层
+                if(rssi < beacon.rssi) {
+                    floor = extra.floor;
+                    rssi = beacon.rssi;
+                }
+            }
+            else {
+                LogUtils.d(beacon.minor + " is not found");
+            }
+        }
+
+        LogUtils.d("floor=" + floor + ",floor2=" + floor2 + ",floorCount=" + floorCount + ",rssi=" + rssi);
+
+        int total = samples.size() > 3 ? 3 : samples.size();
+        if(total < 3) { // 样本数不足3个
+            LogUtils.w("valid samples' count is " + total);
+            return floor;
+        }
+
+        return floorCount == 3 ? floor : floor2;
+    }
 
     // 裁剪集合中信号最强的三个Beacon
-    private<T extends RawBeacon> void trimTopByRssi(List<T> data, int k) {
+    private<T extends RawBeacon> void trimTopByRssi(Collection<T> data, int k) {
         Arrays.sort(data.toArray(new RawBeacon[0]), comparator);
         topBeaconSet.clear();
 
@@ -193,6 +243,7 @@ public class BeaconStore {
     }
 
     // 裁剪集合中信号最强的三个Beacon
+    /*
     private void trimTopByRssi(RawBeacon[] data, int k) {
         Arrays.sort(data, comparator);
         topBeaconSet.clear();
@@ -211,12 +262,13 @@ public class BeaconStore {
             }
         }
     }
-
+*/
     /**
      * 定位楼层
      * @param samples
      * @return
      */
+    /*
     public int selectFloor(RawBeacon[] samples) {
         trimTopByRssi(samples, 3);
 //        for(RawBeacon b : topBeaconSet) {
@@ -265,63 +317,13 @@ public class BeaconStore {
 
         return floorCount == 3 ? floor : floor2;
     }
-
-    /**
-     * 定位楼层
-     * @param samples
-     * @return
-     */
-    public<T extends RawBeacon> int selectFloor(List<T> samples) {
-        trimTopByRssi(samples, 3);
-        options.clear();
-
-        int rssi = -1000;    // 信号最强的beacon
-        int floor2 = 0;      // 出现两次的floor
-        int floor = 0;       // 最强信号的floor
-        int floorCount = 0;  // 获得不同楼层数量
-
-        for(RawBeacon beacon : topBeaconSet) {
-            LogUtils.d("top rssi beacon:" + beacon.major + "," + beacon.minor);
-            MinorExtra extra = minorFilter.find(new MinorExtra(beacon.minor, 0));
-            if(extra != null) {
-                int count = 1;
-                if(options.containsKey(extra.floor)) {
-                    count = options.get(extra.floor) + 1;
-                    if(count >= 2) {
-                        floor2 = extra.floor;
-                    }
-                }else {
-                    floorCount++;
-                }
-                options.put(extra.floor, count);
-
-                // 信号最强的beacon所在楼层
-                if(rssi < beacon.rssi) {
-                    floor = extra.floor;
-                    rssi = beacon.rssi;
-                }
-            }
-            else {
-                LogUtils.d(beacon.minor + " is not found");
-            }
-        }
-
-        LogUtils.d("floor=" + floor + ",floor2=" + floor2 + ",floorCount=" + floorCount + ",rssi=" + rssi);
-
-        int total = samples.size() > 3 ? 3 : samples.size();
-        if(total < 3) { // 样本数不足3个
-            LogUtils.w("valid samples' count is " + total);
-            return floor;
-        }
-
-        return floorCount == 3 ? floor : floor2;
-    }
+*/
 
     /*--------------确定楼层 end---------------*/
 
-    public Map<String, Integer> getMinorMap() {
-        return minorMap;
-    }
+//    public Map<String, Integer> getMinorMap() {
+//        return minorMap;
+//    }
 
     static class MinorExtra implements Comparable<MinorExtra> {
         int minor;
@@ -362,7 +364,7 @@ public class BeaconStore {
 //        FILTER_MAP_MAJOR.put(KEY_860100010030500015, "100");
 
     }
-
+    /*
     public void testFloor() {
 //        Set<RawBeacon> data = new LinkedHashSet<>();
         RawBeacon beacon1 = new RawBeacon();
@@ -435,4 +437,5 @@ public class BeaconStore {
         selectFloor(data);
 
     }
+    */
 }

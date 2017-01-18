@@ -70,11 +70,11 @@ public class MinRInspector implements ILocationInspector {
             min_threshold = DebugUtils.Algorithm.MINR_THRESHOLD_MIN;
             max_threshold = DebugUtils.Algorithm.MINR_THRESHOLD_MAX;
             factor = DebugUtils.Algorithm.MINR_SCALE_FACTOR;
-            DebugWindow.get().logI("min->" + min_threshold +
-                                   ",max->" + max_threshold +
-                                   ",weightA->" + weightA +
-                                   ",weightM->" + weightM +
-                                   ",factor->" + factor);
+//            DebugWindow.get().logI("min->" + min_threshold +
+//                                   ",max->" + max_threshold +
+//                                   ",weightA->" + weightA +
+//                                   ",weightM->" + weightM +
+//                                   ",factor->" + factor);
 //        }
 
         average = average * weightA + minR * weightM;

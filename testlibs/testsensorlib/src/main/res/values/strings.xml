@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">TestSensorLib</string>
 
-    <string name="title_sensor_analog">传感器模拟测试</string>
+    <string name="sensor_analog_title">传感器模拟测试</string>
+    <string name="sensor_analog_start_text">开始</string>
+    <string name="sensor_analog_stop_text">结束</string>
 </resources>

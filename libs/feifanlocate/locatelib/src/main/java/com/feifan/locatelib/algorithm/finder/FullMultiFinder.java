@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * 多点质心发现器
  * Created by xuchunlei on 2016/12/1.
  */
 
@@ -42,7 +43,7 @@ public class FullMultiFinder extends FinderBase {
             featureCache[mBeaconMap.get(beacon.toIdentityString())] = (byte) beacon.rssi;
         }
 
-        FPLocation minLoc = null;
+//        FPLocation minLoc = null;
         for(FPLocation loc : mFPLocations) {
             final FPFeature[] feasures = loc.features;
             int k;
@@ -73,6 +74,7 @@ public class FullMultiFinder extends FinderBase {
         }
 
         int floor = resultCache.firstEntry().getValue().floor;
+
         // 计算权重
         double minDis = Math.sqrt(resultCache.firstKey());
         double selectRadius = minDis * SELECTION_COEFFICIENT;
@@ -101,15 +103,15 @@ public class FullMultiFinder extends FinderBase {
         optimum.floor = floor;
 
         FPLocation loc = mInspector.inspect(optimum, minDis);
-        if(loc == null) { // 使用预测位置
+        if(loc == null) { // 使用PDR预测位置
             if(!mPredictor.isInited()) {
                 mPredictor.setReference(optimum);
             }
             loc = mPredictor.updatePredictedLocation();
-//            DebugWindow.get().logE(System.currentTimeMillis() / 1000 + ":" + loc.x + "," + loc.y + "," + loc.floor);
-        } else {
+            DebugWindow.get().logE(System.currentTimeMillis() / 1000 + ":" + loc.x + "," + loc.y + "," + loc.floor);
+        } else {          // 使用指纹位置
             mPredictor.setReference(loc); // 设置有效位置
-//            DebugWindow.get().logI(System.currentTimeMillis() / 1000 + ":" + loc.x + "," + loc.y + "," + loc.floor);
+            DebugWindow.get().logI(System.currentTimeMillis() / 1000 + ":" + loc.x + "," + loc.y + "," + loc.floor);
         }
 
         return loc;

@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.os.ResultReceiver;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -74,8 +75,10 @@ public class PlazaDetectorService extends IntentService implements CycledLeScanC
     public static final int STATUS_ERROR_FPFILE_NOT_FOUND = 2;
     /** 状态码-广场未找到 */
     public static final int STATUS_ERROR_PLAZA_NOT_FOUND = 3;
+    /** 状态码-beacon点位文件未找到 */
+    public static final int STATUS_ERROR_BEACON_FILE_NOT_FOUND = 4;
     /** 状态码-未知错误 */
-    public static final int STATUS_ERROR_UNKNOWN = 4;
+    public static final int STATUS_ERROR_UNKNOWN = 5;
 
     // 状态码
     private int mStatus = -1;
@@ -187,6 +190,8 @@ public class PlazaDetectorService extends IntentService implements CycledLeScanC
 
         // 通知定位或错误状态
         args.clear();
+        String beaconFile = getBeaconFileName();
+        mStatus = beaconFile.length() == 0 ? STATUS_ERROR_BEACON_FILE_NOT_FOUND : mStatus;
         args.putInt(RESULT_KEY_STATUS_FLAG, mStatus);
         args.putString(RESULT_KEY_BEACON_FILE, getBeaconFileName());
         receiver.send(RESULT_CODE_STATUS, args);
@@ -258,9 +263,9 @@ public class PlazaDetectorService extends IntentService implements CycledLeScanC
 
         // 请求
         paramMap.clear();
-//        paramMap.put("umlist", UrlUtils.encodeToBase64(new Gson().toJson(result)));
+        paramMap.put("umlist", UrlUtils.encodeToBase64(new Gson().toJson(result)));
         // 石景山万达
-        paramMap.put("umlist", UrlUtils.encodeToBase64("[[\"A3FCE438-627C-42B7-AB72-DC6E55E137AC\",\"11000\", \"42493\"]]"));
+//        paramMap.put("umlist", UrlUtils.encodeToBase64("[[\"A3FCE438-627C-42B7-AB72-DC6E55E137AC\",\"11000\", \"42493\"]]"));
         // 爱琴海
 //        paramMap.put("umlist", UrlUtils.encodeToBase64("[[\"A3FCE438-627C-42B7-AB72-DC6E55E137AC\",\"21001\"]]"));
 
@@ -302,8 +307,8 @@ public class PlazaDetectorService extends IntentService implements CycledLeScanC
 
                                 // 确定楼层
                                 int floor = BeaconStore.getInstance().selectFloor(data);
-//                                CacheState.getInstance().setFloor(floor);
-                                CacheState.getInstance().setFloor(1);
+                                CacheState.getInstance().setFloor(floor);
+//                                CacheState.getInstance().setFloor(1);
 
                                 // 请求指纹库
                                 paramMap.clear();

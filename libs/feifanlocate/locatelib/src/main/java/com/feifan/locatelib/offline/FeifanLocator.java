@@ -1,22 +1,15 @@
 package com.feifan.locatelib.offline;
 
-import android.os.SystemClock;
-
 import com.feifan.baselib.utils.LogUtils;
-import com.feifan.debuglib.window.DebugWindow;
 import com.feifan.indoorlocation.model.IndoorLocationModel;
 import com.feifan.locatelib.LocatorBase;
-import com.feifan.locatelib.PlazaDetectorService;
-import com.feifan.locatelib.algorithm.ILocationFinder;
 import com.feifan.locatelib.cache.BeaconStore;
 import com.feifan.locatelib.cache.CacheState;
 import com.feifan.locatelib.cache.FingerprintStore;
 import com.feifan.locatelib.cache.FingerprintStore.FPLocation;
-import com.feifan.locatelib.utils.PrintUtils;
 import com.feifan.scanlib.beacon.SampleBeacon;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,7 +24,7 @@ public class FeifanLocator extends LocatorBase {
     private FPLocation mLoc;
     private int[] mRecentFloor = new int[3]; // 保存最近三次的定位楼层
     private int mGuard = 0; // 循环计数
-    private SampleBeacon[] mTargetArray = new SampleBeacon[0];
+//    private SampleBeacon[] mTargetArray = new SampleBeacon[0];
 
     private FeifanLocator() {
 
@@ -49,16 +42,17 @@ public class FeifanLocator extends LocatorBase {
         }
 
         // 定位楼层
-        int floor = BeaconStore.getInstance().selectFloor(data.toArray(mTargetArray));
+//        int floor = BeaconStore.getInstance().selectFloor(data.toArray(mTargetArray));
+        int floor = BeaconStore.getInstance().selectFloor(data);
         // floor = 0 表示接受数据不足以定位
         mRecentFloor[mGuard++ % 3] = floor;
         updateFloor(floor);
 
         // 定位位置
         List<SampleBeacon> dataList = BeaconStore.getInstance().process2List(data);
-        long begin = SystemClock.elapsedRealtimeNanos();
+//        long begin = SystemClock.elapsedRealtimeNanos();
         mLoc = mFinder.selectLocation(dataList);
-        LogUtils.e("计算时间=" + (SystemClock.elapsedRealtimeNanos() - begin) / 1000000);
+//        LogUtils.e("计算时间=" + (SystemClock.elapsedRealtimeNanos() - begin) / 1000000);
     }
 
     @Override

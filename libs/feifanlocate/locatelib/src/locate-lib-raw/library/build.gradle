@@ -1,0 +1,129 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+apply plugin: 'com.android.library'
+
+def swigPackage = "cn.wanda.locate.swig"
+def swigGenRoot = "$projectDir/src/swigGen"
+def swigJavaRoot = "$swigGenRoot"
+def swigJavaGenPath = swigJavaRoot + "/" + packageToFilePath(swigPackage)
+def moduleName = "wanda_locate"
+def swigFile = "$moduleName" + ".i"
+def jniRoot = "$projectDir/src/main/jni"
+def ndkWorkingDir = "$projectDir/src/main"
+def swigWrapFileDir = "$jniRoot/"
+def swigWrapFile = "$swigWrapFileDir/$moduleName" + '_wrap.cxx'
+def jniLibsPath = "$buildDir/jniLibs"
+def jniObjPath = "$buildDir/obj"
+
+def String packageToFilePath(String packageStr) {
+    return packageStr.replace('.', '/')
+}
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    sourceSets {
+        swigGen {
+            java {
+                srcDir swigGenRoot
+            }
+            jniLibs.srcDirs = [jniLibsPath]
+        }
+
+        main.java.srcDirs += swigGenRoot
+        main.jni.srcDirs = []
+        main {
+            jniLibs {
+                srcDir {
+                    jniLibsPath
+                }
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+task cleanNdk(type: Exec) {
+    workingDir ndkWorkingDir
+    commandLine getNdkBuildCmd(), 'clean'
+}
+
+task cleanSwigWrap(type: Delete) {
+    delete swigWrapFile
+}
+
+task cleanSwig(type: Delete) {
+    delete swigGenRoot
+}
+
+clean.dependsOn cleanNdk
+clean.dependsOn cleanSwigWrap
+clean.dependsOn cleanSwig
+
+task swigGen(type: Exec) {
+    workingDir jniRoot
+    commandLine 'swig', '-c++', '-java', '-package', swigPackage, '-outdir', swigJavaGenPath, '-o', swigWrapFile, swigFile
+}
+
+swigGen.doFirst {
+    new File(swigWrapFileDir).mkdirs()
+    new File(swigJavaGenPath).mkdirs()
+}
+
+preBuild.dependsOn swigGen
+
+task ndkBuild(type: Exec) {
+    workingDir ndkWorkingDir
+    commandLine getNdkBuildCmd(), "NDK_LIBS_OUT=$jniLibsPath", "NDK_OUT=$jniObjPath"
+}
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn ndkBuild
+}
+
+def getNdkDir() {
+    if (System.env.ANDROID_NDK_ROOT != null) {
+        return System.env.ANDROID_NDK_ROOT
+    }
+
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    def ndkDir = properties.getProperty('ndk.dir', null)
+    if (ndkDir == null) {
+        throw new GradleException("NDK location not found. Define location with ndk.dir in the local.properties file or with an ANDROID_NDK_ROOT environment variable.")
+    }
+
+    return ndkDir
+}
+
+def getNdkBuildCmd() {
+    def ndkBuildCmd = getNdkDir() + "/ndk-build"
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        ndkBuildCmd += ".cmd"
+    }
+    return ndkBuildCmd
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    testCompile 'junit:junit:4.12'
+}

@@ -37,6 +37,9 @@ public class FingerprintStore {
     // data
     private Map<Integer, FPLocation[]>  fpMap = new HashMap<>();
 
+    /**
+     * 指纹位置项
+     */
     public static class FPLocation {
         public float x;
         public float y;
@@ -73,7 +76,7 @@ public class FingerprintStore {
     }
 
     /**
-     * 特征类
+     * 指纹特征类
      */
     public static class FPFeature {
         public int index;
@@ -123,6 +126,11 @@ public class FingerprintStore {
 //        LogUtils.i("load " + zipFileName + " consume " + (SystemClock.elapsedRealtime() - begin) + " ms");
     }
 
+    /**
+     * 选取指定楼层的指纹库
+     * @param floor
+     * @return
+     */
     public FPLocation[] selectFingerprints(int floor) {
         if(!fpMap.containsKey(floor)) {
             String floorEntry = zipPrefix + "_" + floor;
