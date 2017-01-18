@@ -70,7 +70,7 @@ dependencies {
     compile project(':libs:interfaces');
 
     // 传感器
-    compile project(':libs:sensorlib');
+    compile project(':libs:feifanlocate:sensorlib');
 }
 
 
