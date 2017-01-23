@@ -33,7 +33,7 @@ public final class OnLineLocator extends LocatorBase {
     }
 
     @Override
-    protected void handleScanData(Collection<SampleBeacon> data) {
+    protected void handleScanData(Collection<SampleBeacon> rawData, Collection<SampleBeacon> data) {
         LogUtils.i("we got " + (data == null ? 0 : data.size()) + " beacon samples");
 
 //                Map<String, Float> sData = DataProcessor.processBeaconData(mPlazaId, beacons);

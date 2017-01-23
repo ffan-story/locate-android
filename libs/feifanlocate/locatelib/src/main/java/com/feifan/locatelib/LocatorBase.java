@@ -81,9 +81,10 @@ public abstract class LocatorBase implements IIndoorLocator {
 
     /**
      * 处理原始的beacon数据
-     * @param data
+     * @param rawData 从蓝牙采集的原始数据
+     * @param data    处理后的数据
      */
-    protected abstract void handleScanData(Collection<SampleBeacon> data);
+    protected abstract void handleScanData(Collection<SampleBeacon> rawData, Collection<SampleBeacon> data);
 
     public LocatorBase() {
         mNotifier = new BeaconNotifier() {
@@ -99,7 +100,7 @@ public abstract class LocatorBase implements IIndoorLocator {
                 // 使用窗口数据
                 mSampleCount.offerLast(beacons.size());
                 mSampleCache.addAll(beacons);
-                handleScanData(mSampleCache);
+                handleScanData(beacons, mSampleCache);
 
                 // moving window
                 if(mSampleCount.size() == WINDOW_SIZE) { // 最近三次的采样集合
@@ -122,6 +123,7 @@ public abstract class LocatorBase implements IIndoorLocator {
         mContext = context;
         mScanManager.bind(context);
         mScanManager.setNotifier(mNotifier);
+        mFinder = LocationFinderFactory.getInstance().getFinder(LocationFinderFactory.FINDER_FULL_MATCH_MULTI_RESULT);
 
         // 初始化广场和楼层
         plazaReceiver = new ResultReceiver(new Handler(Looper.getMainLooper())){
@@ -135,7 +137,7 @@ public abstract class LocatorBase implements IIndoorLocator {
                         int floor = resultData.getInt(PlazaDetectorService.RESULT_KEY_PLAZA_FLOOR);
 
                         // 初始化位置
-                        mLocationModel.floor = floor;
+                        mLocationModel.location.floor = floor;
                         mLocationModel.locationInfo.plazaId = plazaId;
 //                        mLocationModel.locationInfo.plazaName = info.plazaName;
                         notifyListeners(mLocationModel);
@@ -148,7 +150,7 @@ public abstract class LocatorBase implements IIndoorLocator {
                                 // 初始化Finder
                                 final String beaconFile = resultData.getString(PlazaDetectorService.RESULT_KEY_BEACON_FILE);
                                 mFinder.initialize(getBeaconMap(beaconFile), mInspector);
-                                mFinder.updateFingerprints(FingerprintStore.getInstance().selectFingerprints(mLocationModel.floor));
+                                mFinder.updateFingerprints(FingerprintStore.getInstance().selectFingerprints(mLocationModel.location.floor));
 
                                 if(mStatus == STATUS_HANG_UP) { // 挂起状态，则开启
                                     doStart();

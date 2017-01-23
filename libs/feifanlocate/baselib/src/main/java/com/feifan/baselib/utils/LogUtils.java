@@ -254,11 +254,6 @@ public class LogUtils {
         } else {
             Log.wtf(tag, content);
         }
-
-        // temp
-        if (isSaveLog) {
-            point(PATH_LOG_INFO, "", content);
-        }
     }
 
     public static void wtf(String content, Throwable tr) {

@@ -35,7 +35,7 @@ public class FeifanLocator extends LocatorBase {
     }
 
     @Override
-    protected void handleScanData(Collection<SampleBeacon> data) {
+    protected void handleScanData(Collection<SampleBeacon> rawData, Collection<SampleBeacon> data) {
 
         if(!isStarted()) {
             return;
@@ -43,7 +43,7 @@ public class FeifanLocator extends LocatorBase {
 
         // 定位楼层
 //        int floor = BeaconStore.getInstance().selectFloor(data.toArray(mTargetArray));
-        int floor = BeaconStore.getInstance().selectFloor(data);
+        int floor = BeaconStore.getInstance().selectFloor(rawData);
         // floor = 0 表示接受数据不足以定位
         mRecentFloor[mGuard++ % 3] = floor;
         updateFloor(floor);
