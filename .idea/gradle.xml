@@ -9,23 +9,25 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/apps" />
+            <option value="$PROJECT_DIR$/apps/testkit" />
+            <option value="$PROJECT_DIR$/apps/toolkit" />
             <option value="$PROJECT_DIR$/libs" />
-            <option value="$PROJECT_DIR$/libs/baselib" />
+            <option value="$PROJECT_DIR$/libs/baseuilib" />
+            <option value="$PROJECT_DIR$/libs/debuglib" />
+            <option value="$PROJECT_DIR$/libs/feifanlocate" />
+            <option value="$PROJECT_DIR$/libs/feifanlocate/baselib" />
+            <option value="$PROJECT_DIR$/libs/feifanlocate/locatelib" />
+            <option value="$PROJECT_DIR$/libs/feifanlocate/scanlib" />
+            <option value="$PROJECT_DIR$/libs/feifanlocate/sensorlib" />
+            <option value="$PROJECT_DIR$/libs/interfaces" />
+            <option value="$PROJECT_DIR$/libs/maplib" />
             <option value="$PROJECT_DIR$/libs/planlib" />
-            <option value="$PROJECT_DIR$/libs/scanlib" />
+            <option value="$PROJECT_DIR$/testlibs" />
+            <option value="$PROJECT_DIR$/testlibs/testsensorlib" />
           </set>
         </option>
-        <option name="myModules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/libs" />
-            <option value="$PROJECT_DIR$/libs/baselib" />
-            <option value="$PROJECT_DIR$/libs/planlib" />
-            <option value="$PROJECT_DIR$/libs/scanlib" />
-          </set>
-        </option>
+        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
