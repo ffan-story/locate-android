@@ -39,16 +39,14 @@ public class BeaconStore {
     private Set<String> uuidFilter = new HashSet<>();
     private Set<Integer> majorFilter = new HashSet<>();
     private AvlTree<MinorExtra> minorFilter = new AvlTree<>();
-//    private Set<Integer> minorFilter = new HashSet<>(10);
 
     // filter & sort
     private final Map<String, Float> resultMapCache = new LinkedHashMap<>();
     private final List<SampleBeacon> resultListCache = new LinkedList<>();
     private final Map<String, Integer> countCache = new HashMap<>();
-//    private final List<String> sortCache = new ArrayList<>(10);
+    private static final int TOP_SIZE = 3;
+    private final List<RawBeacon> beaconPool = new ArrayList<>();
 
-//    private int beaconCount;
-//    private Map<String, Integer> minorMap = new HashMap<>(10); // 用于存储指纹的beacon特征序列号
 
     private BeaconStore() {
 
@@ -174,10 +172,46 @@ public class BeaconStore {
     /**
      * 定位楼层
      * @param samples
-     * @return
+     * @return 0 表示未能成功定位楼层，其他表示楼层编号，1表示1层，-1表示-1层，以此类推
      */
     public<T extends RawBeacon> int selectFloor(Collection<T> samples) {
-        trimTopByRssi(samples, 3);
+        trimTopByRssi(samples, TOP_SIZE);
+        if(TOP_SIZE == 3) {
+            return computeFloorFromTop3(topBeaconSet);
+        }
+
+        if(TOP_SIZE == 5) {
+            return computeFloorFromTop5(topBeaconSet);
+        }
+
+        return 0;
+    }
+
+    // 裁剪集合中信号最强的三个Beacon
+    private<T extends RawBeacon> void trimTopByRssi(Collection<T> data, int k) {
+        beaconPool.clear();
+        beaconPool.addAll(data);
+        Collections.sort(beaconPool);
+        topBeaconSet.clear();
+
+        for(RawBeacon beacon : beaconPool) {
+            if(!topBeaconSet.contains(beacon)) {
+                if(!uuidFilter.contains(beacon.uuid)) {
+                    continue;
+                }else if(!majorFilter.contains(beacon.major)) {
+                    continue;
+                }
+                topBeaconSet.add(beacon);
+
+            }
+            if(topBeaconSet.size() == k) {
+                break;
+            }
+        }
+    }
+
+    // 使用信号最强的3个beacon计算楼层
+    private int computeFloorFromTop3(Set<RawBeacon> data) {
         options.clear();
 
         int rssi = -1000;    // 信号最强的beacon
@@ -185,14 +219,14 @@ public class BeaconStore {
         int floor = 0;       // 最强信号的floor
         int floorCount = 0;  // 获得不同楼层数量
 
-        for(RawBeacon beacon : topBeaconSet) {
+        for(RawBeacon beacon : data) {
             LogUtils.d("top rssi beacon:" + beacon.major + "," + beacon.minor);
             MinorExtra extra = minorFilter.find(new MinorExtra(beacon.minor, 0));
             if(extra != null) {
                 int count = 1;
                 if(options.containsKey(extra.floor)) {
                     count = options.get(extra.floor) + 1;
-                    if(count >= 2) {
+                    if(count >= 2) { // 过半数的楼层
                         floor2 = extra.floor;
                     }
                 }else {
@@ -213,33 +247,62 @@ public class BeaconStore {
 
         LogUtils.d("floor=" + floor + ",floor2=" + floor2 + ",floorCount=" + floorCount + ",rssi=" + rssi);
 
-        int total = samples.size() > 3 ? 3 : samples.size();
-        if(total < 3) { // 样本数不足3个
-            LogUtils.w("valid samples' count is " + total);
+        if(data.size() < 3) { // 样本数不足
+            LogUtils.w("valid samples' count is " + data.size());
             return floor;
         }
 
         return floorCount == 3 ? floor : floor2;
     }
 
-    // 裁剪集合中信号最强的三个Beacon
-    private<T extends RawBeacon> void trimTopByRssi(Collection<T> data, int k) {
-        Arrays.sort(data.toArray(new RawBeacon[0]), comparator);
-        topBeaconSet.clear();
+    // 使用信号最强的5个beacon计算楼层
+    private int computeFloorFromTop5(Set<RawBeacon> data) {
 
-        for(RawBeacon beacon : data) {
-            if(!topBeaconSet.contains(beacon)) {
-                if(!uuidFilter.contains(beacon.uuid)) {
-                    continue;
-                }else if(!majorFilter.contains(beacon.major)) {
-                    continue;
+        int rssi = -1000;    // 最强信号强度，用于鉴别信号最强的beacon
+        int rssi2 = -1000;   // 出现两次的floor使用的beacon最强信号强度
+        int floor3 = 0;      // 出现三次的floor
+        int floor2_1 = 0;    // 出现两次的floor
+        int floor2_2 = 0;    // 出现两次的floor
+        int floor = 0;       // 最强信号的floor
+
+        final int dataCount = data.size();
+        RawBeacon beacon = null;
+        for(int i = dataCount - 1;i >= 0;i--) { // 倒序遍历，方便更新最强beacon
+
+            MinorExtra extra = minorFilter.find(new MinorExtra(beacon.minor, 0));
+            if(extra != null) {
+                int count = 1;
+                if(options.containsKey(extra.floor)) {
+                    count = options.get(extra.floor) + 1;
+                    if(count == 2) { // 出现过两次的楼层
+                        if(floor2_1 == 0) { // 第一个出现两次的楼层
+                            floor2_1 = extra.floor;
+                        }else {     // 找到第二个出现2次的楼层，此时楼层分布为1，2，2
+                            floor2_2 = extra.floor;
+                        }
+                    }
+                    if(count >= 3) { // 出现超过三次的楼层，分布可能为3，1，1；3，2；4，1；5
+                        floor3 = extra.floor;
+                    }
                 }
-                topBeaconSet.add(beacon);
-            }
-            if(topBeaconSet.size() == k) {
-                break;
+                options.put(extra.floor, count);
+
+                // 信号最强的beacon所在楼层
+                if(rssi < beacon.rssi) {
+                    floor = extra.floor;
+                    rssi = beacon.rssi;
+                }
             }
         }
+
+
+
+        if(floor3 !=0) {
+            return floor3;
+        }
+
+
+        return 0;
     }
 
     // 裁剪集合中信号最强的三个Beacon

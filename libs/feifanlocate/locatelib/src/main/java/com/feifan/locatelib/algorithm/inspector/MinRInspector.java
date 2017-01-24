@@ -23,7 +23,7 @@ public class MinRInspector implements ILocationInspector {
     private double average = 45;
     private double factor = 0.1; // 缩放因子
 
-    private double max_threshold = 75; // 最大阈值
+    private double max_threshold = 65; // 最大阈值
     private double max_factor = 3;
     private double min_threshold = 55; // 最小阈值
 
@@ -65,11 +65,11 @@ public class MinRInspector implements ILocationInspector {
     // 动态更新阈值
     private void doThreshold(double minR) {
 //        if(BuildConfig.DEBUG) {
-            weightA = DebugUtils.Algorithm.MINR_WEIGHT_HISTORY;
-            weightM = DebugUtils.Algorithm.MINR_WEIGHT_CURRENT;
-            min_threshold = DebugUtils.Algorithm.MINR_THRESHOLD_MIN;
-            max_threshold = DebugUtils.Algorithm.MINR_THRESHOLD_MAX;
-            factor = DebugUtils.Algorithm.MINR_SCALE_FACTOR;
+//            weightA = DebugUtils.Algorithm.MINR_WEIGHT_HISTORY;
+//            weightM = DebugUtils.Algorithm.MINR_WEIGHT_CURRENT;
+//            min_threshold = DebugUtils.Algorithm.MINR_THRESHOLD_MIN;
+//            max_threshold = DebugUtils.Algorithm.MINR_THRESHOLD_MAX;
+//            factor = DebugUtils.Algorithm.MINR_SCALE_FACTOR;
 //            DebugWindow.get().logI("min->" + min_threshold +
 //                                   ",max->" + max_threshold +
 //                                   ",weightA->" + weightA +

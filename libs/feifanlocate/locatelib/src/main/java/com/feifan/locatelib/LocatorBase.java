@@ -92,7 +92,7 @@ public abstract class LocatorBase implements IIndoorLocator {
             public void onBeaconsReceived(Collection<SampleBeacon> beacons) {
 
                 // 使用测试数据
-//                handleScanData(getBeacons());
+//                handleScanData(getBeacons(), getBeacons());
 
                 // 使用原始数据
 //                handleScanData(beacons);
@@ -123,7 +123,6 @@ public abstract class LocatorBase implements IIndoorLocator {
         mContext = context;
         mScanManager.bind(context);
         mScanManager.setNotifier(mNotifier);
-        mFinder = LocationFinderFactory.getInstance().getFinder(LocationFinderFactory.FINDER_FULL_MATCH_MULTI_RESULT);
 
         // 初始化广场和楼层
         plazaReceiver = new ResultReceiver(new Handler(Looper.getMainLooper())){
@@ -137,7 +136,7 @@ public abstract class LocatorBase implements IIndoorLocator {
                         int floor = resultData.getInt(PlazaDetectorService.RESULT_KEY_PLAZA_FLOOR);
 
                         // 初始化位置
-                        mLocationModel.location.floor = floor;
+                        mLocationModel.floor = floor;
                         mLocationModel.locationInfo.plazaId = plazaId;
 //                        mLocationModel.locationInfo.plazaName = info.plazaName;
                         notifyListeners(mLocationModel);
@@ -150,7 +149,7 @@ public abstract class LocatorBase implements IIndoorLocator {
                                 // 初始化Finder
                                 final String beaconFile = resultData.getString(PlazaDetectorService.RESULT_KEY_BEACON_FILE);
                                 mFinder.initialize(getBeaconMap(beaconFile), mInspector);
-                                mFinder.updateFingerprints(FingerprintStore.getInstance().selectFingerprints(mLocationModel.location.floor));
+                                mFinder.updateFingerprints(FingerprintStore.getInstance().selectFingerprints(mLocationModel.floor));
 
                                 if(mStatus == STATUS_HANG_UP) { // 挂起状态，则开启
                                     doStart();

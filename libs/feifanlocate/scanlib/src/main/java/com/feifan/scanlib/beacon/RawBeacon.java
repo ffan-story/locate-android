@@ -7,7 +7,7 @@ import com.feifan.baselib.utils.LogUtils;
 /**
  * Created by bianying on 16/9/4.
  */
-public class RawBeacon {
+public class RawBeacon implements Comparable<RawBeacon>{
     /** 信号强度 */
     public int rssi;
     /***/
@@ -82,5 +82,10 @@ public class RawBeacon {
 
     public String toLocateString() {
         return uuid + "_" + major;
+    }
+
+    @Override
+    public int compareTo(RawBeacon o) {
+        return o.rssi - rssi;
     }
 }

@@ -108,10 +108,10 @@ public class FullMultiFinder extends FinderBase {
                 mPredictor.setReference(optimum);
             }
             loc = mPredictor.updatePredictedLocation();
-            DebugWindow.get().logE(System.currentTimeMillis() / 1000 + ":" + loc.x + "," + loc.y + "," + loc.floor);
+//            DebugWindow.get().logE(System.currentTimeMillis() / 1000 + ":" + loc.x + "," + loc.y + "," + loc.floor);
         } else {          // 使用指纹位置
             mPredictor.setReference(loc); // 设置有效位置
-            DebugWindow.get().logI(System.currentTimeMillis() / 1000 + ":" + loc.x + "," + loc.y + "," + loc.floor);
+//            DebugWindow.get().logI(System.currentTimeMillis() / 1000 + ":" + loc.x + "," + loc.y + "," + loc.floor);
         }
 
         return loc;

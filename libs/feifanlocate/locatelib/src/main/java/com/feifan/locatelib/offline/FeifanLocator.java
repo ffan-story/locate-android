@@ -1,6 +1,7 @@
 package com.feifan.locatelib.offline;
 
 import com.feifan.baselib.utils.LogUtils;
+import com.feifan.debuglib.window.DebugWindow;
 import com.feifan.indoorlocation.model.IndoorLocationModel;
 import com.feifan.locatelib.LocatorBase;
 import com.feifan.locatelib.cache.BeaconStore;
@@ -47,6 +48,7 @@ public class FeifanLocator extends LocatorBase {
         // floor = 0 表示接受数据不足以定位
         mRecentFloor[mGuard++ % 3] = floor;
         updateFloor(floor);
+        DebugWindow.get().logI(mRecentFloor[0] + "," + mRecentFloor[1] + "," + mRecentFloor[2]);
 
         // 定位位置
         List<SampleBeacon> dataList = BeaconStore.getInstance().process2List(data);

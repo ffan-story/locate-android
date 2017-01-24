@@ -24,4 +24,15 @@ public class PrintUtils {
             LogUtils.d(item.toString());
         }
     }
+
+    /**
+     * 打印数组
+     * @param data
+     * @param <T>
+     */
+    public static <T> void printArray(T[] data) {
+        for(T item : data) {
+            LogUtils.d(item.toString());
+        }
+    }
 }
